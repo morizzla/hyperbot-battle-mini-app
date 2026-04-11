@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -312,6 +312,18 @@
       padding: 18px;
     }
 
+    .bot-card.is-prep {
+      opacity: 0.42;
+      transform: translateY(14px) scale(0.985);
+      filter: saturate(0.7) blur(1px);
+    }
+
+    .bot-card.is-visible {
+      opacity: 1;
+      transform: none;
+      filter: none;
+    }
+
     .bot-card.is-leader {
       border-color: rgba(255, 209, 102, 0.46);
       box-shadow:
@@ -336,6 +348,177 @@
 
     .bot-card[data-sign="loss"]::before {
       background: linear-gradient(180deg, rgba(255, 109, 122, 0.95), rgba(255, 109, 122, 0.25));
+    }
+
+    .scan-overlay,
+    .motion-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      border-radius: inherit;
+    }
+
+    .scan-overlay {
+      opacity: 0;
+      transition: opacity 220ms ease;
+      background: linear-gradient(180deg, rgba(7, 17, 32, 0.02), rgba(7, 17, 32, 0.22));
+      z-index: 3;
+    }
+
+    .bot-card.is-scanning .scan-overlay {
+      opacity: 1;
+    }
+
+    .scan-line {
+      position: absolute;
+      inset: -12% auto auto -30%;
+      width: 48%;
+      height: 130%;
+      background: linear-gradient(90deg, transparent, rgba(111, 198, 255, 0.55), rgba(255, 255, 255, 0.15), transparent);
+      filter: blur(1px);
+      opacity: 0;
+    }
+
+    .bot-card.is-scanning .scan-line {
+      animation: scanSweep 720ms cubic-bezier(0.2, 0.72, 0.2, 1) forwards;
+    }
+
+    .scan-label {
+      position: absolute;
+      top: 14px;
+      right: 16px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(111, 198, 255, 0.24);
+      background: rgba(9, 19, 38, 0.76);
+      color: var(--cool);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      box-shadow: 0 0 24px rgba(111, 198, 255, 0.12);
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+
+    .bot-card.is-scanning .scan-label {
+      opacity: 1;
+      transform: none;
+    }
+
+    .verdict-chip {
+      position: absolute;
+      top: 14px;
+      left: 18px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      background: rgba(76, 225, 161, 0.12);
+      border: 1px solid rgba(76, 225, 161, 0.26);
+      color: var(--good);
+      opacity: 0;
+      transform: translateY(10px) scale(0.92);
+      z-index: 4;
+    }
+
+    .bot-card[data-sign="loss"] .verdict-chip {
+      background: rgba(255, 109, 122, 0.12);
+      border-color: rgba(255, 109, 122, 0.24);
+      color: var(--bad);
+    }
+
+    .bot-card.is-visible .verdict-chip {
+      animation: verdictPop 520ms cubic-bezier(0.2, 0.84, 0.22, 1) 140ms forwards;
+    }
+
+    .coin-rain,
+    .loss-leak {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+    }
+
+    .coin,
+    .leak {
+      position: absolute;
+      opacity: 0;
+    }
+
+    .coin {
+      top: -22px;
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      color: rgba(9, 19, 38, 0.92);
+      font-size: 10px;
+      font-weight: 900;
+      background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.96), rgba(255,209,102,0.96) 40%, rgba(242,173,28,0.94) 100%);
+      box-shadow: 0 4px 14px rgba(255, 209, 102, 0.28);
+    }
+
+    .coin:nth-child(1) { left: 14%; animation-delay: 0.02s; }
+    .coin:nth-child(2) { left: 30%; animation-delay: 0.12s; }
+    .coin:nth-child(3) { left: 48%; animation-delay: 0.22s; }
+    .coin:nth-child(4) { left: 64%; animation-delay: 0.08s; }
+    .coin:nth-child(5) { left: 78%; animation-delay: 0.18s; }
+
+    .bot-card[data-sign="gain"].is-visible .coin {
+      animation: coinDrop 1s cubic-bezier(0.18, 0.8, 0.24, 1) forwards;
+    }
+
+    .leak {
+      bottom: 58px;
+      width: 8px;
+      height: 16px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(255, 154, 113, 0.95), rgba(255, 109, 122, 0.98));
+      box-shadow: 0 0 16px rgba(255, 109, 122, 0.22);
+    }
+
+    .leak:nth-child(1) { right: 18%; animation-delay: 0.04s; }
+    .leak:nth-child(2) { right: 30%; animation-delay: 0.14s; }
+    .leak:nth-child(3) { right: 42%; animation-delay: 0.24s; }
+    .leak:nth-child(4) { right: 58%; animation-delay: 0.08s; }
+    .leak:nth-child(5) { right: 72%; animation-delay: 0.18s; }
+
+    .bot-card[data-sign="loss"].is-visible .leak {
+      animation: lossLeak 1s cubic-bezier(0.28, 0.78, 0.36, 1) forwards;
+    }
+
+    .crown-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 35% 30%, rgba(255,255,255,0.96), rgba(255,209,102,0.98) 42%, rgba(157,112,14,0.96) 100%);
+      color: rgba(28, 21, 3, 0.94);
+      box-shadow:
+        0 0 0 1px rgba(255, 209, 102, 0.22),
+        0 0 24px rgba(255, 209, 102, 0.28),
+        0 12px 28px rgba(0, 0, 0, 0.34);
+      opacity: 0;
+      transform: translateY(-8px) scale(0.88);
+      z-index: 4;
+    }
+
+    .crown-core {
+      font-size: 22px;
+      line-height: 1;
+      filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.18));
+    }
+
+    .bot-card.is-leader.is-visible .crown-badge {
+      animation: crownPulse 2.6s ease-in-out infinite, crownArrive 460ms cubic-bezier(0.22, 0.84, 0.24, 1) 120ms forwards;
     }
 
     .bot-top {
@@ -647,6 +830,93 @@
     @keyframes laneLeaderPulse {
       0%, 100% { box-shadow: 0 0 0 4px rgba(255, 209, 102, 0.16), 0 10px 28px rgba(0,0,0,0.36); }
       50% { box-shadow: 0 0 0 7px rgba(255, 209, 102, 0.18), 0 10px 34px rgba(0,0,0,0.4); }
+    }
+
+    @keyframes coinDrop {
+      0% {
+        opacity: 0;
+        transform: translate3d(0, -8px, 0) scale(0.7);
+      }
+      12% {
+        opacity: 1;
+      }
+      72% {
+        opacity: 1;
+        transform: translate3d(-6px, 152px, 0) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translate3d(8px, 184px, 0) scale(0.76);
+      }
+    }
+
+    @keyframes lossLeak {
+      0% {
+        opacity: 0;
+        transform: translate3d(0, 0, 0) scale(0.82);
+      }
+      10% {
+        opacity: 1;
+      }
+      76% {
+        opacity: 1;
+        transform: translate3d(10px, 94px, 0) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translate3d(-8px, 130px, 0) scale(0.72);
+      }
+    }
+
+    @keyframes scanSweep {
+      0% {
+        opacity: 0;
+        transform: translateX(0) skewX(-18deg);
+      }
+      14% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: translateX(340%) skewX(-18deg);
+      }
+    }
+
+    @keyframes verdictPop {
+      0% {
+        opacity: 0;
+        transform: translateY(10px) scale(0.9);
+      }
+      100% {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    @keyframes crownArrive {
+      0% {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.8);
+      }
+      100% {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    @keyframes crownPulse {
+      0%, 100% {
+        box-shadow:
+          0 0 0 1px rgba(255, 209, 102, 0.22),
+          0 0 24px rgba(255, 209, 102, 0.28),
+          0 12px 28px rgba(0, 0, 0, 0.34);
+      }
+      50% {
+        box-shadow:
+          0 0 0 1px rgba(255, 209, 102, 0.28),
+          0 0 34px rgba(255, 209, 102, 0.4),
+          0 14px 34px rgba(0, 0, 0, 0.38);
+      }
     }
 
     @media (max-width: 840px) {
@@ -4148,7 +4418,7 @@
     const LIVE_STATUS = {
   "state": "running",
   "interval_minutes": 30.0,
-  "last_refresh_started_at": "2026-04-11T17:44:50.107660+00:00",
+  "last_refresh_started_at": "2026-04-11T17:56:46.116509+00:00",
   "last_refresh_finished_at": "",
   "next_refresh_at": "",
   "last_error": ""
@@ -4307,8 +4577,31 @@
               const runnerGlyph = Number(score.net_pnl || 0) >= 0
                 ? (row.rank === 1 ? "👑" : "⚡")
                 : "☠";
+              const verdict = Number(score.net_pnl || 0) >= 0 ? "profit locked" : "leak detected";
               return `
                 <article class="bot-card${cardClass}" data-sign="${Number(score.net_pnl || 0) >= 0 ? "gain" : "loss"}">
+                  <div class="scan-overlay">
+                    <div class="scan-line"></div>
+                    <div class="scan-label">scanning</div>
+                    <div class="verdict-chip">${verdict}</div>
+                  </div>
+                  <div class="motion-overlay">
+                    <div class="coin-rain">
+                      <span class="coin">$</span>
+                      <span class="coin">$</span>
+                      <span class="coin">$</span>
+                      <span class="coin">$</span>
+                      <span class="coin">$</span>
+                    </div>
+                    <div class="loss-leak">
+                      <span class="leak"></span>
+                      <span class="leak"></span>
+                      <span class="leak"></span>
+                      <span class="leak"></span>
+                      <span class="leak"></span>
+                    </div>
+                  </div>
+                  ${row.rank === 1 ? `<div class="crown-badge"><span class="crown-core">👑</span></div>` : ""}
                   <div class="bot-top">
                     <div>
                       <div class="bot-rank">#${row.rank} • ${badge}</div>
@@ -4377,6 +4670,52 @@
 
     panels.innerHTML = venues.map((venue, index) => renderVenuePanel(venue, index === 0)).join("");
 
+    const setCardVisuals = (card, animated = true) => {
+      const fill = card.querySelector(".powerbar-fill");
+      const runner = card.querySelector(".lane-runner");
+      if (fill) {
+        fill.style.transitionDuration = animated ? "700ms" : "0ms";
+        fill.style.width = `${fill.dataset.width}%`;
+      }
+      if (runner) {
+        runner.style.transitionDuration = animated ? "1100ms" : "0ms";
+        runner.style.transform = `translateX(calc(${runner.dataset.lane}% - 50%))`;
+      }
+    };
+
+    const resetCardVisuals = (card) => {
+      const fill = card.querySelector(".powerbar-fill");
+      const runner = card.querySelector(".lane-runner");
+      card.classList.remove("is-visible", "is-scanning");
+      card.classList.add("is-prep");
+      if (fill) {
+        fill.style.transitionDuration = "0ms";
+        fill.style.width = "0%";
+      }
+      if (runner) {
+        runner.style.transitionDuration = "0ms";
+        runner.style.transform = "translateX(calc(0% - 50%))";
+      }
+    };
+
+    const playPanelAnimation = (panel) => {
+      if (!panel) return;
+      const cards = [...panel.querySelectorAll(".bot-card")];
+      cards.forEach(resetCardVisuals);
+      cards.forEach((card, index) => {
+        const delay = index * 170;
+        window.setTimeout(() => {
+          card.classList.add("is-scanning");
+        }, delay + 30);
+        window.setTimeout(() => {
+          card.classList.remove("is-scanning");
+          card.classList.remove("is-prep");
+          card.classList.add("is-visible");
+          setCardVisuals(card);
+        }, delay + 720);
+      });
+    };
+
     tabs.addEventListener("click", (event) => {
       const button = event.target.closest(".tab");
       if (!button) return;
@@ -4384,19 +4723,17 @@
       for (const tab of tabs.querySelectorAll(".tab")) {
         tab.classList.toggle("active", tab === button);
       }
+      let activePanel = null;
       for (const panel of panels.querySelectorAll(".venue-panel")) {
-        panel.classList.toggle("active", panel.dataset.venue === venue);
+        const isActive = panel.dataset.venue === venue;
+        panel.classList.toggle("active", isActive);
+        if (isActive) activePanel = panel;
       }
+      playPanelAnimation(activePanel);
     });
 
-    requestAnimationFrame(() => {
-      for (const fill of document.querySelectorAll(".powerbar-fill")) {
-        fill.style.width = `${fill.dataset.width}%`;
-      }
-      for (const runner of document.querySelectorAll(".lane-runner")) {
-        runner.style.transform = `translateX(calc(${runner.dataset.lane}% - 50%))`;
-      }
-    });
+    const firstPanel = panels.querySelector(".venue-panel.active") || panels.querySelector(".venue-panel");
+    playPanelAnimation(firstPanel);
 
     if (window.Telegram && window.Telegram.WebApp) {
       window.Telegram.WebApp.ready();
@@ -4405,3 +4742,4 @@
   </script>
 </body>
 </html>
+
