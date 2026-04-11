@@ -1,0 +1,3493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Battle Royale Arena</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #08111f;
+      --bg-2: #0f1e35;
+      --panel: rgba(9, 19, 38, 0.84);
+      --panel-strong: rgba(13, 26, 48, 0.96);
+      --border: rgba(112, 177, 255, 0.24);
+      --text: #ecf4ff;
+      --muted: #9db4d0;
+      --good: #4ce1a1;
+      --bad: #ff6d7a;
+      --warm: #ffd166;
+      --cool: #6fc6ff;
+      --violet: #8cb0ff;
+      --shadow: 0 22px 70px rgba(0, 0, 0, 0.34);
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --radius-md: 14px;
+      --radius-sm: 10px;
+      --font-display: "Arial Black", "Franklin Gothic Heavy", sans-serif;
+      --font-body: "Trebuchet MS", "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(79, 152, 255, 0.18), transparent 28%),
+        radial-gradient(circle at top right, rgba(255, 109, 122, 0.16), transparent 26%),
+        linear-gradient(180deg, #040812 0%, #071120 38%, #0a1425 100%);
+      color: var(--text);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(transparent 0 31px, rgba(255,255,255,0.025) 32px),
+        linear-gradient(90deg, transparent 0 31px, rgba(255,255,255,0.02) 32px);
+      background-size: 32px 32px;
+      mask-image: linear-gradient(180deg, rgba(255,255,255,0.8), transparent);
+    }
+
+    .app {
+      width: min(1200px, calc(100vw - 24px));
+      margin: 0 auto;
+      padding: 18px 0 36px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      background:
+        linear-gradient(135deg, rgba(18, 35, 66, 0.92), rgba(7, 17, 32, 0.92)),
+        radial-gradient(circle at top right, rgba(255, 209, 102, 0.24), transparent 35%);
+      border: 1px solid rgba(151, 201, 255, 0.22);
+      border-radius: var(--radius-xl);
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -20% -60% 45%;
+      height: 240px;
+      background: radial-gradient(circle, rgba(111, 198, 255, 0.22), transparent 62%);
+      transform: rotate(-12deg);
+    }
+
+    .eyebrow {
+      font-size: 11px;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--warm);
+      margin-bottom: 10px;
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-family: var(--font-display);
+      font-size: clamp(32px, 6vw, 54px);
+      line-height: 0.92;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      max-width: 8ch;
+    }
+
+    .hero-copy {
+      max-width: 680px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    .ticker-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .ticker {
+      position: relative;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      backdrop-filter: blur(12px);
+    }
+
+    .ticker-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .ticker-value {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .ticker-sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: space-between;
+      align-items: center;
+      margin: 18px 0 14px;
+    }
+
+    .tabs {
+      display: inline-flex;
+      gap: 8px;
+      padding: 6px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+    }
+
+    .tab {
+      border: 0;
+      border-radius: 999px;
+      padding: 10px 16px;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+    }
+
+    .tab.active {
+      background: linear-gradient(135deg, rgba(111, 198, 255, 0.22), rgba(140, 176, 255, 0.24));
+      color: var(--text);
+      transform: translateY(-1px);
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .status-pill strong {
+      color: var(--text);
+    }
+
+    .venue-panel {
+      display: none;
+      gap: 16px;
+    }
+
+    .venue-panel.active {
+      display: grid;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+
+    .summary-card,
+    .bot-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .summary-card {
+      padding: 16px;
+      min-height: 112px;
+    }
+
+    .summary-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.22em;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .summary-main {
+      font-size: 21px;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .summary-detail {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .board {
+      display: grid;
+      gap: 12px;
+    }
+
+    .bot-card {
+      position: relative;
+      overflow: hidden;
+      padding: 18px;
+    }
+
+    .bot-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 6px;
+      background: linear-gradient(180deg, rgba(111, 198, 255, 0.95), rgba(140, 176, 255, 0.35));
+      opacity: 0.9;
+    }
+
+    .bot-card[data-sign="loss"]::before {
+      background: linear-gradient(180deg, rgba(255, 109, 122, 0.95), rgba(255, 109, 122, 0.25));
+    }
+
+    .bot-top {
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .bot-rank {
+      font-size: 13px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 8px;
+    }
+
+    .bot-name {
+      font-family: var(--font-display);
+      font-size: clamp(24px, 4vw, 30px);
+      line-height: 0.95;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-bottom: 6px;
+    }
+
+    .bot-sub {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .net-pill {
+      min-width: 112px;
+      text-align: right;
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+
+    .net-pill.good {
+      color: var(--good);
+    }
+
+    .net-pill.bad {
+      color: var(--bad);
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .chip {
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      color: var(--text);
+    }
+
+    .chip.subtle {
+      color: var(--muted);
+    }
+
+    .powerbar {
+      margin-top: 16px;
+      height: 14px;
+      border-radius: 999px;
+      overflow: hidden;
+      position: relative;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .powerbar-fill {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 0;
+      border-radius: 999px;
+      transition: width 700ms cubic-bezier(0.2, 0.8, 0.2, 1);
+      background: linear-gradient(90deg, rgba(76, 225, 161, 0.92), rgba(111, 198, 255, 0.92));
+    }
+
+    .powerbar-fill.loss {
+      background: linear-gradient(90deg, rgba(255, 109, 122, 0.95), rgba(255, 154, 113, 0.92));
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .metric-stack {
+      display: grid;
+      gap: 10px;
+    }
+
+    .metric-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .metric-line strong {
+      color: var(--text);
+    }
+
+    .form-rail {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .form-chip {
+      padding: 12px 10px;
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      text-align: center;
+    }
+
+    .form-chip-label {
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .form-chip-value {
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .form-chip-value.good {
+      color: var(--good);
+    }
+
+    .form-chip-value.bad {
+      color: var(--bad);
+    }
+
+    .footer-note {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    @media (max-width: 840px) {
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .bot-top {
+        flex-direction: column;
+      }
+
+      .net-pill {
+        text-align: left;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <section class="hero">
+      <div class="eyebrow">Telegram Mini App Arena</div>
+      <h1>Battle Royale</h1>
+      <p class="hero-copy">
+        Live challenger tournament for HL and DX. Ranking runs on net profit after fees while stage gates keep weak
+        ideas from touching live logic too early.
+      </p>
+      <div class="ticker-row" id="ticker-row"></div>
+    </section>
+
+    <div class="toolbar">
+      <div class="tabs" id="tabs"></div>
+      <div class="status-pill" id="status-pill">Arena loading...</div>
+    </div>
+
+    <div id="venue-panels"></div>
+    <div class="footer-note">Mini App V1. Open from Telegram once the generated file is hosted on HTTPS.</div>
+  </div>
+
+  <script>
+    const SNAPSHOT = {
+  "generated_at": "2026-04-11T16:42:26.116775+00:00",
+  "config_path": "C:\\Users\\God level Mode\\Claude Projects\\Decentralised Trading\\config\\battle_royale.json",
+  "registry_path": "C:\\Users\\God level Mode\\Claude Projects\\Decentralised Trading\\data\\battle_royale_registry.json",
+  "stage_policies": {
+    "stage1": {
+      "label": "Stage 1 constrained",
+      "min_hours": 24.0,
+      "require_beats_champion": false,
+      "promotion_target": "advance-stage2"
+    },
+    "stage2": {
+      "label": "Stage 2 compositional",
+      "min_hours": 72.0,
+      "require_beats_champion": true,
+      "promotion_target": "shadow"
+    },
+    "stage3": {
+      "label": "Stage 3 open invention",
+      "min_hours": 168.0,
+      "require_beats_champion": true,
+      "promotion_target": "live-filter"
+    }
+  },
+  "venues": [
+    {
+      "venue": "HL",
+      "generated_at": "2026-04-11T15:50:25.473777+00:00",
+      "days": 30,
+      "account_start": 150.0,
+      "primary_account_start": 150.0,
+      "account_starts": [
+        150.0,
+        500.0
+      ],
+      "coins": [
+        "BTC",
+        "ETH",
+        "SOL"
+      ],
+      "promotion_rules": {
+        "min_net_pnl": 0.0,
+        "min_profit_factor": 1.05,
+        "max_drawdown_pct": 0.12,
+        "min_trades": 8,
+        "require_more_wins_than_losses": true
+      },
+      "session_leaders": {
+        "1d": {
+          "case_id": "hl_challenger_scalper_review",
+          "nickname": "Spark Chaser",
+          "arena_badge": "[HOT]",
+          "arena_title": "Hot Streak",
+          "net_pnl": 5.961231205163818,
+          "wins": 2,
+          "losses": 0
+        },
+        "3d": {
+          "case_id": "hl_champion_dip_rip_current",
+          "nickname": "Tide King",
+          "arena_badge": "[KING]",
+          "arena_title": "Crown Holder",
+          "net_pnl": 4.192968630003754,
+          "wins": 3,
+          "losses": 1
+        },
+        "7d": {
+          "case_id": "hl_champion_dip_rip_current",
+          "nickname": "Tide King",
+          "arena_badge": "[KING]",
+          "arena_title": "Crown Holder",
+          "net_pnl": 11.808539435619224,
+          "wins": 7,
+          "losses": 2
+        }
+      },
+      "duplicate_rejections": [],
+      "leaderboard": [
+        {
+          "rank": 1,
+          "case_id": "hl_champion_dip_rip_current",
+          "role": "champion",
+          "family": "dip_rip",
+          "base_strategy": "dip_rip",
+          "stage": "stage3",
+          "stage_label": "Stage 3 open invention",
+          "fingerprint": "hl|dip_rip|current_live",
+          "mutation_summary": "Current live HL dip_rip baseline",
+          "description": "Current HL main engine using live dip_rip config.",
+          "nickname": "Tide King",
+          "verdict": "champion",
+          "beats_champion": false,
+          "promotion_pass": true,
+          "lifecycle_state": "active",
+          "promotion_target": "champion",
+          "time_floor_met": true,
+          "elapsed_hours": 0.9973573133333333,
+          "stage_floor_hours": 168.0,
+          "hours_to_floor": 167.00264268666666,
+          "arena_badge": "[KING]",
+          "arena_title": "Crown Holder",
+          "score": {
+            "net_pnl": 32.305020241681916,
+            "total_pnl": 33.330900124576836,
+            "total_fees": 1.0258798828949989,
+            "return_pct": 0.21536680161121277,
+            "total_trades": 34,
+            "wins": 25,
+            "losses": 9,
+            "win_rate": 0.7352941176470589,
+            "win_loss_gap": 16,
+            "profit_factor": 1.8449006402651869,
+            "max_drawdown_pct": 0.08057090741677576,
+            "avg_rr": 0.8920361858070949,
+            "best_trade": 5.836924836098562,
+            "worst_trade": -6.487142448856108,
+            "long_pnl": 32.75385664198666,
+            "short_pnl": 0.5770434825901827
+          },
+          "session_scores": {
+            "1d": {
+              "net_pnl": 3.0316392794619853,
+              "total_trades": 1,
+              "wins": 1,
+              "losses": 0,
+              "win_rate": 1.0,
+              "profit_factor": Infinity
+            },
+            "3d": {
+              "net_pnl": 4.192968630003754,
+              "total_trades": 4,
+              "wins": 3,
+              "losses": 1,
+              "win_rate": 0.75,
+              "profit_factor": 1.65232826298154
+            },
+            "7d": {
+              "net_pnl": 11.808539435619224,
+              "total_trades": 9,
+              "wins": 7,
+              "losses": 2,
+              "win_rate": 0.7777777777777778,
+              "profit_factor": 2.194899883904141
+            }
+          },
+          "bankroll_scores": {
+            "150": {
+              "account_start": 150.0,
+              "promotion_pass": true,
+              "score": {
+                "net_pnl": 32.305020241681916,
+                "total_pnl": 33.330900124576836,
+                "total_fees": 1.0258798828949989,
+                "return_pct": 0.21536680161121277,
+                "total_trades": 34,
+                "wins": 25,
+                "losses": 9,
+                "win_rate": 0.7352941176470589,
+                "win_loss_gap": 16,
+                "profit_factor": 1.8449006402651869,
+                "max_drawdown_pct": 0.08057090741677576,
+                "avg_rr": 0.8920361858070949,
+                "best_trade": 5.836924836098562,
+                "worst_trade": -6.487142448856108,
+                "long_pnl": 32.75385664198666,
+                "short_pnl": 0.5770434825901827
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": 3.0316392794619853,
+                  "total_trades": 1,
+                  "wins": 1,
+                  "losses": 0,
+                  "win_rate": 1.0,
+                  "profit_factor": Infinity
+                },
+                "3d": {
+                  "net_pnl": 4.192968630003754,
+                  "total_trades": 4,
+                  "wins": 3,
+                  "losses": 1,
+                  "win_rate": 0.75,
+                  "profit_factor": 1.65232826298154
+                },
+                "7d": {
+                  "net_pnl": 11.808539435619224,
+                  "total_trades": 9,
+                  "wins": 7,
+                  "losses": 2,
+                  "win_rate": 0.7777777777777778,
+                  "profit_factor": 2.194899883904141
+                }
+              }
+            },
+            "500": {
+              "account_start": 500.0,
+              "promotion_pass": true,
+              "score": {
+                "net_pnl": 107.6834008056062,
+                "total_pnl": 111.10300041525612,
+                "total_fees": 3.4195996096499948,
+                "return_pct": 0.21536680161121238,
+                "total_trades": 34,
+                "wins": 25,
+                "losses": 9,
+                "win_rate": 0.7352941176470589,
+                "win_loss_gap": 16,
+                "profit_factor": 1.8449006402651873,
+                "max_drawdown_pct": 0.08057090741677565,
+                "avg_rr": 0.8920361858070949,
+                "best_trade": 19.45641612032854,
+                "worst_trade": -21.623808162853685,
+                "long_pnl": 109.17952213995551,
+                "short_pnl": 1.923478275300596
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": 10.105464264873282,
+                  "total_trades": 1,
+                  "wins": 1,
+                  "losses": 0,
+                  "win_rate": 1.0,
+                  "profit_factor": Infinity
+                },
+                "3d": {
+                  "net_pnl": 13.976562100012508,
+                  "total_trades": 4,
+                  "wins": 3,
+                  "losses": 1,
+                  "win_rate": 0.75,
+                  "profit_factor": 1.65232826298154
+                },
+                "7d": {
+                  "net_pnl": 39.36179811873073,
+                  "total_trades": 9,
+                  "wins": 7,
+                  "losses": 2,
+                  "win_rate": 0.7777777777777778,
+                  "profit_factor": 2.1948998839041405
+                }
+              }
+            }
+          }
+        },
+        {
+          "rank": 2,
+          "case_id": "hl_challenger_oi_scale_balanced",
+          "role": "challenger",
+          "family": "oi_filter",
+          "base_strategy": "dip_rip",
+          "stage": "stage2",
+          "stage_label": "Stage 2 compositional",
+          "fingerprint": "hl|dip_rip|oi_scale_balanced|lb4",
+          "mutation_summary": "Balanced OI score-based sizing on HL dip_rip",
+          "description": "HL dip_rip with balanced OI score-based sizing proxy.",
+          "nickname": "Pulse Weaver",
+          "verdict": "keep-testing",
+          "beats_champion": false,
+          "promotion_pass": true,
+          "lifecycle_state": "active",
+          "promotion_target": "hold",
+          "time_floor_met": false,
+          "elapsed_hours": 0.9973573133333333,
+          "stage_floor_hours": 72.0,
+          "hours_to_floor": 71.00264268666666,
+          "arena_badge": "[HOT]",
+          "arena_title": "Hot Streak",
+          "score": {
+            "net_pnl": 10.619400104259284,
+            "total_pnl": 11.191741683011628,
+            "total_fees": 0.5723415787523917,
+            "return_pct": 0.0707960006950619,
+            "total_trades": 19,
+            "wins": 13,
+            "losses": 6,
+            "win_rate": 0.6842105263157895,
+            "win_loss_gap": 7,
+            "profit_factor": 1.4446630737601138,
+            "max_drawdown_pct": 0.04367218910347255,
+            "avg_rr": 0.7302735868763606,
+            "best_trade": 5.285653880318331,
+            "worst_trade": -6.517264390541349,
+            "long_pnl": 12.045145694599285,
+            "short_pnl": -0.8534040115876564
+          },
+          "session_scores": {
+            "1d": {
+              "net_pnl": 2.585325517490859,
+              "total_trades": 1,
+              "wins": 1,
+              "losses": 0,
+              "win_rate": 1.0,
+              "profit_factor": Infinity
+            },
+            "3d": {
+              "net_pnl": 3.2289096408564553,
+              "total_trades": 4,
+              "wins": 3,
+              "losses": 1,
+              "win_rate": 0.75,
+              "profit_factor": 1.495439412515264
+            },
+            "7d": {
+              "net_pnl": 5.59092146431597,
+              "total_trades": 7,
+              "wins": 5,
+              "losses": 2,
+              "win_rate": 0.7142857142857143,
+              "profit_factor": 1.595681896029431
+            }
+          },
+          "bankroll_scores": {
+            "150": {
+              "account_start": 150.0,
+              "promotion_pass": true,
+              "score": {
+                "net_pnl": 10.619400104259284,
+                "total_pnl": 11.191741683011628,
+                "total_fees": 0.5723415787523917,
+                "return_pct": 0.0707960006950619,
+                "total_trades": 19,
+                "wins": 13,
+                "losses": 6,
+                "win_rate": 0.6842105263157895,
+                "win_loss_gap": 7,
+                "profit_factor": 1.4446630737601138,
+                "max_drawdown_pct": 0.04367218910347255,
+                "avg_rr": 0.7302735868763606,
+                "best_trade": 5.285653880318331,
+                "worst_trade": -6.517264390541349,
+                "long_pnl": 12.045145694599285,
+                "short_pnl": -0.8534040115876564
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": 2.585325517490859,
+                  "total_trades": 1,
+                  "wins": 1,
+                  "losses": 0,
+                  "win_rate": 1.0,
+                  "profit_factor": Infinity
+                },
+                "3d": {
+                  "net_pnl": 3.2289096408564553,
+                  "total_trades": 4,
+                  "wins": 3,
+                  "losses": 1,
+                  "win_rate": 0.75,
+                  "profit_factor": 1.495439412515264
+                },
+                "7d": {
+                  "net_pnl": 5.59092146431597,
+                  "total_trades": 7,
+                  "wins": 5,
+                  "losses": 2,
+                  "win_rate": 0.7142857142857143,
+                  "profit_factor": 1.595681896029431
+                }
+              }
+            },
+            "500": {
+              "account_start": 500.0,
+              "promotion_pass": true,
+              "score": {
+                "net_pnl": 35.39800034753057,
+                "total_pnl": 37.30580561003874,
+                "total_fees": 1.9078052625079711,
+                "return_pct": 0.07079600069506115,
+                "total_trades": 19,
+                "wins": 13,
+                "losses": 6,
+                "win_rate": 0.6842105263157895,
+                "win_loss_gap": 7,
+                "profit_factor": 1.4446630737601138,
+                "max_drawdown_pct": 0.04367218910347249,
+                "avg_rr": 0.7302735868763606,
+                "best_trade": 17.61884626772776,
+                "worst_trade": -21.72421463513782,
+                "long_pnl": 40.15048564866425,
+                "short_pnl": -2.8446800386255156
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": 8.617751724969525,
+                  "total_trades": 1,
+                  "wins": 1,
+                  "losses": 0,
+                  "win_rate": 1.0,
+                  "profit_factor": Infinity
+                },
+                "3d": {
+                  "net_pnl": 10.76303213618818,
+                  "total_trades": 4,
+                  "wins": 3,
+                  "losses": 1,
+                  "win_rate": 0.75,
+                  "profit_factor": 1.495439412515264
+                },
+                "7d": {
+                  "net_pnl": 18.636404881053217,
+                  "total_trades": 7,
+                  "wins": 5,
+                  "losses": 2,
+                  "win_rate": 0.7142857142857143,
+                  "profit_factor": 1.595681896029431
+                }
+              }
+            }
+          }
+        },
+        {
+          "rank": 3,
+          "case_id": "hl_challenger_oi_veto_loose",
+          "role": "challenger",
+          "family": "oi_filter",
+          "base_strategy": "dip_rip",
+          "stage": "stage1",
+          "stage_label": "Stage 1 constrained",
+          "fingerprint": "hl|dip_rip|oi_veto_loose|lb4",
+          "mutation_summary": "Loose OI veto on HL dip_rip",
+          "description": "HL dip_rip with loose OI veto proxy filter.",
+          "nickname": "Flow Guard",
+          "verdict": "keep-testing",
+          "beats_champion": false,
+          "promotion_pass": true,
+          "lifecycle_state": "active",
+          "promotion_target": "hold",
+          "time_floor_met": false,
+          "elapsed_hours": 0.9973573133333333,
+          "stage_floor_hours": 24.0,
+          "hours_to_floor": 23.00264268666667,
+          "arena_badge": "[HOT]",
+          "arena_title": "Hot Streak",
+          "score": {
+            "net_pnl": 9.864085494288332,
+            "total_pnl": 10.413114727030829,
+            "total_fees": 0.5490292327424996,
+            "return_pct": 0.06576056996192221,
+            "total_trades": 19,
+            "wins": 13,
+            "losses": 6,
+            "win_rate": 0.6842105263157895,
+            "win_loss_gap": 7,
+            "profit_factor": 1.4305860501257244,
+            "max_drawdown_pct": 0.04715412284926128,
+            "avg_rr": 0.7302735868763606,
+            "best_trade": 4.918393174881218,
+            "worst_trade": -5.843124476871498,
+            "long_pnl": 10.31498390882437,
+            "short_pnl": 0.09813081820645841
+          },
+          "session_scores": {
+            "1d": {
+              "net_pnl": 2.658458007998092,
+              "total_trades": 1,
+              "wins": 1,
+              "losses": 0,
+              "win_rate": 1.0,
+              "profit_factor": Infinity
+            },
+            "3d": {
+              "net_pnl": 3.478628036334926,
+              "total_trades": 4,
+              "wins": 3,
+              "losses": 1,
+              "win_rate": 0.75,
+              "profit_factor": 1.595336972557093
+            },
+            "7d": {
+              "net_pnl": 4.871900671237336,
+              "total_trades": 7,
+              "wins": 5,
+              "losses": 2,
+              "win_rate": 0.7142857142857143,
+              "profit_factor": 1.5423642388137453
+            }
+          },
+          "bankroll_scores": {
+            "150": {
+              "account_start": 150.0,
+              "promotion_pass": true,
+              "score": {
+                "net_pnl": 9.864085494288332,
+                "total_pnl": 10.413114727030829,
+                "total_fees": 0.5490292327424996,
+                "return_pct": 0.06576056996192221,
+                "total_trades": 19,
+                "wins": 13,
+                "losses": 6,
+                "win_rate": 0.6842105263157895,
+                "win_loss_gap": 7,
+                "profit_factor": 1.4305860501257244,
+                "max_drawdown_pct": 0.04715412284926128,
+                "avg_rr": 0.7302735868763606,
+                "best_trade": 4.918393174881218,
+                "worst_trade": -5.843124476871498,
+                "long_pnl": 10.31498390882437,
+                "short_pnl": 0.09813081820645841
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": 2.658458007998092,
+                  "total_trades": 1,
+                  "wins": 1,
+                  "losses": 0,
+                  "win_rate": 1.0,
+                  "profit_factor": Infinity
+                },
+                "3d": {
+                  "net_pnl": 3.478628036334926,
+                  "total_trades": 4,
+                  "wins": 3,
+                  "losses": 1,
+                  "win_rate": 0.75,
+                  "profit_factor": 1.595336972557093
+                },
+                "7d": {
+                  "net_pnl": 4.871900671237336,
+                  "total_trades": 7,
+                  "wins": 5,
+                  "losses": 2,
+                  "win_rate": 0.7142857142857143,
+                  "profit_factor": 1.5423642388137453
+                }
+              }
+            },
+            "500": {
+              "account_start": 500.0,
+              "promotion_pass": true,
+              "score": {
+                "net_pnl": 32.880284980961164,
+                "total_pnl": 34.710382423436116,
+                "total_fees": 1.830097442474999,
+                "return_pct": 0.06576056996192232,
+                "total_trades": 19,
+                "wins": 13,
+                "losses": 6,
+                "win_rate": 0.6842105263157895,
+                "win_loss_gap": 7,
+                "profit_factor": 1.4305860501257244,
+                "max_drawdown_pct": 0.047154122849261314,
+                "avg_rr": 0.7302735868763606,
+                "best_trade": 16.39464391627073,
+                "worst_trade": -19.477081589571647,
+                "long_pnl": 34.38327969608123,
+                "short_pnl": 0.3271027273548839
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": 8.861526693326976,
+                  "total_trades": 1,
+                  "wins": 1,
+                  "losses": 0,
+                  "win_rate": 1.0,
+                  "profit_factor": Infinity
+                },
+                "3d": {
+                  "net_pnl": 11.595426787783108,
+                  "total_trades": 4,
+                  "wins": 3,
+                  "losses": 1,
+                  "win_rate": 0.75,
+                  "profit_factor": 1.5953369725570945
+                },
+                "7d": {
+                  "net_pnl": 16.239668904124475,
+                  "total_trades": 7,
+                  "wins": 5,
+                  "losses": 2,
+                  "win_rate": 0.7142857142857143,
+                  "profit_factor": 1.5423642388137462
+                }
+              }
+            }
+          }
+        },
+        {
+          "rank": 4,
+          "case_id": "hl_agent_oi_reclaim_guard_v1",
+          "role": "challenger",
+          "family": "agent_stage3",
+          "base_strategy": "dip_rip",
+          "stage": "stage3",
+          "stage_label": "Stage 3 open invention",
+          "fingerprint": "hl|agent_stage3|dip_rip|oi_reclaim_guard_v1",
+          "mutation_summary": "Agent proposal: tighter HL OI guard with gentle strength scaling around dip_rip reclaims",
+          "description": "Stage 3 agent-proposed HL dip_rip variant using a tighter OI guard plus light strength scaling to reduce weak reclaim entries.",
+          "nickname": "Reclaim Warden",
+          "verdict": "keep-testing",
+          "beats_champion": false,
+          "promotion_pass": true,
+          "lifecycle_state": "active",
+          "promotion_target": "hold",
+          "time_floor_met": false,
+          "elapsed_hours": 0.0,
+          "stage_floor_hours": 168.0,
+          "hours_to_floor": 168.0,
+          "arena_badge": "[HOT]",
+          "arena_title": "Hot Streak",
+          "score": {
+            "net_pnl": 6.795693035918475,
+            "total_pnl": 7.3291839717721565,
+            "total_fees": 0.5334909358536742,
+            "return_pct": 0.0453046202394565,
+            "total_trades": 17,
+            "wins": 11,
+            "losses": 6,
+            "win_rate": 0.6470588235294118,
+            "win_loss_gap": 5,
+            "profit_factor": 1.3226815986332354,
+            "max_drawdown_pct": 0.05109717418736751,
+            "avg_rr": 0.7049937428628429,
+            "best_trade": 5.015544522890143,
+            "worst_trade": -6.094155534261315,
+            "long_pnl": 10.363925851375376,
+            "short_pnl": -3.0347418796032195
+          },
+          "session_scores": {
+            "1d": {
+              "net_pnl": 2.547909210352914,
+              "total_trades": 1,
+              "wins": 1,
+              "losses": 0,
+              "win_rate": 1.0,
+              "profit_factor": Infinity
+            },
+            "3d": {
+              "net_pnl": 3.2486659719774904,
+              "total_trades": 4,
+              "wins": 3,
+              "losses": 1,
+              "win_rate": 0.75,
+              "profit_factor": 1.5330789399308082
+            },
+            "7d": {
+              "net_pnl": 8.264267570702646,
+              "total_trades": 7,
+              "wins": 5,
+              "losses": 2,
+              "win_rate": 0.7142857142857143,
+              "profit_factor": 2.34744030420654
+            }
+          },
+          "bankroll_scores": {
+            "150": {
+              "account_start": 150.0,
+              "promotion_pass": true,
+              "score": {
+                "net_pnl": 6.795693035918475,
+                "total_pnl": 7.3291839717721565,
+                "total_fees": 0.5334909358536742,
+                "return_pct": 0.0453046202394565,
+                "total_trades": 17,
+                "wins": 11,
+                "losses": 6,
+                "win_rate": 0.6470588235294118,
+                "win_loss_gap": 5,
+                "profit_factor": 1.3226815986332354,
+                "max_drawdown_pct": 0.05109717418736751,
+                "avg_rr": 0.7049937428628429,
+                "best_trade": 5.015544522890143,
+                "worst_trade": -6.094155534261315,
+                "long_pnl": 10.363925851375376,
+                "short_pnl": -3.0347418796032195
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": 2.547909210352914,
+                  "total_trades": 1,
+                  "wins": 1,
+                  "losses": 0,
+                  "win_rate": 1.0,
+                  "profit_factor": Infinity
+                },
+                "3d": {
+                  "net_pnl": 3.2486659719774904,
+                  "total_trades": 4,
+                  "wins": 3,
+                  "losses": 1,
+                  "win_rate": 0.75,
+                  "profit_factor": 1.5330789399308082
+                },
+                "7d": {
+                  "net_pnl": 8.264267570702646,
+                  "total_trades": 7,
+                  "wins": 5,
+                  "losses": 2,
+                  "win_rate": 0.7142857142857143,
+                  "profit_factor": 2.34744030420654
+                }
+              }
+            },
+            "500": {
+              "account_start": 500.0,
+              "promotion_pass": true,
+              "score": {
+                "net_pnl": 22.652310119728213,
+                "total_pnl": 24.43061323924051,
+                "total_fees": 1.7783031195122478,
+                "return_pct": 0.045304620239456424,
+                "total_trades": 17,
+                "wins": 11,
+                "losses": 6,
+                "win_rate": 0.6470588235294118,
+                "win_loss_gap": 5,
+                "profit_factor": 1.3226815986332354,
+                "max_drawdown_pct": 0.051097174187367485,
+                "avg_rr": 0.7049937428628429,
+                "best_trade": 16.718481742967146,
+                "worst_trade": -20.313851780871047,
+                "long_pnl": 34.54641950458457,
+                "short_pnl": -10.115806265344059
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": 8.493030701176378,
+                  "total_trades": 1,
+                  "wins": 1,
+                  "losses": 0,
+                  "win_rate": 1.0,
+                  "profit_factor": Infinity
+                },
+                "3d": {
+                  "net_pnl": 10.828886573258306,
+                  "total_trades": 4,
+                  "wins": 3,
+                  "losses": 1,
+                  "win_rate": 0.75,
+                  "profit_factor": 1.5330789399308085
+                },
+                "7d": {
+                  "net_pnl": 27.54755856900882,
+                  "total_trades": 7,
+                  "wins": 5,
+                  "losses": 2,
+                  "win_rate": 0.7142857142857143,
+                  "profit_factor": 2.3474403042065406
+                }
+              }
+            }
+          }
+        },
+        {
+          "rank": 5,
+          "case_id": "hl_challenger_sweep_short_helper",
+          "role": "challenger",
+          "family": "liquidity_sweep",
+          "base_strategy": "liquidity_sweep",
+          "stage": "stage1",
+          "stage_label": "Stage 1 constrained",
+          "fingerprint": "hl|liquidity_sweep|short_helper|full_contender",
+          "mutation_summary": "HL helper-only liquidity sweep treated as contender",
+          "description": "HL short-only liquidity_sweep helper treated as a full contender.",
+          "nickname": "Night Hook",
+          "verdict": "research-only",
+          "beats_champion": false,
+          "promotion_pass": false,
+          "lifecycle_state": "probation",
+          "promotion_target": "hold",
+          "time_floor_met": false,
+          "elapsed_hours": 0.9973573133333333,
+          "stage_floor_hours": 24.0,
+          "hours_to_floor": 23.00264268666667,
+          "arena_badge": "[ROPE]",
+          "arena_title": "On the Ropes",
+          "score": {
+            "net_pnl": 0.0,
+            "total_pnl": 0.0,
+            "total_fees": 0.0,
+            "return_pct": 0.0,
+            "total_trades": 0,
+            "wins": 0,
+            "losses": 0,
+            "win_rate": 0.0,
+            "win_loss_gap": 0,
+            "profit_factor": 0.0,
+            "max_drawdown_pct": 0.0,
+            "avg_rr": 0.0,
+            "best_trade": 0.0,
+            "worst_trade": 0.0,
+            "long_pnl": 0.0,
+            "short_pnl": 0.0
+          },
+          "session_scores": {
+            "1d": {
+              "net_pnl": 0.0,
+              "total_trades": 0,
+              "wins": 0,
+              "losses": 0,
+              "win_rate": 0.0,
+              "profit_factor": 0.0
+            },
+            "3d": {
+              "net_pnl": 0.0,
+              "total_trades": 0,
+              "wins": 0,
+              "losses": 0,
+              "win_rate": 0.0,
+              "profit_factor": 0.0
+            },
+            "7d": {
+              "net_pnl": 0.0,
+              "total_trades": 0,
+              "wins": 0,
+              "losses": 0,
+              "win_rate": 0.0,
+              "profit_factor": 0.0
+            }
+          },
+          "bankroll_scores": {
+            "150": {
+              "account_start": 150.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": 0.0,
+                "total_pnl": 0.0,
+                "total_fees": 0.0,
+                "return_pct": 0.0,
+                "total_trades": 0,
+                "wins": 0,
+                "losses": 0,
+                "win_rate": 0.0,
+                "win_loss_gap": 0,
+                "profit_factor": 0.0,
+                "max_drawdown_pct": 0.0,
+                "avg_rr": 0.0,
+                "best_trade": 0.0,
+                "worst_trade": 0.0,
+                "long_pnl": 0.0,
+                "short_pnl": 0.0
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": 0.0,
+                  "total_trades": 0,
+                  "wins": 0,
+                  "losses": 0,
+                  "win_rate": 0.0,
+                  "profit_factor": 0.0
+                },
+                "3d": {
+                  "net_pnl": 0.0,
+                  "total_trades": 0,
+                  "wins": 0,
+                  "losses": 0,
+                  "win_rate": 0.0,
+                  "profit_factor": 0.0
+                },
+                "7d": {
+                  "net_pnl": 0.0,
+                  "total_trades": 0,
+                  "wins": 0,
+                  "losses": 0,
+                  "win_rate": 0.0,
+                  "profit_factor": 0.0
+                }
+              }
+            },
+            "500": {
+              "account_start": 500.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": 0.0,
+                "total_pnl": 0.0,
+                "total_fees": 0.0,
+                "return_pct": 0.0,
+                "total_trades": 0,
+                "wins": 0,
+                "losses": 0,
+                "win_rate": 0.0,
+                "win_loss_gap": 0,
+                "profit_factor": 0.0,
+                "max_drawdown_pct": 0.0,
+                "avg_rr": 0.0,
+                "best_trade": 0.0,
+                "worst_trade": 0.0,
+                "long_pnl": 0.0,
+                "short_pnl": 0.0
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": 0.0,
+                  "total_trades": 0,
+                  "wins": 0,
+                  "losses": 0,
+                  "win_rate": 0.0,
+                  "profit_factor": 0.0
+                },
+                "3d": {
+                  "net_pnl": 0.0,
+                  "total_trades": 0,
+                  "wins": 0,
+                  "losses": 0,
+                  "win_rate": 0.0,
+                  "profit_factor": 0.0
+                },
+                "7d": {
+                  "net_pnl": 0.0,
+                  "total_trades": 0,
+                  "wins": 0,
+                  "losses": 0,
+                  "win_rate": 0.0,
+                  "profit_factor": 0.0
+                }
+              }
+            }
+          }
+        },
+        {
+          "rank": 6,
+          "case_id": "hl_challenger_scalper_review",
+          "role": "challenger",
+          "family": "scalp",
+          "base_strategy": "scalp",
+          "stage": "stage1",
+          "stage_label": "Stage 1 constrained",
+          "fingerprint": "hl|scalp|review|live_aligned",
+          "mutation_summary": "Disabled HL scalper rerun through live-aligned path",
+          "description": "Disabled HL scalper rerun through the live-aligned backtest path.",
+          "nickname": "Spark Chaser",
+          "verdict": "research-only",
+          "beats_champion": false,
+          "promotion_pass": false,
+          "lifecycle_state": "probation",
+          "promotion_target": "hold",
+          "time_floor_met": false,
+          "elapsed_hours": 0.9973573133333333,
+          "stage_floor_hours": 24.0,
+          "hours_to_floor": 23.00264268666667,
+          "arena_badge": "[HOT]",
+          "arena_title": "Hot Streak",
+          "score": {
+            "net_pnl": -40.384277148224726,
+            "total_pnl": -34.17548004669413,
+            "total_fees": 6.208797101530628,
+            "return_pct": -0.2692285143214982,
+            "total_trades": 94,
+            "wins": 44,
+            "losses": 50,
+            "win_rate": 0.46808510638297873,
+            "win_loss_gap": -6,
+            "profit_factor": 0.8401802867282633,
+            "max_drawdown_pct": 0.5306386380934114,
+            "avg_rr": 0.34507002212822474,
+            "best_trade": 15.121633723991756,
+            "worst_trade": -8.427778701876555,
+            "long_pnl": 10.668327352721063,
+            "short_pnl": -44.8438073994152
+          },
+          "session_scores": {
+            "1d": {
+              "net_pnl": 5.961231205163818,
+              "total_trades": 2,
+              "wins": 2,
+              "losses": 0,
+              "win_rate": 1.0,
+              "profit_factor": Infinity
+            },
+            "3d": {
+              "net_pnl": 0.4806289517681633,
+              "total_trades": 9,
+              "wins": 6,
+              "losses": 3,
+              "win_rate": 0.6666666666666666,
+              "profit_factor": 1.034163945115455
+            },
+            "7d": {
+              "net_pnl": -22.07675327279894,
+              "total_trades": 15,
+              "wins": 6,
+              "losses": 9,
+              "win_rate": 0.4,
+              "profit_factor": 0.3972331370125188
+            }
+          },
+          "bankroll_scores": {
+            "150": {
+              "account_start": 150.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": -40.384277148224726,
+                "total_pnl": -34.17548004669413,
+                "total_fees": 6.208797101530628,
+                "return_pct": -0.2692285143214982,
+                "total_trades": 94,
+                "wins": 44,
+                "losses": 50,
+                "win_rate": 0.46808510638297873,
+                "win_loss_gap": -6,
+                "profit_factor": 0.8401802867282633,
+                "max_drawdown_pct": 0.5306386380934114,
+                "avg_rr": 0.34507002212822474,
+                "best_trade": 15.121633723991756,
+                "worst_trade": -8.427778701876555,
+                "long_pnl": 10.668327352721063,
+                "short_pnl": -44.8438073994152
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": 5.961231205163818,
+                  "total_trades": 2,
+                  "wins": 2,
+                  "losses": 0,
+                  "win_rate": 1.0,
+                  "profit_factor": Infinity
+                },
+                "3d": {
+                  "net_pnl": 0.4806289517681633,
+                  "total_trades": 9,
+                  "wins": 6,
+                  "losses": 3,
+                  "win_rate": 0.6666666666666666,
+                  "profit_factor": 1.034163945115455
+                },
+                "7d": {
+                  "net_pnl": -22.07675327279894,
+                  "total_trades": 15,
+                  "wins": 6,
+                  "losses": 9,
+                  "win_rate": 0.4,
+                  "profit_factor": 0.3972331370125188
+                }
+              }
+            },
+            "500": {
+              "account_start": 500.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": -134.6142571607491,
+                "total_pnl": -113.91826682231374,
+                "total_fees": 20.695990338435443,
+                "return_pct": -0.2692285143214982,
+                "total_trades": 94,
+                "wins": 44,
+                "losses": 50,
+                "win_rate": 0.46808510638297873,
+                "win_loss_gap": -6,
+                "profit_factor": 0.8401802867282631,
+                "max_drawdown_pct": 0.5306386380934115,
+                "avg_rr": 0.34507002212822474,
+                "best_trade": 50.40544574663919,
+                "worst_trade": -28.092595672921856,
+                "long_pnl": 35.561091175736856,
+                "short_pnl": -149.4793579980506
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": 19.870770683879385,
+                  "total_trades": 2,
+                  "wins": 2,
+                  "losses": 0,
+                  "win_rate": 1.0,
+                  "profit_factor": Infinity
+                },
+                "3d": {
+                  "net_pnl": 1.6020965058938754,
+                  "total_trades": 9,
+                  "wins": 6,
+                  "losses": 3,
+                  "win_rate": 0.6666666666666666,
+                  "profit_factor": 1.0341639451154547
+                },
+                "7d": {
+                  "net_pnl": -73.58917757599644,
+                  "total_trades": 15,
+                  "wins": 6,
+                  "losses": 9,
+                  "win_rate": 0.4,
+                  "profit_factor": 0.3972331370125188
+                }
+              }
+            }
+          }
+        }
+      ],
+      "champion": "hl_champion_dip_rip_current"
+    },
+    {
+      "venue": "DX",
+      "generated_at": "2026-04-11T16:42:26.116775+00:00",
+      "days": 30,
+      "account_start": 150.0,
+      "primary_account_start": 150.0,
+      "account_starts": [
+        150.0,
+        500.0
+      ],
+      "coins": [
+        "SUI",
+        "LINK",
+        "XRP"
+      ],
+      "promotion_rules": {
+        "min_net_pnl": 0.0,
+        "min_profit_factor": 1.05,
+        "max_drawdown_pct": 0.12,
+        "min_trades": 12,
+        "require_more_wins_than_losses": true
+      },
+      "session_leaders": {
+        "1d": {
+          "case_id": "dx_challenger_hybrid_lb2_candle_veto",
+          "nickname": "Fuse Lock",
+          "arena_badge": "[RIP]",
+          "arena_title": "Graveyard",
+          "net_pnl": 3.3944885094804538,
+          "wins": 2,
+          "losses": 1
+        },
+        "3d": {
+          "case_id": "dx_agent_setupq_close_bias_v1",
+          "nickname": "Seal Fox",
+          "arena_badge": "[RIP]",
+          "arena_title": "Graveyard",
+          "net_pnl": -1.8119295145478587,
+          "wins": 2,
+          "losses": 3
+        },
+        "7d": {
+          "case_id": "dx_agent_setupq_close_bias_v1",
+          "nickname": "Seal Fox",
+          "arena_badge": "[RIP]",
+          "arena_title": "Graveyard",
+          "net_pnl": -4.994420610358145,
+          "wins": 2,
+          "losses": 5
+        }
+      },
+      "duplicate_rejections": [],
+      "leaderboard": [
+        {
+          "rank": 1,
+          "case_id": "dx_challenger_hybrid_lb2_candle_veto",
+          "role": "challenger",
+          "family": "hybrid",
+          "base_strategy": "liquidity_sweep",
+          "stage": "stage2",
+          "stage_label": "Stage 2 compositional",
+          "fingerprint": "dx|liquidity_sweep|hybrid|oi_scale_very_loose|candle_veto_very_loose",
+          "mutation_summary": "OI sizing plus candle veto on DX sweep",
+          "description": "DX hybrid with OI sizing plus very loose candle veto.",
+          "nickname": "Fuse Lock",
+          "verdict": "knocked-out",
+          "beats_champion": true,
+          "promotion_pass": false,
+          "lifecycle_state": "knocked_out",
+          "promotion_target": "graveyard",
+          "time_floor_met": false,
+          "elapsed_hours": 1.8642025905555557,
+          "stage_floor_hours": 72.0,
+          "hours_to_floor": 70.13579740944445,
+          "arena_badge": "[RIP]",
+          "arena_title": "Graveyard",
+          "score": {
+            "net_pnl": -8.641229369733168,
+            "total_pnl": -6.252510198784996,
+            "total_fees": 2.388719170948223,
+            "return_pct": -0.057608195798221115,
+            "total_trades": 12,
+            "wins": 6,
+            "losses": 6,
+            "win_rate": 0.5,
+            "win_loss_gap": 0,
+            "profit_factor": 0.5542758266106114,
+            "max_drawdown_pct": 0.09036741588289487,
+            "avg_rr": 0.15098113122145096,
+            "best_trade": 2.90301791357262,
+            "worst_trade": -5.12997784757324,
+            "long_pnl": -6.252510198784996,
+            "short_pnl": 0.0
+          },
+          "session_scores": {
+            "1d": {
+              "net_pnl": 3.3944885094804538,
+              "total_trades": 3,
+              "wins": 2,
+              "losses": 1,
+              "win_rate": 0.6666666666666666,
+              "profit_factor": 13.819713272496017
+            },
+            "3d": {
+              "net_pnl": -4.269615202088171,
+              "total_trades": 8,
+              "wins": 4,
+              "losses": 4,
+              "win_rate": 0.5,
+              "profit_factor": 0.5910042957366309
+            },
+            "7d": {
+              "net_pnl": -6.252510198784996,
+              "total_trades": 12,
+              "wins": 6,
+              "losses": 6,
+              "win_rate": 0.5,
+              "profit_factor": 0.5542758266106114
+            }
+          },
+          "bankroll_scores": {
+            "150": {
+              "account_start": 150.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": -8.641229369733168,
+                "total_pnl": -6.252510198784996,
+                "total_fees": 2.388719170948223,
+                "return_pct": -0.057608195798221115,
+                "total_trades": 12,
+                "wins": 6,
+                "losses": 6,
+                "win_rate": 0.5,
+                "win_loss_gap": 0,
+                "profit_factor": 0.5542758266106114,
+                "max_drawdown_pct": 0.09036741588289487,
+                "avg_rr": 0.15098113122145096,
+                "best_trade": 2.90301791357262,
+                "worst_trade": -5.12997784757324,
+                "long_pnl": -6.252510198784996,
+                "short_pnl": 0.0
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": 3.3944885094804538,
+                  "total_trades": 3,
+                  "wins": 2,
+                  "losses": 1,
+                  "win_rate": 0.6666666666666666,
+                  "profit_factor": 13.819713272496017
+                },
+                "3d": {
+                  "net_pnl": -4.269615202088171,
+                  "total_trades": 8,
+                  "wins": 4,
+                  "losses": 4,
+                  "win_rate": 0.5,
+                  "profit_factor": 0.5910042957366309
+                },
+                "7d": {
+                  "net_pnl": -6.252510198784996,
+                  "total_trades": 12,
+                  "wins": 6,
+                  "losses": 6,
+                  "win_rate": 0.5,
+                  "profit_factor": 0.5542758266106114
+                }
+              }
+            },
+            "500": {
+              "account_start": 500.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": -28.80409789911073,
+                "total_pnl": -20.841700662616663,
+                "total_fees": 7.962397236494077,
+                "return_pct": -0.05760819579822146,
+                "total_trades": 12,
+                "wins": 6,
+                "losses": 6,
+                "win_rate": 0.5,
+                "win_loss_gap": 0,
+                "profit_factor": 0.554275826610611,
+                "max_drawdown_pct": 0.09036741588289499,
+                "avg_rr": 0.15098113122145096,
+                "best_trade": 9.676726378575397,
+                "worst_trade": -17.09992615857747,
+                "long_pnl": -20.841700662616663,
+                "short_pnl": 0.0
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": 11.314961698268176,
+                  "total_trades": 3,
+                  "wins": 2,
+                  "losses": 1,
+                  "win_rate": 0.6666666666666666,
+                  "profit_factor": 13.819713272496017
+                },
+                "3d": {
+                  "net_pnl": -14.232050673627247,
+                  "total_trades": 8,
+                  "wins": 4,
+                  "losses": 4,
+                  "win_rate": 0.5,
+                  "profit_factor": 0.5910042957366307
+                },
+                "7d": {
+                  "net_pnl": -20.841700662616663,
+                  "total_trades": 12,
+                  "wins": 6,
+                  "losses": 6,
+                  "win_rate": 0.5,
+                  "profit_factor": 0.554275826610611
+                }
+              }
+            }
+          }
+        },
+        {
+          "rank": 2,
+          "case_id": "dx_agent_long_guard_short_pressure_v1",
+          "role": "challenger",
+          "family": "agent_stage3",
+          "base_strategy": "liquidity_sweep",
+          "stage": "stage3",
+          "stage_label": "Stage 3 open invention",
+          "fingerprint": "dx|agent_stage3|liquidity_sweep|long_guard_short_pressure_v1",
+          "mutation_summary": "Agent proposal: stricter long guard plus pressure-weighted short side for DX sweep",
+          "description": "Stage 3 agent-proposed DX asymmetric hybrid that clamps weak longs harder while keeping short-side pressure filters looser and scalable.",
+          "nickname": "Pressure Wolf",
+          "verdict": "knocked-out",
+          "beats_champion": true,
+          "promotion_pass": false,
+          "lifecycle_state": "knocked_out",
+          "promotion_target": "graveyard",
+          "time_floor_met": false,
+          "elapsed_hours": 0.8668452772222222,
+          "stage_floor_hours": 168.0,
+          "hours_to_floor": 167.1331547227778,
+          "arena_badge": "[RIP]",
+          "arena_title": "Graveyard",
+          "score": {
+            "net_pnl": -9.717113598948487,
+            "total_pnl": -7.695833094108046,
+            "total_fees": 2.0212805048405,
+            "return_pct": -0.06478075732632324,
+            "total_trades": 10,
+            "wins": 4,
+            "losses": 6,
+            "win_rate": 0.4,
+            "win_loss_gap": -2,
+            "profit_factor": 0.42541026696658524,
+            "max_drawdown_pct": 0.09778874029359087,
+            "avg_rr": -0.006325741602356305,
+            "best_trade": 2.702194013062518,
+            "worst_trade": -4.807382603212703,
+            "long_pnl": -5.299659742708559,
+            "short_pnl": -2.3961733513994874
+          },
+          "session_scores": {
+            "1d": {
+              "net_pnl": 3.1569732573928007,
+              "total_trades": 3,
+              "wins": 2,
+              "losses": 1,
+              "win_rate": 0.6666666666666666,
+              "profit_factor": 13.670369854765378
+            },
+            "3d": {
+              "net_pnl": -6.1492375984185745,
+              "total_trades": 9,
+              "wins": 4,
+              "losses": 5,
+              "win_rate": 0.4444444444444444,
+              "profit_factor": 0.4809464005791602
+            },
+            "7d": {
+              "net_pnl": -7.695833094108046,
+              "total_trades": 10,
+              "wins": 4,
+              "losses": 6,
+              "win_rate": 0.4,
+              "profit_factor": 0.42541026696658524
+            }
+          },
+          "bankroll_scores": {
+            "150": {
+              "account_start": 150.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": -9.717113598948487,
+                "total_pnl": -7.695833094108046,
+                "total_fees": 2.0212805048405,
+                "return_pct": -0.06478075732632324,
+                "total_trades": 10,
+                "wins": 4,
+                "losses": 6,
+                "win_rate": 0.4,
+                "win_loss_gap": -2,
+                "profit_factor": 0.42541026696658524,
+                "max_drawdown_pct": 0.09778874029359087,
+                "avg_rr": -0.006325741602356305,
+                "best_trade": 2.702194013062518,
+                "worst_trade": -4.807382603212703,
+                "long_pnl": -5.299659742708559,
+                "short_pnl": -2.3961733513994874
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": 3.1569732573928007,
+                  "total_trades": 3,
+                  "wins": 2,
+                  "losses": 1,
+                  "win_rate": 0.6666666666666666,
+                  "profit_factor": 13.670369854765378
+                },
+                "3d": {
+                  "net_pnl": -6.1492375984185745,
+                  "total_trades": 9,
+                  "wins": 4,
+                  "losses": 5,
+                  "win_rate": 0.4444444444444444,
+                  "profit_factor": 0.4809464005791602
+                },
+                "7d": {
+                  "net_pnl": -7.695833094108046,
+                  "total_trades": 10,
+                  "wins": 4,
+                  "losses": 6,
+                  "win_rate": 0.4,
+                  "profit_factor": 0.42541026696658524
+                }
+              }
+            },
+            "500": {
+              "account_start": 500.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": -32.390378663161755,
+                "total_pnl": -25.652776980360148,
+                "total_fees": 6.7376016828016665,
+                "return_pct": -0.0647807573263235,
+                "total_trades": 10,
+                "wins": 4,
+                "losses": 6,
+                "win_rate": 0.4,
+                "win_loss_gap": -2,
+                "profit_factor": 0.42541026696658524,
+                "max_drawdown_pct": 0.09778874029359087,
+                "avg_rr": -0.006325741602356305,
+                "best_trade": 9.00731337687506,
+                "worst_trade": -16.024608677375678,
+                "long_pnl": -17.66553247569519,
+                "short_pnl": -7.9872445046649565
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": 10.523244191309335,
+                  "total_trades": 3,
+                  "wins": 2,
+                  "losses": 1,
+                  "win_rate": 0.6666666666666666,
+                  "profit_factor": 13.670369854765378
+                },
+                "3d": {
+                  "net_pnl": -20.497458661395243,
+                  "total_trades": 9,
+                  "wins": 4,
+                  "losses": 5,
+                  "win_rate": 0.4444444444444444,
+                  "profit_factor": 0.4809464005791601
+                },
+                "7d": {
+                  "net_pnl": -25.652776980360148,
+                  "total_trades": 10,
+                  "wins": 4,
+                  "losses": 6,
+                  "win_rate": 0.4,
+                  "profit_factor": 0.42541026696658524
+                }
+              }
+            }
+          }
+        },
+        {
+          "rank": 3,
+          "case_id": "dx_agent_setupq_close_bias_v1",
+          "role": "challenger",
+          "family": "setup_quality",
+          "base_strategy": "liquidity_sweep",
+          "stage": "stage1",
+          "stage_label": "Stage 1 constrained",
+          "fingerprint": "dx|setup_quality|dx_agent_setupq_close_bias_v1",
+          "mutation_summary": "Stage 1 setup-quality branch that emphasizes body strength and close location on DX longs",
+          "description": "DX liquidity_sweep variant that requires stronger reclaim closes on longs while keeping shorts balanced.",
+          "nickname": "Seal Fox",
+          "verdict": "knocked-out",
+          "beats_champion": true,
+          "promotion_pass": false,
+          "lifecycle_state": "knocked_out",
+          "promotion_target": "graveyard",
+          "time_floor_met": false,
+          "elapsed_hours": 0.0,
+          "stage_floor_hours": 24.0,
+          "hours_to_floor": 24.0,
+          "arena_badge": "[RIP]",
+          "arena_title": "Graveyard",
+          "score": {
+            "net_pnl": -9.891012748995593,
+            "total_pnl": -2.221038733310532,
+            "total_fees": 7.6699740156850496,
+            "return_pct": -0.06594008499330395,
+            "total_trades": 41,
+            "wins": 20,
+            "losses": 21,
+            "win_rate": 0.4878048780487805,
+            "win_loss_gap": -1,
+            "profit_factor": 0.9270254346830583,
+            "max_drawdown_pct": 0.12307898831277332,
+            "avg_rr": 0.44675738435170126,
+            "best_trade": 5.8954012629303705,
+            "worst_trade": -4.502148521114057,
+            "long_pnl": -0.6979403166365514,
+            "short_pnl": -1.5230984166739803
+          },
+          "session_scores": {
+            "1d": {
+              "net_pnl": 3.1728460588320107,
+              "total_trades": 2,
+              "wins": 2,
+              "losses": 0,
+              "win_rate": 1.0,
+              "profit_factor": Infinity
+            },
+            "3d": {
+              "net_pnl": -1.8119295145478587,
+              "total_trades": 5,
+              "wins": 2,
+              "losses": 3,
+              "win_rate": 0.4,
+              "profit_factor": 0.6365073035135059
+            },
+            "7d": {
+              "net_pnl": -4.994420610358145,
+              "total_trades": 7,
+              "wins": 2,
+              "losses": 5,
+              "win_rate": 0.2857142857142857,
+              "profit_factor": 0.38848322056155193
+            }
+          },
+          "bankroll_scores": {
+            "150": {
+              "account_start": 150.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": -9.891012748995593,
+                "total_pnl": -2.221038733310532,
+                "total_fees": 7.6699740156850496,
+                "return_pct": -0.06594008499330395,
+                "total_trades": 41,
+                "wins": 20,
+                "losses": 21,
+                "win_rate": 0.4878048780487805,
+                "win_loss_gap": -1,
+                "profit_factor": 0.9270254346830583,
+                "max_drawdown_pct": 0.12307898831277332,
+                "avg_rr": 0.44675738435170126,
+                "best_trade": 5.8954012629303705,
+                "worst_trade": -4.502148521114057,
+                "long_pnl": -0.6979403166365514,
+                "short_pnl": -1.5230984166739803
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": 3.1728460588320107,
+                  "total_trades": 2,
+                  "wins": 2,
+                  "losses": 0,
+                  "win_rate": 1.0,
+                  "profit_factor": Infinity
+                },
+                "3d": {
+                  "net_pnl": -1.8119295145478587,
+                  "total_trades": 5,
+                  "wins": 2,
+                  "losses": 3,
+                  "win_rate": 0.4,
+                  "profit_factor": 0.6365073035135059
+                },
+                "7d": {
+                  "net_pnl": -4.994420610358145,
+                  "total_trades": 7,
+                  "wins": 2,
+                  "losses": 5,
+                  "win_rate": 0.2857142857142857,
+                  "profit_factor": 0.38848322056155193
+                }
+              }
+            },
+            "500": {
+              "account_start": 500.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": -32.9700424966519,
+                "total_pnl": -7.4034624443684365,
+                "total_fees": 25.5665800522835,
+                "return_pct": -0.0659400849933038,
+                "total_trades": 41,
+                "wins": 20,
+                "losses": 21,
+                "win_rate": 0.4878048780487805,
+                "win_loss_gap": -1,
+                "profit_factor": 0.9270254346830584,
+                "max_drawdown_pct": 0.12307898831277307,
+                "avg_rr": 0.44675738435170126,
+                "best_trade": 19.65133754310123,
+                "worst_trade": -15.007161737046854,
+                "long_pnl": -2.326467722121837,
+                "short_pnl": -5.076994722246599
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": 10.57615352944004,
+                  "total_trades": 2,
+                  "wins": 2,
+                  "losses": 0,
+                  "win_rate": 1.0,
+                  "profit_factor": Infinity
+                },
+                "3d": {
+                  "net_pnl": -6.039765048492854,
+                  "total_trades": 5,
+                  "wins": 2,
+                  "losses": 3,
+                  "win_rate": 0.4,
+                  "profit_factor": 0.6365073035135063
+                },
+                "7d": {
+                  "net_pnl": -16.64806870119381,
+                  "total_trades": 7,
+                  "wins": 2,
+                  "losses": 5,
+                  "win_rate": 0.2857142857142857,
+                  "profit_factor": 0.3884832205615521
+                }
+              }
+            }
+          }
+        },
+        {
+          "rank": 4,
+          "case_id": "dx_challenger_asym_strict_long_loose_short",
+          "role": "challenger",
+          "family": "asymmetric_hybrid",
+          "base_strategy": "liquidity_sweep",
+          "stage": "stage2",
+          "stage_label": "Stage 2 compositional",
+          "fingerprint": "dx|liquidity_sweep|asym|strict_long|loose_short",
+          "mutation_summary": "Strict-long loose-short asymmetric hybrid",
+          "description": "DX asymmetric hybrid: strict longs, loose shorts.",
+          "nickname": "Split Fang",
+          "verdict": "knocked-out",
+          "beats_champion": true,
+          "promotion_pass": false,
+          "lifecycle_state": "knocked_out",
+          "promotion_target": "graveyard",
+          "time_floor_met": false,
+          "elapsed_hours": 1.8642025905555557,
+          "stage_floor_hours": 72.0,
+          "hours_to_floor": 70.13579740944445,
+          "arena_badge": "[RIP]",
+          "arena_title": "Graveyard",
+          "score": {
+            "net_pnl": -11.135283760938336,
+            "total_pnl": -8.540732864249895,
+            "total_fees": 2.594550896688463,
+            "return_pct": -0.07423522507292224,
+            "total_trades": 13,
+            "wins": 6,
+            "losses": 7,
+            "win_rate": 0.46153846153846156,
+            "win_loss_gap": -1,
+            "profit_factor": 0.4730260509653842,
+            "max_drawdown_pct": 0.10641645996190997,
+            "avg_rr": 0.06244412112749319,
+            "best_trade": 2.8517987034534933,
+            "worst_trade": -5.0394674128794525,
+            "long_pnl": -6.261913902326943,
+            "short_pnl": -2.2788189619229526
+          },
+          "session_scores": {
+            "1d": {
+              "net_pnl": 3.3345980694658848,
+              "total_trades": 3,
+              "wins": 2,
+              "losses": 1,
+              "win_rate": 0.6666666666666666,
+              "profit_factor": 13.819713272496015
+            },
+            "3d": {
+              "net_pnl": -6.557644244482668,
+              "total_trades": 9,
+              "wins": 4,
+              "losses": 5,
+              "win_rate": 0.4444444444444444,
+              "profit_factor": 0.4803126770587769
+            },
+            "7d": {
+              "net_pnl": -8.540732864249895,
+              "total_trades": 13,
+              "wins": 6,
+              "losses": 7,
+              "win_rate": 0.46153846153846156,
+              "profit_factor": 0.4730260509653842
+            }
+          },
+          "bankroll_scores": {
+            "150": {
+              "account_start": 150.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": -11.135283760938336,
+                "total_pnl": -8.540732864249895,
+                "total_fees": 2.594550896688463,
+                "return_pct": -0.07423522507292224,
+                "total_trades": 13,
+                "wins": 6,
+                "losses": 7,
+                "win_rate": 0.46153846153846156,
+                "win_loss_gap": -1,
+                "profit_factor": 0.4730260509653842,
+                "max_drawdown_pct": 0.10641645996190997,
+                "avg_rr": 0.06244412112749319,
+                "best_trade": 2.8517987034534933,
+                "worst_trade": -5.0394674128794525,
+                "long_pnl": -6.261913902326943,
+                "short_pnl": -2.2788189619229526
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": 3.3345980694658848,
+                  "total_trades": 3,
+                  "wins": 2,
+                  "losses": 1,
+                  "win_rate": 0.6666666666666666,
+                  "profit_factor": 13.819713272496015
+                },
+                "3d": {
+                  "net_pnl": -6.557644244482668,
+                  "total_trades": 9,
+                  "wins": 4,
+                  "losses": 5,
+                  "win_rate": 0.4444444444444444,
+                  "profit_factor": 0.4803126770587769
+                },
+                "7d": {
+                  "net_pnl": -8.540732864249895,
+                  "total_trades": 13,
+                  "wins": 6,
+                  "losses": 7,
+                  "win_rate": 0.46153846153846156,
+                  "profit_factor": 0.4730260509653842
+                }
+              }
+            },
+            "500": {
+              "account_start": 500.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": -37.117612536461195,
+                "total_pnl": -28.469109547499656,
+                "total_fees": 8.648502988961543,
+                "return_pct": -0.07423522507292239,
+                "total_trades": 13,
+                "wins": 6,
+                "losses": 7,
+                "win_rate": 0.46153846153846156,
+                "win_loss_gap": -1,
+                "profit_factor": 0.47302605096538414,
+                "max_drawdown_pct": 0.10641645996191017,
+                "avg_rr": 0.06244412112749319,
+                "best_trade": 9.50599567817831,
+                "worst_trade": -16.798224709598173,
+                "long_pnl": -20.873046341089815,
+                "short_pnl": -7.596063206409842
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": 11.115326898219616,
+                  "total_trades": 3,
+                  "wins": 2,
+                  "losses": 1,
+                  "win_rate": 0.6666666666666666,
+                  "profit_factor": 13.819713272496017
+                },
+                "3d": {
+                  "net_pnl": -21.858814148275563,
+                  "total_trades": 9,
+                  "wins": 4,
+                  "losses": 5,
+                  "win_rate": 0.4444444444444444,
+                  "profit_factor": 0.4803126770587767
+                },
+                "7d": {
+                  "net_pnl": -28.469109547499656,
+                  "total_trades": 13,
+                  "wins": 6,
+                  "losses": 7,
+                  "win_rate": 0.46153846153846156,
+                  "profit_factor": 0.47302605096538414
+                }
+              }
+            }
+          }
+        },
+        {
+          "rank": 5,
+          "case_id": "dx_challenger_confidence_scale_balanced",
+          "role": "challenger",
+          "family": "candle_confidence",
+          "base_strategy": "liquidity_sweep",
+          "stage": "stage1",
+          "stage_label": "Stage 1 constrained",
+          "fingerprint": "dx|liquidity_sweep|confidence_scale_balanced|lb20",
+          "mutation_summary": "Balanced candle-confidence sizing on DX sweep",
+          "description": "DX liquidity_sweep with balanced candle-confidence sizing.",
+          "nickname": "Candle Judge",
+          "verdict": "knocked-out",
+          "beats_champion": true,
+          "promotion_pass": false,
+          "lifecycle_state": "knocked_out",
+          "promotion_target": "graveyard",
+          "time_floor_met": false,
+          "elapsed_hours": 1.8642025905555557,
+          "stage_floor_hours": 24.0,
+          "hours_to_floor": 22.135797409444443,
+          "arena_badge": "[RIP]",
+          "arena_title": "Graveyard",
+          "score": {
+            "net_pnl": -11.822899136939327,
+            "total_pnl": -1.3106552023060867,
+            "total_fees": 10.51224393463323,
+            "return_pct": -0.07881932757959552,
+            "total_trades": 55,
+            "wins": 28,
+            "losses": 27,
+            "win_rate": 0.509090909090909,
+            "win_loss_gap": 1,
+            "profit_factor": 0.9689744489329682,
+            "max_drawdown_pct": 0.13355886469445882,
+            "avg_rr": 0.3950275003289818,
+            "best_trade": 6.956387289832791,
+            "worst_trade": -4.397814629703796,
+            "long_pnl": -2.63818365799706,
+            "short_pnl": 1.3275284556909734
+          },
+          "session_scores": {
+            "1d": {
+              "net_pnl": -1.1379848323417987,
+              "total_trades": 4,
+              "wins": 2,
+              "losses": 2,
+              "win_rate": 0.5,
+              "profit_factor": 0.7186278279182761
+            },
+            "3d": {
+              "net_pnl": -7.9680073045916835,
+              "total_trades": 10,
+              "wins": 4,
+              "losses": 6,
+              "win_rate": 0.4,
+              "profit_factor": 0.381601468151001
+            },
+            "7d": {
+              "net_pnl": -14.902325026909896,
+              "total_trades": 14,
+              "wins": 4,
+              "losses": 10,
+              "win_rate": 0.2857142857142857,
+              "profit_factor": 0.2480873717002066
+            }
+          },
+          "bankroll_scores": {
+            "150": {
+              "account_start": 150.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": -11.822899136939327,
+                "total_pnl": -1.3106552023060867,
+                "total_fees": 10.51224393463323,
+                "return_pct": -0.07881932757959552,
+                "total_trades": 55,
+                "wins": 28,
+                "losses": 27,
+                "win_rate": 0.509090909090909,
+                "win_loss_gap": 1,
+                "profit_factor": 0.9689744489329682,
+                "max_drawdown_pct": 0.13355886469445882,
+                "avg_rr": 0.3950275003289818,
+                "best_trade": 6.956387289832791,
+                "worst_trade": -4.397814629703796,
+                "long_pnl": -2.63818365799706,
+                "short_pnl": 1.3275284556909734
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": -1.1379848323417987,
+                  "total_trades": 4,
+                  "wins": 2,
+                  "losses": 2,
+                  "win_rate": 0.5,
+                  "profit_factor": 0.7186278279182761
+                },
+                "3d": {
+                  "net_pnl": -7.9680073045916835,
+                  "total_trades": 10,
+                  "wins": 4,
+                  "losses": 6,
+                  "win_rate": 0.4,
+                  "profit_factor": 0.381601468151001
+                },
+                "7d": {
+                  "net_pnl": -14.902325026909896,
+                  "total_trades": 14,
+                  "wins": 4,
+                  "losses": 10,
+                  "win_rate": 0.2857142857142857,
+                  "profit_factor": 0.2480873717002066
+                }
+              }
+            },
+            "500": {
+              "account_start": 500.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": -39.40966378979789,
+                "total_pnl": -4.368850674353618,
+                "total_fees": 35.04081311544409,
+                "return_pct": -0.07881932757959578,
+                "total_trades": 55,
+                "wins": 28,
+                "losses": 27,
+                "win_rate": 0.509090909090909,
+                "win_loss_gap": 1,
+                "profit_factor": 0.9689744489329681,
+                "max_drawdown_pct": 0.13355886469445863,
+                "avg_rr": 0.3950275003289818,
+                "best_trade": 23.187957632775962,
+                "worst_trade": -14.659382099012653,
+                "long_pnl": -8.793945526656863,
+                "short_pnl": 4.425094852303245
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": -3.793282774472661,
+                  "total_trades": 4,
+                  "wins": 2,
+                  "losses": 2,
+                  "win_rate": 0.5,
+                  "profit_factor": 0.7186278279182761
+                },
+                "3d": {
+                  "net_pnl": -26.560024348638944,
+                  "total_trades": 10,
+                  "wins": 4,
+                  "losses": 6,
+                  "win_rate": 0.4,
+                  "profit_factor": 0.38160146815100093
+                },
+                "7d": {
+                  "net_pnl": -49.67441675636631,
+                  "total_trades": 14,
+                  "wins": 4,
+                  "losses": 10,
+                  "win_rate": 0.2857142857142857,
+                  "profit_factor": 0.24808737170020656
+                }
+              }
+            }
+          }
+        },
+        {
+          "rank": 6,
+          "case_id": "dx_agent_setupq_balanced_v1",
+          "role": "challenger",
+          "family": "setup_quality",
+          "base_strategy": "liquidity_sweep",
+          "stage": "stage1",
+          "stage_label": "Stage 1 constrained",
+          "fingerprint": "dx|setup_quality|dx_agent_setupq_balanced_v1",
+          "mutation_summary": "Stage 1 balanced setup-quality layer for both sides of DX sweep entries",
+          "description": "DX liquidity_sweep variant using balanced setup-quality gating on both longs and shorts.",
+          "nickname": "Signal Smith",
+          "verdict": "knocked-out",
+          "beats_champion": true,
+          "promotion_pass": false,
+          "lifecycle_state": "knocked_out",
+          "promotion_target": "graveyard",
+          "time_floor_met": false,
+          "elapsed_hours": 0.0,
+          "stage_floor_hours": 24.0,
+          "hours_to_floor": 24.0,
+          "arena_badge": "[RIP]",
+          "arena_title": "Graveyard",
+          "score": {
+            "net_pnl": -13.17875329560195,
+            "total_pnl": -1.2194033293777766,
+            "total_fees": 11.959349966223956,
+            "return_pct": -0.08785835530401301,
+            "total_trades": 66,
+            "wins": 36,
+            "losses": 30,
+            "win_rate": 0.5454545454545454,
+            "win_loss_gap": 6,
+            "profit_factor": 0.975419894460236,
+            "max_drawdown_pct": 0.14330685757474118,
+            "avg_rr": 0.4285663697658716,
+            "best_trade": 6.1460667148303045,
+            "worst_trade": -4.575257142834271,
+            "long_pnl": 0.3178647211616429,
+            "short_pnl": -1.5372680505394196
+          },
+          "session_scores": {
+            "1d": {
+              "net_pnl": -0.6550679900595839,
+              "total_trades": 3,
+              "wins": 2,
+              "losses": 1,
+              "win_rate": 0.6666666666666666,
+              "profit_factor": 0.8280379132508974
+            },
+            "3d": {
+              "net_pnl": -7.614170134694089,
+              "total_trades": 9,
+              "wins": 4,
+              "losses": 5,
+              "win_rate": 0.4444444444444444,
+              "profit_factor": 0.4090516512316123
+            },
+            "7d": {
+              "net_pnl": -13.855822466733427,
+              "total_trades": 13,
+              "wins": 4,
+              "losses": 9,
+              "win_rate": 0.3076923076923077,
+              "profit_factor": 0.27556236218990177
+            }
+          },
+          "bankroll_scores": {
+            "150": {
+              "account_start": 150.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": -13.17875329560195,
+                "total_pnl": -1.2194033293777766,
+                "total_fees": 11.959349966223956,
+                "return_pct": -0.08785835530401301,
+                "total_trades": 66,
+                "wins": 36,
+                "losses": 30,
+                "win_rate": 0.5454545454545454,
+                "win_loss_gap": 6,
+                "profit_factor": 0.975419894460236,
+                "max_drawdown_pct": 0.14330685757474118,
+                "avg_rr": 0.4285663697658716,
+                "best_trade": 6.1460667148303045,
+                "worst_trade": -4.575257142834271,
+                "long_pnl": 0.3178647211616429,
+                "short_pnl": -1.5372680505394196
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": -0.6550679900595839,
+                  "total_trades": 3,
+                  "wins": 2,
+                  "losses": 1,
+                  "win_rate": 0.6666666666666666,
+                  "profit_factor": 0.8280379132508974
+                },
+                "3d": {
+                  "net_pnl": -7.614170134694089,
+                  "total_trades": 9,
+                  "wins": 4,
+                  "losses": 5,
+                  "win_rate": 0.4444444444444444,
+                  "profit_factor": 0.4090516512316123
+                },
+                "7d": {
+                  "net_pnl": -13.855822466733427,
+                  "total_trades": 13,
+                  "wins": 4,
+                  "losses": 9,
+                  "win_rate": 0.3076923076923077,
+                  "profit_factor": 0.27556236218990177
+                }
+              }
+            },
+            "500": {
+              "account_start": 500.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": -43.929177652005535,
+                "total_pnl": -4.064677764592611,
+                "total_fees": 39.86449988741323,
+                "return_pct": -0.08785835530401107,
+                "total_trades": 66,
+                "wins": 36,
+                "losses": 30,
+                "win_rate": 0.5454545454545454,
+                "win_loss_gap": 6,
+                "profit_factor": 0.9754198944602358,
+                "max_drawdown_pct": 0.1433068575747395,
+                "avg_rr": 0.4285663697658716,
+                "best_trade": 20.48688904943438,
+                "worst_trade": -15.250857142780937,
+                "long_pnl": 1.0595490705387958,
+                "short_pnl": -5.124226835131408
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": -2.183559966865277,
+                  "total_trades": 3,
+                  "wins": 2,
+                  "losses": 1,
+                  "win_rate": 0.6666666666666666,
+                  "profit_factor": 0.8280379132508979
+                },
+                "3d": {
+                  "net_pnl": -25.380567115647008,
+                  "total_trades": 9,
+                  "wins": 4,
+                  "losses": 5,
+                  "win_rate": 0.4444444444444444,
+                  "profit_factor": 0.4090516512316124
+                },
+                "7d": {
+                  "net_pnl": -46.1860748891115,
+                  "total_trades": 13,
+                  "wins": 4,
+                  "losses": 9,
+                  "win_rate": 0.3076923076923077,
+                  "profit_factor": 0.2755623621899019
+                }
+              }
+            }
+          }
+        },
+        {
+          "rank": 7,
+          "case_id": "dx_agent_setupq_guarded_longs_v1",
+          "role": "challenger",
+          "family": "setup_quality",
+          "base_strategy": "liquidity_sweep",
+          "stage": "stage1",
+          "stage_label": "Stage 1 constrained",
+          "fingerprint": "dx|setup_quality|dx_agent_setupq_guarded_longs_v1",
+          "mutation_summary": "Stage 1 setup-quality guard that clamps weak DX longs but keeps shorts loose and scalable",
+          "description": "DX liquidity_sweep variant with strict long setup-quality gating and loose short pressure scoring.",
+          "nickname": "Gate Falcon",
+          "verdict": "knocked-out",
+          "beats_champion": true,
+          "promotion_pass": false,
+          "lifecycle_state": "knocked_out",
+          "promotion_target": "graveyard",
+          "time_floor_met": false,
+          "elapsed_hours": 0.0,
+          "stage_floor_hours": 24.0,
+          "hours_to_floor": 24.0,
+          "arena_badge": "[RIP]",
+          "arena_title": "Graveyard",
+          "score": {
+            "net_pnl": -16.21859236691327,
+            "total_pnl": -4.907250538538203,
+            "total_fees": 11.311341828374916,
+            "return_pct": -0.10812394911275514,
+            "total_trades": 63,
+            "wins": 34,
+            "losses": 29,
+            "win_rate": 0.5396825396825397,
+            "win_loss_gap": 5,
+            "profit_factor": 0.8961192164319645,
+            "max_drawdown_pct": 0.1619248221732244,
+            "avg_rr": 0.43157171220824336,
+            "best_trade": 5.947462565651085,
+            "worst_trade": -4.425156696160835,
+            "long_pnl": -5.183022364040349,
+            "short_pnl": 0.2757718255021461
+          },
+          "session_scores": {
+            "1d": {
+              "net_pnl": -0.6184713380565211,
+              "total_trades": 3,
+              "wins": 2,
+              "losses": 1,
+              "win_rate": 0.6666666666666666,
+              "profit_factor": 0.8321325074621186
+            },
+            "3d": {
+              "net_pnl": -9.569559733996018,
+              "total_trades": 10,
+              "wins": 4,
+              "losses": 6,
+              "win_rate": 0.4,
+              "profit_factor": 0.34775328519842774
+            },
+            "7d": {
+              "net_pnl": -15.743754750915084,
+              "total_trades": 14,
+              "wins": 4,
+              "losses": 10,
+              "win_rate": 0.2857142857142857,
+              "profit_factor": 0.2447546888806634
+            }
+          },
+          "bankroll_scores": {
+            "150": {
+              "account_start": 150.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": -16.21859236691327,
+                "total_pnl": -4.907250538538203,
+                "total_fees": 11.311341828374916,
+                "return_pct": -0.10812394911275514,
+                "total_trades": 63,
+                "wins": 34,
+                "losses": 29,
+                "win_rate": 0.5396825396825397,
+                "win_loss_gap": 5,
+                "profit_factor": 0.8961192164319645,
+                "max_drawdown_pct": 0.1619248221732244,
+                "avg_rr": 0.43157171220824336,
+                "best_trade": 5.947462565651085,
+                "worst_trade": -4.425156696160835,
+                "long_pnl": -5.183022364040349,
+                "short_pnl": 0.2757718255021461
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": -0.6184713380565211,
+                  "total_trades": 3,
+                  "wins": 2,
+                  "losses": 1,
+                  "win_rate": 0.6666666666666666,
+                  "profit_factor": 0.8321325074621186
+                },
+                "3d": {
+                  "net_pnl": -9.569559733996018,
+                  "total_trades": 10,
+                  "wins": 4,
+                  "losses": 6,
+                  "win_rate": 0.4,
+                  "profit_factor": 0.34775328519842774
+                },
+                "7d": {
+                  "net_pnl": -15.743754750915084,
+                  "total_trades": 14,
+                  "wins": 4,
+                  "losses": 10,
+                  "win_rate": 0.2857142857142857,
+                  "profit_factor": 0.2447546888806634
+                }
+              }
+            },
+            "500": {
+              "account_start": 500.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": -54.06197455637704,
+                "total_pnl": -16.357501795127376,
+                "total_fees": 37.70447276124973,
+                "return_pct": -0.10812394911275408,
+                "total_trades": 63,
+                "wins": 34,
+                "losses": 29,
+                "win_rate": 0.5396825396825397,
+                "win_loss_gap": 5,
+                "profit_factor": 0.8961192164319643,
+                "max_drawdown_pct": 0.16192482217322327,
+                "avg_rr": 0.43157171220824336,
+                "best_trade": 19.824875218836954,
+                "worst_trade": -14.750522320536133,
+                "long_pnl": -17.27674121346785,
+                "short_pnl": 0.919239418340477
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": -2.0615711268550707,
+                  "total_trades": 3,
+                  "wins": 2,
+                  "losses": 1,
+                  "win_rate": 0.6666666666666666,
+                  "profit_factor": 0.8321325074621188
+                },
+                "3d": {
+                  "net_pnl": -31.898532446653423,
+                  "total_trades": 10,
+                  "wins": 4,
+                  "losses": 6,
+                  "win_rate": 0.4,
+                  "profit_factor": 0.3477532851984278
+                },
+                "7d": {
+                  "net_pnl": -52.479182503050325,
+                  "total_trades": 14,
+                  "wins": 4,
+                  "losses": 10,
+                  "win_rate": 0.2857142857142857,
+                  "profit_factor": 0.24475468888066346
+                }
+              }
+            }
+          }
+        },
+        {
+          "rank": 8,
+          "case_id": "dx_agent_setupq_short_pressure_v1",
+          "role": "challenger",
+          "family": "setup_quality",
+          "base_strategy": "liquidity_sweep",
+          "stage": "stage1",
+          "stage_label": "Stage 1 constrained",
+          "fingerprint": "dx|setup_quality|dx_agent_setupq_short_pressure_v1",
+          "mutation_summary": "Stage 1 setup-quality branch with guarded longs and aggressively scalable short pressure",
+          "description": "DX liquidity_sweep variant that keeps long quality strict while giving shorts more room to scale on strong candles.",
+          "nickname": "Grim Tide",
+          "verdict": "knocked-out",
+          "beats_champion": true,
+          "promotion_pass": false,
+          "lifecycle_state": "knocked_out",
+          "promotion_target": "graveyard",
+          "time_floor_met": false,
+          "elapsed_hours": 0.0,
+          "stage_floor_hours": 24.0,
+          "hours_to_floor": 24.0,
+          "arena_badge": "[RIP]",
+          "arena_title": "Graveyard",
+          "score": {
+            "net_pnl": -16.234932860299494,
+            "total_pnl": -4.884641149753111,
+            "total_fees": 11.350291710546289,
+            "return_pct": -0.10823288573532996,
+            "total_trades": 63,
+            "wins": 34,
+            "losses": 29,
+            "win_rate": 0.5396825396825397,
+            "win_loss_gap": 5,
+            "profit_factor": 0.8968736239535543,
+            "max_drawdown_pct": 0.16202718738332894,
+            "avg_rr": 0.43157171220824336,
+            "best_trade": 5.945491667881594,
+            "worst_trade": -4.4246161932239465,
+            "long_pnl": -5.186780696196999,
+            "short_pnl": 0.3021395464438894
+          },
+          "session_scores": {
+            "1d": {
+              "net_pnl": -0.6183957959689619,
+              "total_trades": 3,
+              "wins": 2,
+              "losses": 1,
+              "win_rate": 0.6666666666666666,
+              "profit_factor": 0.8321325074621189
+            },
+            "3d": {
+              "net_pnl": -9.597173516784514,
+              "total_trades": 10,
+              "wins": 4,
+              "losses": 6,
+              "win_rate": 0.4,
+              "profit_factor": 0.34707232207301436
+            },
+            "7d": {
+              "net_pnl": -15.772119047347864,
+              "total_trades": 14,
+              "wins": 4,
+              "losses": 10,
+              "win_rate": 0.2857142857142857,
+              "profit_factor": 0.24439955378844722
+            }
+          },
+          "bankroll_scores": {
+            "150": {
+              "account_start": 150.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": -16.234932860299494,
+                "total_pnl": -4.884641149753111,
+                "total_fees": 11.350291710546289,
+                "return_pct": -0.10823288573532996,
+                "total_trades": 63,
+                "wins": 34,
+                "losses": 29,
+                "win_rate": 0.5396825396825397,
+                "win_loss_gap": 5,
+                "profit_factor": 0.8968736239535543,
+                "max_drawdown_pct": 0.16202718738332894,
+                "avg_rr": 0.43157171220824336,
+                "best_trade": 5.945491667881594,
+                "worst_trade": -4.4246161932239465,
+                "long_pnl": -5.186780696196999,
+                "short_pnl": 0.3021395464438894
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": -0.6183957959689619,
+                  "total_trades": 3,
+                  "wins": 2,
+                  "losses": 1,
+                  "win_rate": 0.6666666666666666,
+                  "profit_factor": 0.8321325074621189
+                },
+                "3d": {
+                  "net_pnl": -9.597173516784514,
+                  "total_trades": 10,
+                  "wins": 4,
+                  "losses": 6,
+                  "win_rate": 0.4,
+                  "profit_factor": 0.34707232207301436
+                },
+                "7d": {
+                  "net_pnl": -15.772119047347864,
+                  "total_trades": 14,
+                  "wins": 4,
+                  "losses": 10,
+                  "win_rate": 0.2857142857142857,
+                  "profit_factor": 0.24439955378844722
+                }
+              }
+            },
+            "500": {
+              "account_start": 500.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": -54.116442867664375,
+                "total_pnl": -16.28213716584373,
+                "total_fees": 37.83430570182099,
+                "return_pct": -0.10823288573532876,
+                "total_trades": 63,
+                "wins": 34,
+                "losses": 29,
+                "win_rate": 0.5396825396825397,
+                "win_loss_gap": 5,
+                "profit_factor": 0.8968736239535543,
+                "max_drawdown_pct": 0.1620271873833277,
+                "avg_rr": 0.43157171220824336,
+                "best_trade": 19.818305559605324,
+                "worst_trade": -14.748720644079839,
+                "long_pnl": -17.289268987323368,
+                "short_pnl": 1.0071318214796374
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": -2.0613193198965436,
+                  "total_trades": 3,
+                  "wins": 2,
+                  "losses": 1,
+                  "win_rate": 0.6666666666666666,
+                  "profit_factor": 0.8321325074621186
+                },
+                "3d": {
+                  "net_pnl": -31.990578389281755,
+                  "total_trades": 10,
+                  "wins": 4,
+                  "losses": 6,
+                  "win_rate": 0.4,
+                  "profit_factor": 0.34707232207301436
+                },
+                "7d": {
+                  "net_pnl": -52.57373015782628,
+                  "total_trades": 14,
+                  "wins": 4,
+                  "losses": 10,
+                  "win_rate": 0.2857142857142857,
+                  "profit_factor": 0.24439955378844722
+                }
+              }
+            }
+          }
+        },
+        {
+          "rank": 9,
+          "case_id": "dx_challenger_oi_scale_very_loose_lb2",
+          "role": "challenger",
+          "family": "oi_filter",
+          "base_strategy": "liquidity_sweep",
+          "stage": "stage1",
+          "stage_label": "Stage 1 constrained",
+          "fingerprint": "dx|liquidity_sweep|oi_scale_very_loose|lb2",
+          "mutation_summary": "Very loose short-lookback OI sizing on DX sweep",
+          "description": "DX liquidity_sweep with short-lookback loose OI sizing.",
+          "nickname": "Open Interest Ghost",
+          "verdict": "knocked-out",
+          "beats_champion": true,
+          "promotion_pass": false,
+          "lifecycle_state": "knocked_out",
+          "promotion_target": "graveyard",
+          "time_floor_met": false,
+          "elapsed_hours": 1.8642025905555557,
+          "stage_floor_hours": 24.0,
+          "hours_to_floor": 22.135797409444443,
+          "arena_badge": "[RIP]",
+          "arena_title": "Graveyard",
+          "score": {
+            "net_pnl": -17.58301161903688,
+            "total_pnl": -14.372470030388044,
+            "total_fees": 3.210541588648842,
+            "return_pct": -0.11722007746024588,
+            "total_trades": 16,
+            "wins": 6,
+            "losses": 10,
+            "win_rate": 0.375,
+            "win_loss_gap": -4,
+            "profit_factor": 0.3399005266269478,
+            "max_drawdown_pct": 0.13982652486121802,
+            "avg_rr": -0.13676415158391178,
+            "best_trade": 2.690160735281077,
+            "worst_trade": -4.965611784783795,
+            "long_pnl": -12.26114079547213,
+            "short_pnl": -2.111329234915913
+          },
+          "session_scores": {
+            "1d": {
+              "net_pnl": -0.8367397208997148,
+              "total_trades": 4,
+              "wins": 2,
+              "losses": 2,
+              "win_rate": 0.5,
+              "profit_factor": 0.8020818958506682
+            },
+            "3d": {
+              "net_pnl": -10.110823526644856,
+              "total_trades": 10,
+              "wins": 4,
+              "losses": 6,
+              "win_rate": 0.4,
+              "profit_factor": 0.36010648154136565
+            },
+            "7d": {
+              "net_pnl": -14.372470030388044,
+              "total_trades": 16,
+              "wins": 6,
+              "losses": 10,
+              "win_rate": 0.375,
+              "profit_factor": 0.3399005266269478
+            }
+          },
+          "bankroll_scores": {
+            "150": {
+              "account_start": 150.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": -17.58301161903688,
+                "total_pnl": -14.372470030388044,
+                "total_fees": 3.210541588648842,
+                "return_pct": -0.11722007746024588,
+                "total_trades": 16,
+                "wins": 6,
+                "losses": 10,
+                "win_rate": 0.375,
+                "win_loss_gap": -4,
+                "profit_factor": 0.3399005266269478,
+                "max_drawdown_pct": 0.13982652486121802,
+                "avg_rr": -0.13676415158391178,
+                "best_trade": 2.690160735281077,
+                "worst_trade": -4.965611784783795,
+                "long_pnl": -12.26114079547213,
+                "short_pnl": -2.111329234915913
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": -0.8367397208997148,
+                  "total_trades": 4,
+                  "wins": 2,
+                  "losses": 2,
+                  "win_rate": 0.5,
+                  "profit_factor": 0.8020818958506682
+                },
+                "3d": {
+                  "net_pnl": -10.110823526644856,
+                  "total_trades": 10,
+                  "wins": 4,
+                  "losses": 6,
+                  "win_rate": 0.4,
+                  "profit_factor": 0.36010648154136565
+                },
+                "7d": {
+                  "net_pnl": -14.372470030388044,
+                  "total_trades": 16,
+                  "wins": 6,
+                  "losses": 10,
+                  "win_rate": 0.375,
+                  "profit_factor": 0.3399005266269478
+                }
+              }
+            },
+            "500": {
+              "account_start": 500.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": -58.610038730122994,
+                "total_pnl": -47.90823343462683,
+                "total_fees": 10.701805295496143,
+                "return_pct": -0.11722007746024599,
+                "total_trades": 16,
+                "wins": 6,
+                "losses": 10,
+                "win_rate": 0.375,
+                "win_loss_gap": -4,
+                "profit_factor": 0.3399005266269477,
+                "max_drawdown_pct": 0.13982652486121822,
+                "avg_rr": -0.13676415158391178,
+                "best_trade": 8.96720245093692,
+                "worst_trade": -16.552039282612654,
+                "long_pnl": -40.87046931824045,
+                "short_pnl": -7.037764116386376
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": -2.7891324029990585,
+                  "total_trades": 4,
+                  "wins": 2,
+                  "losses": 2,
+                  "win_rate": 0.5,
+                  "profit_factor": 0.8020818958506678
+                },
+                "3d": {
+                  "net_pnl": -33.7027450888162,
+                  "total_trades": 10,
+                  "wins": 4,
+                  "losses": 6,
+                  "win_rate": 0.4,
+                  "profit_factor": 0.36010648154136543
+                },
+                "7d": {
+                  "net_pnl": -47.90823343462683,
+                  "total_trades": 16,
+                  "wins": 6,
+                  "losses": 10,
+                  "win_rate": 0.375,
+                  "profit_factor": 0.3399005266269477
+                }
+              }
+            }
+          }
+        },
+        {
+          "rank": 10,
+          "case_id": "dx_champion_liquidity_sweep_current",
+          "role": "champion",
+          "family": "liquidity_sweep",
+          "base_strategy": "liquidity_sweep",
+          "stage": "stage3",
+          "stage_label": "Stage 3 open invention",
+          "fingerprint": "dx|liquidity_sweep|current_live",
+          "mutation_summary": "Current live DX liquidity_sweep baseline",
+          "description": "Current DX live liquidity_sweep baseline.",
+          "nickname": "Street Sweeper",
+          "verdict": "champion",
+          "beats_champion": false,
+          "promotion_pass": false,
+          "lifecycle_state": "active",
+          "promotion_target": "champion",
+          "time_floor_met": true,
+          "elapsed_hours": 1.8642025905555557,
+          "stage_floor_hours": 168.0,
+          "hours_to_floor": 166.13579740944445,
+          "arena_badge": "[KING]",
+          "arena_title": "Crown Holder",
+          "score": {
+            "net_pnl": -19.324378640659035,
+            "total_pnl": 1.2309264078098594,
+            "total_fees": 20.555305048468764,
+            "return_pct": -0.1288291909377269,
+            "total_trades": 121,
+            "wins": 66,
+            "losses": 55,
+            "win_rate": 0.5454545454545454,
+            "win_loss_gap": 11,
+            "profit_factor": 1.015509084355039,
+            "max_drawdown_pct": 0.19453753085706035,
+            "avg_rr": 0.40759491840899137,
+            "best_trade": 5.690558312079306,
+            "worst_trade": -4.249210920482787,
+            "long_pnl": 0.7241669331162462,
+            "short_pnl": 0.506759474693613
+          },
+          "session_scores": {
+            "1d": {
+              "net_pnl": -0.9028085642628483,
+              "total_trades": 4,
+              "wins": 2,
+              "losses": 2,
+              "win_rate": 0.5,
+              "profit_factor": 0.7637701568484258
+            },
+            "3d": {
+              "net_pnl": -8.207289669414488,
+              "total_trades": 13,
+              "wins": 6,
+              "losses": 7,
+              "win_rate": 0.46153846153846156,
+              "profit_factor": 0.43872146442647175
+            },
+            "7d": {
+              "net_pnl": -12.567769842352444,
+              "total_trades": 30,
+              "wins": 14,
+              "losses": 16,
+              "win_rate": 0.4666666666666667,
+              "profit_factor": 0.5743289698810472
+            }
+          },
+          "bankroll_scores": {
+            "150": {
+              "account_start": 150.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": -19.324378640659035,
+                "total_pnl": 1.2309264078098594,
+                "total_fees": 20.555305048468764,
+                "return_pct": -0.1288291909377269,
+                "total_trades": 121,
+                "wins": 66,
+                "losses": 55,
+                "win_rate": 0.5454545454545454,
+                "win_loss_gap": 11,
+                "profit_factor": 1.015509084355039,
+                "max_drawdown_pct": 0.19453753085706035,
+                "avg_rr": 0.40759491840899137,
+                "best_trade": 5.690558312079306,
+                "worst_trade": -4.249210920482787,
+                "long_pnl": 0.7241669331162462,
+                "short_pnl": 0.506759474693613
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": -0.9028085642628483,
+                  "total_trades": 4,
+                  "wins": 2,
+                  "losses": 2,
+                  "win_rate": 0.5,
+                  "profit_factor": 0.7637701568484258
+                },
+                "3d": {
+                  "net_pnl": -8.207289669414488,
+                  "total_trades": 13,
+                  "wins": 6,
+                  "losses": 7,
+                  "win_rate": 0.46153846153846156,
+                  "profit_factor": 0.43872146442647175
+                },
+                "7d": {
+                  "net_pnl": -12.567769842352444,
+                  "total_trades": 30,
+                  "wins": 14,
+                  "losses": 16,
+                  "win_rate": 0.4666666666666667,
+                  "profit_factor": 0.5743289698810472
+                }
+              }
+            },
+            "500": {
+              "account_start": 500.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": -64.41459546886296,
+                "total_pnl": 4.103088026032904,
+                "total_fees": 68.51768349489595,
+                "return_pct": -0.1288291909377259,
+                "total_trades": 121,
+                "wins": 66,
+                "losses": 55,
+                "win_rate": 0.5454545454545454,
+                "win_loss_gap": 11,
+                "profit_factor": 1.0155090843550392,
+                "max_drawdown_pct": 0.1945375308570594,
+                "avg_rr": 0.40759491840899137,
+                "best_trade": 18.968527706931056,
+                "worst_trade": -14.164036401609303,
+                "long_pnl": 2.413889777054189,
+                "short_pnl": 1.6891982489787152
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": -3.009361880876172,
+                  "total_trades": 4,
+                  "wins": 2,
+                  "losses": 2,
+                  "win_rate": 0.5,
+                  "profit_factor": 0.7637701568484253
+                },
+                "3d": {
+                  "net_pnl": -27.357632231381658,
+                  "total_trades": 13,
+                  "wins": 6,
+                  "losses": 7,
+                  "win_rate": 0.46153846153846156,
+                  "profit_factor": 0.4387214644264717
+                },
+                "7d": {
+                  "net_pnl": -41.892566141174875,
+                  "total_trades": 30,
+                  "wins": 14,
+                  "losses": 16,
+                  "win_rate": 0.4666666666666667,
+                  "profit_factor": 0.5743289698810472
+                }
+              }
+            }
+          }
+        }
+      ],
+      "champion": "dx_champion_liquidity_sweep_current"
+    }
+  ]
+};
+    const LIVE_STATUS = {
+  "state": "running",
+  "interval_minutes": 30.0,
+  "last_refresh_started_at": "2026-04-11T16:54:40.654515+00:00",
+  "last_refresh_finished_at": "",
+  "next_refresh_at": "",
+  "last_error": ""
+};
+
+    const currency = (value) => {
+      const sign = value > 0 ? "+" : value < 0 ? "-" : "";
+      return `${sign}$${Math.abs(value).toFixed(2)}`;
+    };
+
+    const shortStage = (stage) => (stage || "").toUpperCase().replace("STAGE", "S");
+
+    const badgeMap = {
+      KING: "Crown Holder",
+      HOT: "Hot Streak",
+      SHADOW: "Shadow Ready",
+      FILTER: "Live Filter",
+      ROPE: "On the Ropes",
+      RIP: "Graveyard",
+      LIVE: "Live Guard",
+    };
+
+    const parseTime = (value) => {
+      if (!value) return null;
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? null : date;
+    };
+
+    const relative = (value) => {
+      const date = parseTime(value);
+      if (!date) return "";
+      const delta = date.getTime() - Date.now();
+      const abs = Math.abs(delta) / 1000;
+      if (abs < 60) return "now";
+      const label = abs < 3600 ? `${Math.round(abs / 60)}m`
+        : abs < 86400 ? `${(abs / 3600).toFixed(1)}h`
+        : `${(abs / 86400).toFixed(1)}d`;
+      return delta >= 0 ? `in ${label}` : `${label} ago`;
+    };
+
+    const stageMix = (leaderboard) => {
+      const counts = {};
+      for (const row of leaderboard || []) {
+        const key = shortStage(row.stage);
+        if (!key) continue;
+        counts[key] = (counts[key] || 0) + 1;
+      }
+      return Object.entries(counts).map(([stage, count]) => `${stage}:${count}`).join(" / ");
+    };
+
+    const leaderSummary = (leader) => {
+      if (!leader) return "-";
+      return `${leader.nickname || leader.case_id} ${currency(Number(leader.net_pnl || 0))}`;
+    };
+
+    const tickerRow = document.getElementById("ticker-row");
+    const tabs = document.getElementById("tabs");
+    const panels = document.getElementById("venue-panels");
+    const statusPill = document.getElementById("status-pill");
+
+    const venues = SNAPSHOT.venues || [];
+    const allScores = venues.flatMap((venue) => (venue.leaderboard || []).map((row) => Math.abs(Number(row.score?.net_pnl || 0))));
+    const scoreScale = Math.max(...allScores, 1);
+
+    const tickerCards = [
+      {
+        label: "Age",
+        value: relative(SNAPSHOT.generated_at) || "just now",
+        sub: "Latest arena snapshot",
+      },
+      {
+        label: "Cadence",
+        value: `${Math.round(Number(LIVE_STATUS.interval_minutes || 0) || 0)}m`,
+        sub: LIVE_STATUS.state === "running" ? "refresh running now" : "battle loop heartbeat",
+      },
+      {
+        label: "Primary",
+        value: venues[0] ? `$${Math.round(Number(venues[0].primary_account_start || 0))}` : "-",
+        sub: venues[0] ? `Tracks ${(venues[0].account_starts || []).map((value) => `$${Math.round(Number(value))}`).join(" / ")}` : "",
+      },
+      {
+        label: "Next",
+        value: relative(LIVE_STATUS.next_refresh_at) || (LIVE_STATUS.state === "running" ? "running" : "waiting"),
+        sub: "Auto arena refresh",
+      },
+    ];
+
+    tickerRow.innerHTML = tickerCards.map((card) => `
+      <article class="ticker">
+        <div class="ticker-label">${card.label}</div>
+        <div class="ticker-value">${card.value}</div>
+        <div class="ticker-sub">${card.sub}</div>
+      </article>
+    `).join("");
+
+    statusPill.innerHTML = `
+      <strong>${(LIVE_STATUS.state || "ready").toUpperCase()}</strong>
+      <span>${relative(LIVE_STATUS.next_refresh_at) || relative(LIVE_STATUS.last_refresh_finished_at) || "fresh now"}</span>
+    `;
+
+    const renderVenuePanel = (venueResult, isActive) => {
+      const leaderboard = (venueResult.leaderboard || []).slice(0, 5);
+      const promotion = venueResult.promotion_rules || {};
+      const sessionLeaders = venueResult.session_leaders || {};
+      const duplicateLocks = (venueResult.duplicate_rejections || []).length;
+
+      return `
+        <section class="venue-panel${isActive ? " active" : ""}" data-venue="${venueResult.venue}">
+          <div class="summary-grid">
+            <article class="summary-card">
+              <div class="summary-title">Gate</div>
+              <div class="summary-main">PF ${Number(promotion.min_profit_factor || 0).toFixed(2)}</div>
+              <div class="summary-detail">
+                DD ${Math.round(Number(promotion.max_drawdown_pct || 0) * 100)}%<br>
+                Trades ${promotion.min_trades || 0}<br>
+                ${(promotion.require_more_wins_than_losses ? "Need more wins than losses" : "Wins optional")}
+              </div>
+            </article>
+            <article class="summary-card">
+              <div class="summary-title">Race</div>
+              <div class="summary-main">1d ${leaderSummary(sessionLeaders["1d"])}</div>
+              <div class="summary-detail">
+                3d ${leaderSummary(sessionLeaders["3d"])}<br>
+                7d ${leaderSummary(sessionLeaders["7d"])}
+              </div>
+            </article>
+            <article class="summary-card">
+              <div class="summary-title">Deck</div>
+              <div class="summary-main">${stageMix(venueResult.leaderboard || []) || "No stages"}</div>
+              <div class="summary-detail">
+                Field ${(venueResult.leaderboard || []).length} contenders<br>
+                Primary $${Math.round(Number(venueResult.primary_account_start || 0))}<br>
+                Locks ${duplicateLocks}
+              </div>
+            </article>
+          </div>
+
+          <div class="board">
+            ${leaderboard.map((row) => {
+              const score = row.score || {};
+              const bank = Object.values(row.bankroll_scores || {})
+                .sort((a, b) => Number(a.account_start || 0) - Number(b.account_start || 0))
+                .map((entry) => `$${Math.round(Number(entry.account_start || 0))} ${currency(Number(entry.score?.net_pnl || 0))}`)
+                .join(" / ");
+              const signClass = Number(score.net_pnl || 0) >= 0 ? "good" : "bad";
+              const fillClass = Number(score.net_pnl || 0) >= 0 ? "" : " loss";
+              const barWidth = Math.max(8, Math.min(100, (Math.abs(Number(score.net_pnl || 0)) / scoreScale) * 100));
+              const sessions = row.session_scores || {};
+              const badge = badgeMap[(row.arena_badge || "").replace(/[[\]]/g, "")] || row.arena_title || "Contender";
+              return `
+                <article class="bot-card" data-sign="${Number(score.net_pnl || 0) >= 0 ? "gain" : "loss"}">
+                  <div class="bot-top">
+                    <div>
+                      <div class="bot-rank">#${row.rank} • ${badge}</div>
+                      <div class="bot-name">${row.nickname || row.case_id}</div>
+                      <div class="bot-sub">${row.arena_title || "Contender"} • ${(row.case_id || "").replace(/^hl_|^dx_/, "").replace(/_/g, " ")}</div>
+                    </div>
+                    <div class="net-pill ${signClass}">${currency(Number(score.net_pnl || 0))}</div>
+                  </div>
+
+                  <div class="chip-row">
+                    <span class="chip">${row.lifecycle_state || "active"}</span>
+                    <span class="chip subtle">${shortStage(row.stage)} gate ${Math.round(Number(row.hours_to_floor || 0))}h</span>
+                    <span class="chip subtle">${row.promotion_target || "hold"}</span>
+                    <span class="chip subtle">${Number(score.total_trades || 0)} trades</span>
+                  </div>
+
+                  <div class="powerbar">
+                    <div class="powerbar-fill${fillClass}" data-width="${barWidth.toFixed(1)}"></div>
+                  </div>
+
+                  <div class="grid-2">
+                    <div class="metric-stack">
+                      <div class="metric-line"><span>Record</span><strong>${Number(score.wins || 0)}W / ${Number(score.losses || 0)}L</strong></div>
+                      <div class="metric-line"><span>Profit factor</span><strong>${Number(score.profit_factor || 0).toFixed(2)}</strong></div>
+                      <div class="metric-line"><span>Drawdown</span><strong>${(Number(score.max_drawdown_pct || 0) * 100).toFixed(1)}%</strong></div>
+                      <div class="metric-line"><span>Bankrolls</span><strong>${bank || "-"}</strong></div>
+                    </div>
+                    <div class="form-rail">
+                      ${["1d", "3d", "7d"].map((windowKey) => {
+                        const value = Number(sessions[windowKey]?.net_pnl || 0);
+                        const klass = value >= 0 ? "good" : "bad";
+                        return `
+                          <div class="form-chip">
+                            <div class="form-chip-label">${windowKey}</div>
+                            <div class="form-chip-value ${klass}">${currency(value)}</div>
+                          </div>
+                        `;
+                      }).join("")}
+                    </div>
+                  </div>
+                </article>
+              `;
+            }).join("")}
+          </div>
+        </section>
+      `;
+    };
+
+    tabs.innerHTML = venues.map((venue, index) => `
+      <button class="tab${index === 0 ? " active" : ""}" data-venue="${venue.venue}">
+        ${venue.venue} Arena
+      </button>
+    `).join("");
+
+    panels.innerHTML = venues.map((venue, index) => renderVenuePanel(venue, index === 0)).join("");
+
+    tabs.addEventListener("click", (event) => {
+      const button = event.target.closest(".tab");
+      if (!button) return;
+      const venue = button.dataset.venue;
+      for (const tab of tabs.querySelectorAll(".tab")) {
+        tab.classList.toggle("active", tab === button);
+      }
+      for (const panel of panels.querySelectorAll(".venue-panel")) {
+        panel.classList.toggle("active", panel.dataset.venue === venue);
+      }
+    });
+
+    requestAnimationFrame(() => {
+      for (const fill of document.querySelectorAll(".powerbar-fill")) {
+        fill.style.width = `${fill.dataset.width}%`;
+      }
+    });
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      window.Telegram.WebApp.ready();
+      window.Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
