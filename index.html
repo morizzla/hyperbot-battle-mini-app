@@ -434,6 +434,24 @@
       animation: verdictPop 520ms cubic-bezier(0.2, 0.84, 0.22, 1) 140ms forwards;
     }
 
+    .bot-card.is-visible .scan-overlay {
+      animation: scanOverlayLoop 9s linear infinite;
+    }
+
+    .bot-card.is-visible .scan-line {
+      animation: scanSweep 9s linear infinite;
+    }
+
+    .bot-card.is-visible .scan-label {
+      animation: scanLabelLoop 9s linear infinite;
+    }
+
+    .bot-card.is-visible .verdict-chip {
+      animation:
+        verdictPop 520ms cubic-bezier(0.2, 0.84, 0.22, 1) 140ms forwards,
+        verdictLoop 9s linear infinite;
+    }
+
     .coin-rain,
     .loss-leak {
       position: absolute;
@@ -468,7 +486,7 @@
     .coin:nth-child(5) { left: 78%; animation-delay: 0.18s; }
 
     .bot-card[data-sign="gain"].is-visible .coin {
-      animation: coinDrop 1s cubic-bezier(0.18, 0.8, 0.24, 1) forwards;
+      animation: coinDrop 9s linear infinite;
     }
 
     .leak {
@@ -487,7 +505,7 @@
     .leak:nth-child(5) { right: 72%; animation-delay: 0.18s; }
 
     .bot-card[data-sign="loss"].is-visible .leak {
-      animation: lossLeak 1s cubic-bezier(0.28, 0.78, 0.36, 1) forwards;
+      animation: lossLeak 9s linear infinite;
     }
 
     .crown-badge {
@@ -833,14 +851,14 @@
     }
 
     @keyframes coinDrop {
-      0% {
+      0%, 74% {
         opacity: 0;
         transform: translate3d(0, -8px, 0) scale(0.7);
       }
-      12% {
+      78% {
         opacity: 1;
       }
-      72% {
+      94% {
         opacity: 1;
         transform: translate3d(-6px, 152px, 0) scale(1);
       }
@@ -851,14 +869,14 @@
     }
 
     @keyframes lossLeak {
-      0% {
+      0%, 74% {
         opacity: 0;
         transform: translate3d(0, 0, 0) scale(0.82);
       }
-      10% {
+      78% {
         opacity: 1;
       }
-      76% {
+      94% {
         opacity: 1;
         transform: translate3d(10px, 94px, 0) scale(1);
       }
@@ -869,16 +887,36 @@
     }
 
     @keyframes scanSweep {
-      0% {
+      0%, 76% {
         opacity: 0;
         transform: translateX(0) skewX(-18deg);
       }
-      14% {
+      80% {
         opacity: 1;
       }
       100% {
         opacity: 0;
         transform: translateX(340%) skewX(-18deg);
+      }
+    }
+
+    @keyframes scanOverlayLoop {
+      0%, 76%, 100% {
+        opacity: 0;
+      }
+      82%, 94% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes scanLabelLoop {
+      0%, 76%, 100% {
+        opacity: 0;
+        transform: translateY(-6px);
+      }
+      82%, 94% {
+        opacity: 1;
+        transform: none;
       }
     }
 
@@ -888,6 +926,21 @@
         transform: translateY(10px) scale(0.9);
       }
       100% {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    @keyframes verdictLoop {
+      0%, 72% {
+        opacity: 1;
+        transform: none;
+      }
+      76% {
+        opacity: 0;
+        transform: translateY(10px) scale(0.92);
+      }
+      84%, 100% {
         opacity: 1;
         transform: none;
       }
@@ -4418,11 +4471,11 @@
   ]
 };
     const LIVE_STATUS = {
-  "state": "sleeping",
+  "state": "running",
   "interval_minutes": 30.0,
-  "last_refresh_started_at": "2026-04-11T19:02:56.336798+00:00",
-  "last_refresh_finished_at": "2026-04-11T19:27:39.710686+00:00",
-  "next_refresh_at": "2026-04-11T19:57:39.710686+00:00",
+  "last_refresh_started_at": "2026-04-11T19:32:56.811869+00:00",
+  "last_refresh_finished_at": "",
+  "next_refresh_at": "",
   "last_error": ""
 };
 
