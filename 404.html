@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Battle Royale Arena</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+
     :root {
       color-scheme: dark;
       --bg: #08111f;
@@ -24,8 +26,8 @@
       --radius-lg: 20px;
       --radius-md: 14px;
       --radius-sm: 10px;
-      --font-display: "Arial Black", "Franklin Gothic Heavy", sans-serif;
-      --font-body: "Trebuchet MS", "Segoe UI", sans-serif;
+      --font-display: "Bebas Neue", "Arial Black", sans-serif;
+      --font-body: "IBM Plex Sans", "Segoe UI", sans-serif;
     }
 
     * {
@@ -56,6 +58,19 @@
       mask-image: linear-gradient(180deg, rgba(255,255,255,0.8), transparent);
     }
 
+    body::after {
+      content: "";
+      position: fixed;
+      inset: -20% -10%;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at 18% 24%, rgba(111, 198, 255, 0.18), transparent 24%),
+        radial-gradient(circle at 82% 16%, rgba(255, 109, 122, 0.15), transparent 26%),
+        radial-gradient(circle at 50% 92%, rgba(255, 209, 102, 0.12), transparent 28%);
+      filter: blur(28px);
+      animation: driftGlow 18s ease-in-out infinite alternate;
+    }
+
     .app {
       width: min(1200px, calc(100vw - 24px));
       margin: 0 auto;
@@ -74,6 +89,18 @@
       box-shadow: var(--shadow);
     }
 
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: -40% auto auto -8%;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 209, 102, 0.24), transparent 65%);
+      animation: haloOrbit 14s linear infinite;
+      opacity: 0.85;
+    }
+
     .hero::after {
       content: "";
       position: absolute;
@@ -81,6 +108,7 @@
       height: 240px;
       background: radial-gradient(circle, rgba(111, 198, 255, 0.22), transparent 62%);
       transform: rotate(-12deg);
+      animation: heroWave 11s ease-in-out infinite;
     }
 
     .eyebrow {
@@ -123,6 +151,26 @@
       border-radius: var(--radius-md);
       padding: 14px 16px;
       backdrop-filter: blur(12px);
+      overflow: hidden;
+      animation: floatCard 8s ease-in-out infinite;
+    }
+
+    .ticker:nth-child(2n) {
+      animation-delay: -2.4s;
+    }
+
+    .ticker:nth-child(3n) {
+      animation-delay: -4.8s;
+    }
+
+    .ticker::after {
+      content: "";
+      position: absolute;
+      inset: -1px auto -1px -40%;
+      width: 38%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.16), transparent);
+      transform: skewX(-18deg);
+      animation: scanTicker 4.8s linear infinite;
     }
 
     .ticker-label {
@@ -217,6 +265,14 @@
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow);
       backdrop-filter: blur(14px);
+      transition: transform 220ms ease, border-color 220ms ease, box-shadow 220ms ease;
+    }
+
+    .summary-card:hover,
+    .bot-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(151, 201, 255, 0.4);
+      box-shadow: 0 26px 80px rgba(0, 0, 0, 0.38);
     }
 
     .summary-card {
@@ -254,6 +310,19 @@
       position: relative;
       overflow: hidden;
       padding: 18px;
+    }
+
+    .bot-card.is-leader {
+      border-color: rgba(255, 209, 102, 0.46);
+      box-shadow:
+        0 26px 90px rgba(0, 0, 0, 0.45),
+        0 0 0 1px rgba(255, 209, 102, 0.16),
+        0 0 38px rgba(255, 209, 102, 0.12);
+      animation: leaderPulse 3.6s ease-in-out infinite;
+    }
+
+    .bot-card.is-shadow {
+      border-color: rgba(111, 198, 255, 0.34);
     }
 
     .bot-card::before {
@@ -334,6 +403,114 @@
       color: var(--muted);
     }
 
+    .race-lane {
+      position: relative;
+      margin-top: 16px;
+      height: 42px;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08);
+      background:
+        linear-gradient(90deg, rgba(255,109,122,0.08), rgba(255,255,255,0.02) 48%, rgba(76,225,161,0.08)),
+        rgba(255,255,255,0.03);
+    }
+
+    .lane-grid {
+      position: absolute;
+      inset: 0;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          transparent 0 7.5%,
+          rgba(255,255,255,0.05) 7.5% 8%
+        );
+      opacity: 0.7;
+    }
+
+    .lane-mid {
+      position: absolute;
+      top: 4px;
+      bottom: 4px;
+      left: 50%;
+      width: 2px;
+      background: linear-gradient(180deg, transparent, rgba(255,255,255,0.55), transparent);
+      transform: translateX(-50%);
+    }
+
+    .lane-finish {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 10px;
+      opacity: 0.55;
+      background:
+        repeating-linear-gradient(
+          180deg,
+          rgba(255,255,255,0.9) 0 5px,
+          rgba(255,255,255,0.08) 5px 10px
+        );
+    }
+
+    .lane-finish-left {
+      left: 14px;
+    }
+
+    .lane-finish-right {
+      right: 14px;
+    }
+
+    .lane-caption {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(236, 244, 255, 0.48);
+      pointer-events: none;
+    }
+
+    .lane-caption-left {
+      left: 28px;
+    }
+
+    .lane-caption-right {
+      right: 28px;
+    }
+
+    .lane-runner {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle at 32% 28%, rgba(255,255,255,0.95), rgba(111,198,255,0.82) 44%, rgba(9,19,38,0.98) 100%);
+      box-shadow: 0 0 0 4px rgba(111,198,255,0.12), 0 10px 28px rgba(0,0,0,0.36);
+      transform: translateX(-50%);
+      transition: transform 1100ms cubic-bezier(0.2, 0.8, 0.2, 1);
+      z-index: 2;
+    }
+
+    .lane-runner.loss {
+      background: radial-gradient(circle at 32% 28%, rgba(255,255,255,0.95), rgba(255,109,122,0.86) 46%, rgba(43,12,19,0.98) 100%);
+      box-shadow: 0 0 0 4px rgba(255,109,122,0.14), 0 10px 28px rgba(0,0,0,0.36);
+    }
+
+    .lane-runner.leader {
+      width: 38px;
+      height: 38px;
+      animation: laneLeaderPulse 2.6s ease-in-out infinite;
+    }
+
+    .runner-core {
+      font-size: 17px;
+      line-height: 1;
+      filter: drop-shadow(0 0 10px rgba(255,255,255,0.28));
+    }
+
     .powerbar {
       margin-top: 16px;
       height: 14px;
@@ -355,6 +532,15 @@
 
     .powerbar-fill.loss {
       background: linear-gradient(90deg, rgba(255, 109, 122, 0.95), rgba(255, 154, 113, 0.92));
+    }
+
+    .powerbar::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transform: translateX(-120%);
+      animation: barShimmer 3.6s linear infinite;
     }
 
     .grid-2 {
@@ -423,6 +609,46 @@
       text-align: center;
     }
 
+    @keyframes floatCard {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-4px); }
+    }
+
+    @keyframes scanTicker {
+      0% { transform: translateX(0) skewX(-18deg); }
+      100% { transform: translateX(420%) skewX(-18deg); }
+    }
+
+    @keyframes driftGlow {
+      0% { transform: translate3d(0, 0, 0) scale(1); }
+      100% { transform: translate3d(-2%, 2%, 0) scale(1.08); }
+    }
+
+    @keyframes heroWave {
+      0%, 100% { transform: rotate(-12deg) translateY(0); }
+      50% { transform: rotate(-8deg) translateY(-12px); }
+    }
+
+    @keyframes haloOrbit {
+      0% { transform: rotate(0deg) translateX(0); }
+      100% { transform: rotate(360deg) translateX(18px); }
+    }
+
+    @keyframes barShimmer {
+      0% { transform: translateX(-120%); }
+      100% { transform: translateX(140%); }
+    }
+
+    @keyframes leaderPulse {
+      0%, 100% { box-shadow: 0 26px 90px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 209, 102, 0.16), 0 0 38px rgba(255, 209, 102, 0.12); }
+      50% { box-shadow: 0 26px 96px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 209, 102, 0.22), 0 0 54px rgba(255, 209, 102, 0.2); }
+    }
+
+    @keyframes laneLeaderPulse {
+      0%, 100% { box-shadow: 0 0 0 4px rgba(255, 209, 102, 0.16), 0 10px 28px rgba(0,0,0,0.36); }
+      50% { box-shadow: 0 0 0 7px rgba(255, 209, 102, 0.18), 0 10px 34px rgba(0,0,0,0.4); }
+    }
+
     @media (max-width: 840px) {
       .grid-2 {
         grid-template-columns: 1fr;
@@ -461,7 +687,7 @@
 
   <script>
     const SNAPSHOT = {
-  "generated_at": "2026-04-11T16:42:26.116775+00:00",
+  "generated_at": "2026-04-11T17:37:21.151222+00:00",
   "config_path": "C:\\Users\\God level Mode\\Claude Projects\\Decentralised Trading\\config\\battle_royale.json",
   "registry_path": "C:\\Users\\God level Mode\\Claude Projects\\Decentralised Trading\\data\\battle_royale_registry.json",
   "stage_policies": {
@@ -487,7 +713,7 @@
   "venues": [
     {
       "venue": "HL",
-      "generated_at": "2026-04-11T15:50:25.473777+00:00",
+      "generated_at": "2026-04-11T16:54:40.657799+00:00",
       "days": 30,
       "account_start": 150.0,
       "primary_account_start": 150.0,
@@ -556,9 +782,9 @@
           "lifecycle_state": "active",
           "promotion_target": "champion",
           "time_floor_met": true,
-          "elapsed_hours": 0.9973573133333333,
+          "elapsed_hours": 2.068241763888889,
           "stage_floor_hours": 168.0,
-          "hours_to_floor": 167.00264268666666,
+          "hours_to_floor": 165.9317582361111,
           "arena_badge": "[KING]",
           "arena_title": "Crown Holder",
           "score": {
@@ -722,9 +948,9 @@
           "lifecycle_state": "active",
           "promotion_target": "hold",
           "time_floor_met": false,
-          "elapsed_hours": 0.9973573133333333,
+          "elapsed_hours": 2.068241763888889,
           "stage_floor_hours": 72.0,
-          "hours_to_floor": 71.00264268666666,
+          "hours_to_floor": 69.93175823611111,
           "arena_badge": "[HOT]",
           "arena_title": "Hot Streak",
           "score": {
@@ -888,9 +1114,9 @@
           "lifecycle_state": "active",
           "promotion_target": "hold",
           "time_floor_met": false,
-          "elapsed_hours": 0.9973573133333333,
+          "elapsed_hours": 2.068241763888889,
           "stage_floor_hours": 24.0,
-          "hours_to_floor": 23.00264268666667,
+          "hours_to_floor": 21.93175823611111,
           "arena_badge": "[HOT]",
           "arena_title": "Hot Streak",
           "score": {
@@ -1054,9 +1280,9 @@
           "lifecycle_state": "active",
           "promotion_target": "hold",
           "time_floor_met": false,
-          "elapsed_hours": 0.0,
+          "elapsed_hours": 1.0708844505555555,
           "stage_floor_hours": 168.0,
-          "hours_to_floor": 168.0,
+          "hours_to_floor": 166.92911554944445,
           "arena_badge": "[HOT]",
           "arena_title": "Hot Streak",
           "score": {
@@ -1220,9 +1446,9 @@
           "lifecycle_state": "probation",
           "promotion_target": "hold",
           "time_floor_met": false,
-          "elapsed_hours": 0.9973573133333333,
+          "elapsed_hours": 2.068241763888889,
           "stage_floor_hours": 24.0,
-          "hours_to_floor": 23.00264268666667,
+          "hours_to_floor": 21.93175823611111,
           "arena_badge": "[ROPE]",
           "arena_title": "On the Ropes",
           "score": {
@@ -1386,9 +1612,9 @@
           "lifecycle_state": "probation",
           "promotion_target": "hold",
           "time_floor_met": false,
-          "elapsed_hours": 0.9973573133333333,
+          "elapsed_hours": 2.068241763888889,
           "stage_floor_hours": 24.0,
-          "hours_to_floor": 23.00264268666667,
+          "hours_to_floor": 21.93175823611111,
           "arena_badge": "[HOT]",
           "arena_title": "Hot Streak",
           "score": {
@@ -1539,7 +1765,7 @@
     },
     {
       "venue": "DX",
-      "generated_at": "2026-04-11T16:42:26.116775+00:00",
+      "generated_at": "2026-04-11T17:37:21.151222+00:00",
       "days": 30,
       "account_start": 150.0,
       "primary_account_start": 150.0,
@@ -1592,6 +1818,172 @@
       "leaderboard": [
         {
           "rank": 1,
+          "case_id": "dx_agent_sui_hard_veto_v1",
+          "role": "challenger",
+          "family": "setup_quality_sui",
+          "base_strategy": "liquidity_sweep",
+          "stage": "stage1",
+          "stage_label": "Stage 1 constrained",
+          "fingerprint": "dx|setup_quality_sui|dx_agent_sui_hard_veto_v1",
+          "mutation_summary": "Stage 1 hard SUI veto that only allows very clean SUI long structures through the DX sweep gate",
+          "description": "DX liquidity_sweep variant with a hard-veto SUI long profile designed to eliminate dead-on-arrival SUI reclaims.",
+          "nickname": "Blue Lock",
+          "verdict": "knocked-out",
+          "beats_champion": true,
+          "promotion_pass": false,
+          "lifecycle_state": "knocked_out",
+          "promotion_target": "graveyard",
+          "time_floor_met": false,
+          "elapsed_hours": 0.0,
+          "stage_floor_hours": 24.0,
+          "hours_to_floor": 24.0,
+          "arena_badge": "[RIP]",
+          "arena_title": "Graveyard",
+          "score": {
+            "net_pnl": -3.728848629743567,
+            "total_pnl": 7.5052110084479695,
+            "total_fees": 11.23405963819154,
+            "return_pct": -0.02485899086495711,
+            "total_trades": 62,
+            "wins": 36,
+            "losses": 26,
+            "win_rate": 0.5806451612903226,
+            "win_loss_gap": 10,
+            "profit_factor": 1.1877079803946955,
+            "max_drawdown_pct": 0.11798641491049026,
+            "avg_rr": 0.5011787273943228,
+            "best_trade": 5.9219808251396895,
+            "worst_trade": -4.228077710806115,
+            "long_pnl": 7.235179556871271,
+            "short_pnl": 0.2700314515766981
+          },
+          "session_scores": {
+            "1d": {
+              "net_pnl": -0.7019392308705636,
+              "total_trades": 3,
+              "wins": 2,
+              "losses": 1,
+              "win_rate": 0.6666666666666666,
+              "profit_factor": 0.8278961365576231
+            },
+            "3d": {
+              "net_pnl": -5.4951069148716645,
+              "total_trades": 9,
+              "wins": 4,
+              "losses": 5,
+              "win_rate": 0.4444444444444444,
+              "profit_factor": 0.5065883193427229
+            },
+            "7d": {
+              "net_pnl": -8.91476621727352,
+              "total_trades": 11,
+              "wins": 4,
+              "losses": 7,
+              "win_rate": 0.36363636363636365,
+              "profit_factor": 0.38757996730016975
+            }
+          },
+          "bankroll_scores": {
+            "150": {
+              "account_start": 150.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": -3.728848629743567,
+                "total_pnl": 7.5052110084479695,
+                "total_fees": 11.23405963819154,
+                "return_pct": -0.02485899086495711,
+                "total_trades": 62,
+                "wins": 36,
+                "losses": 26,
+                "win_rate": 0.5806451612903226,
+                "win_loss_gap": 10,
+                "profit_factor": 1.1877079803946955,
+                "max_drawdown_pct": 0.11798641491049026,
+                "avg_rr": 0.5011787273943228,
+                "best_trade": 5.9219808251396895,
+                "worst_trade": -4.228077710806115,
+                "long_pnl": 7.235179556871271,
+                "short_pnl": 0.2700314515766981
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": -0.7019392308705636,
+                  "total_trades": 3,
+                  "wins": 2,
+                  "losses": 1,
+                  "win_rate": 0.6666666666666666,
+                  "profit_factor": 0.8278961365576231
+                },
+                "3d": {
+                  "net_pnl": -5.4951069148716645,
+                  "total_trades": 9,
+                  "wins": 4,
+                  "losses": 5,
+                  "win_rate": 0.4444444444444444,
+                  "profit_factor": 0.5065883193427229
+                },
+                "7d": {
+                  "net_pnl": -8.91476621727352,
+                  "total_trades": 11,
+                  "wins": 4,
+                  "losses": 7,
+                  "win_rate": 0.36363636363636365,
+                  "profit_factor": 0.38757996730016975
+                }
+              }
+            },
+            "500": {
+              "account_start": 500.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": -12.429495432478348,
+                "total_pnl": 25.017370028159895,
+                "total_fees": 37.44686546063848,
+                "return_pct": -0.024858990864956694,
+                "total_trades": 62,
+                "wins": 36,
+                "losses": 26,
+                "win_rate": 0.5806451612903226,
+                "win_loss_gap": 10,
+                "profit_factor": 1.1877079803946955,
+                "max_drawdown_pct": 0.11798641491049017,
+                "avg_rr": 0.5011787273943228,
+                "best_trade": 19.739936083798966,
+                "worst_trade": -14.093592369353724,
+                "long_pnl": 24.117265189570897,
+                "short_pnl": 0.9001048385889961
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": -2.339797436235214,
+                  "total_trades": 3,
+                  "wins": 2,
+                  "losses": 1,
+                  "win_rate": 0.6666666666666666,
+                  "profit_factor": 0.8278961365576231
+                },
+                "3d": {
+                  "net_pnl": -18.317023049572228,
+                  "total_trades": 9,
+                  "wins": 4,
+                  "losses": 5,
+                  "win_rate": 0.4444444444444444,
+                  "profit_factor": 0.5065883193427227
+                },
+                "7d": {
+                  "net_pnl": -29.715887390911757,
+                  "total_trades": 11,
+                  "wins": 4,
+                  "losses": 7,
+                  "win_rate": 0.36363636363636365,
+                  "profit_factor": 0.38757996730016964
+                }
+              }
+            }
+          }
+        },
+        {
+          "rank": 2,
           "case_id": "dx_challenger_hybrid_lb2_candle_veto",
           "role": "challenger",
           "family": "hybrid",
@@ -1608,9 +2000,9 @@
           "lifecycle_state": "knocked_out",
           "promotion_target": "graveyard",
           "time_floor_met": false,
-          "elapsed_hours": 1.8642025905555557,
+          "elapsed_hours": 2.7794899369444446,
           "stage_floor_hours": 72.0,
-          "hours_to_floor": 70.13579740944445,
+          "hours_to_floor": 69.22051006305556,
           "arena_badge": "[RIP]",
           "arena_title": "Graveyard",
           "score": {
@@ -1757,7 +2149,339 @@
           }
         },
         {
-          "rank": 2,
+          "rank": 3,
+          "case_id": "dx_agent_sui_close_guard_v1",
+          "role": "challenger",
+          "family": "setup_quality_sui",
+          "base_strategy": "liquidity_sweep",
+          "stage": "stage1",
+          "stage_label": "Stage 1 constrained",
+          "fingerprint": "dx|setup_quality_sui|dx_agent_sui_close_guard_v1",
+          "mutation_summary": "Stage 1 SUI-focused close guard that keeps broad DX balanced but forces cleaner SUI long reclaim closes",
+          "description": "DX liquidity_sweep variant with balanced global filters and a stricter SUI-only long close/body override.",
+          "nickname": "Glass Pike",
+          "verdict": "knocked-out",
+          "beats_champion": true,
+          "promotion_pass": false,
+          "lifecycle_state": "knocked_out",
+          "promotion_target": "graveyard",
+          "time_floor_met": false,
+          "elapsed_hours": 0.0,
+          "stage_floor_hours": 24.0,
+          "hours_to_floor": 24.0,
+          "arena_badge": "[RIP]",
+          "arena_title": "Graveyard",
+          "score": {
+            "net_pnl": -8.984340588710978,
+            "total_pnl": 2.028896157526897,
+            "total_fees": 11.01323674623769,
+            "return_pct": -0.05989560392473985,
+            "total_trades": 61,
+            "wins": 34,
+            "losses": 27,
+            "win_rate": 0.5573770491803278,
+            "win_loss_gap": 7,
+            "profit_factor": 1.0466639427523416,
+            "max_drawdown_pct": 0.13141919419170248,
+            "avg_rr": 0.4632313085350336,
+            "best_trade": 5.9970049771107865,
+            "worst_trade": -4.559484908697517,
+            "long_pnl": 0.4908295467829958,
+            "short_pnl": 1.538066610743901
+          },
+          "session_scores": {
+            "1d": {
+              "net_pnl": -0.6767187007184083,
+              "total_trades": 3,
+              "wins": 2,
+              "losses": 1,
+              "win_rate": 0.6666666666666666,
+              "profit_factor": 0.8278961365576231
+            },
+            "3d": {
+              "net_pnl": -7.695583506035259,
+              "total_trades": 9,
+              "wins": 4,
+              "losses": 5,
+              "win_rate": 0.4444444444444444,
+              "profit_factor": 0.4141040597700332
+            },
+            "7d": {
+              "net_pnl": -11.04624913718593,
+              "total_trades": 11,
+              "wins": 4,
+              "losses": 7,
+              "win_rate": 0.36363636363636365,
+              "profit_factor": 0.3299371714519056
+            }
+          },
+          "bankroll_scores": {
+            "150": {
+              "account_start": 150.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": -8.984340588710978,
+                "total_pnl": 2.028896157526897,
+                "total_fees": 11.01323674623769,
+                "return_pct": -0.05989560392473985,
+                "total_trades": 61,
+                "wins": 34,
+                "losses": 27,
+                "win_rate": 0.5573770491803278,
+                "win_loss_gap": 7,
+                "profit_factor": 1.0466639427523416,
+                "max_drawdown_pct": 0.13141919419170248,
+                "avg_rr": 0.4632313085350336,
+                "best_trade": 5.9970049771107865,
+                "worst_trade": -4.559484908697517,
+                "long_pnl": 0.4908295467829958,
+                "short_pnl": 1.538066610743901
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": -0.6767187007184083,
+                  "total_trades": 3,
+                  "wins": 2,
+                  "losses": 1,
+                  "win_rate": 0.6666666666666666,
+                  "profit_factor": 0.8278961365576231
+                },
+                "3d": {
+                  "net_pnl": -7.695583506035259,
+                  "total_trades": 9,
+                  "wins": 4,
+                  "losses": 5,
+                  "win_rate": 0.4444444444444444,
+                  "profit_factor": 0.4141040597700332
+                },
+                "7d": {
+                  "net_pnl": -11.04624913718593,
+                  "total_trades": 11,
+                  "wins": 4,
+                  "losses": 7,
+                  "win_rate": 0.36363636363636365,
+                  "profit_factor": 0.3299371714519056
+                }
+              }
+            },
+            "500": {
+              "account_start": 500.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": -29.947801962369226,
+                "total_pnl": 6.762987191756319,
+                "total_fees": 36.710789154125656,
+                "return_pct": -0.05989560392473845,
+                "total_trades": 61,
+                "wins": 34,
+                "losses": 27,
+                "win_rate": 0.5573770491803278,
+                "win_loss_gap": 7,
+                "profit_factor": 1.0466639427523416,
+                "max_drawdown_pct": 0.13141919419170203,
+                "avg_rr": 0.4632313085350336,
+                "best_trade": 19.99001659036931,
+                "worst_trade": -15.198283028991744,
+                "long_pnl": 1.636098489276642,
+                "short_pnl": 5.126888702479677
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": -2.2557290023946983,
+                  "total_trades": 3,
+                  "wins": 2,
+                  "losses": 1,
+                  "win_rate": 0.6666666666666666,
+                  "profit_factor": 0.8278961365576231
+                },
+                "3d": {
+                  "net_pnl": -25.651945020117566,
+                  "total_trades": 9,
+                  "wins": 4,
+                  "losses": 5,
+                  "win_rate": 0.4444444444444444,
+                  "profit_factor": 0.4141040597700333
+                },
+                "7d": {
+                  "net_pnl": -36.820830457286476,
+                  "total_trades": 11,
+                  "wins": 4,
+                  "losses": 7,
+                  "win_rate": 0.36363636363636365,
+                  "profit_factor": 0.3299371714519057
+                }
+              }
+            }
+          }
+        },
+        {
+          "rank": 4,
+          "case_id": "dx_agent_sui_volume_guard_v1",
+          "role": "challenger",
+          "family": "setup_quality_sui",
+          "base_strategy": "liquidity_sweep",
+          "stage": "stage1",
+          "stage_label": "Stage 1 constrained",
+          "fingerprint": "dx|setup_quality_sui|dx_agent_sui_volume_guard_v1",
+          "mutation_summary": "Stage 1 SUI-focused volume guard that requires stronger participation before DX SUI longs can trigger",
+          "description": "DX liquidity_sweep variant that raises the SUI long volume requirement while leaving other DX coins on the balanced long profile.",
+          "nickname": "River Fang",
+          "verdict": "knocked-out",
+          "beats_champion": true,
+          "promotion_pass": false,
+          "lifecycle_state": "knocked_out",
+          "promotion_target": "graveyard",
+          "time_floor_met": false,
+          "elapsed_hours": 0.0,
+          "stage_floor_hours": 24.0,
+          "hours_to_floor": 24.0,
+          "arena_badge": "[RIP]",
+          "arena_title": "Graveyard",
+          "score": {
+            "net_pnl": -9.058335173286821,
+            "total_pnl": 1.9634454556821201,
+            "total_fees": 11.021780628968859,
+            "return_pct": -0.06038890115524547,
+            "total_trades": 61,
+            "wins": 34,
+            "losses": 27,
+            "win_rate": 0.5573770491803278,
+            "win_loss_gap": 7,
+            "profit_factor": 1.0450511182731637,
+            "max_drawdown_pct": 0.13161709702924734,
+            "avg_rr": 0.4632313085350336,
+            "best_trade": 6.034190022392706,
+            "worst_trade": -4.6402250353677745,
+            "long_pnl": 0.4248698814544002,
+            "short_pnl": 1.53857557422772
+          },
+          "session_scores": {
+            "1d": {
+              "net_pnl": -0.6763636088134152,
+              "total_trades": 3,
+              "wins": 2,
+              "losses": 1,
+              "win_rate": 0.6666666666666666,
+              "profit_factor": 0.8278961365576228
+            },
+            "3d": {
+              "net_pnl": -7.7773250531359635,
+              "total_trades": 9,
+              "wins": 4,
+              "losses": 5,
+              "win_rate": 0.4444444444444444,
+              "profit_factor": 0.4114157955096005
+            },
+            "7d": {
+              "net_pnl": -11.128248158594145,
+              "total_trades": 11,
+              "wins": 4,
+              "losses": 7,
+              "win_rate": 0.36363636363636365,
+              "profit_factor": 0.3281884402289315
+            }
+          },
+          "bankroll_scores": {
+            "150": {
+              "account_start": 150.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": -9.058335173286821,
+                "total_pnl": 1.9634454556821201,
+                "total_fees": 11.021780628968859,
+                "return_pct": -0.06038890115524547,
+                "total_trades": 61,
+                "wins": 34,
+                "losses": 27,
+                "win_rate": 0.5573770491803278,
+                "win_loss_gap": 7,
+                "profit_factor": 1.0450511182731637,
+                "max_drawdown_pct": 0.13161709702924734,
+                "avg_rr": 0.4632313085350336,
+                "best_trade": 6.034190022392706,
+                "worst_trade": -4.6402250353677745,
+                "long_pnl": 0.4248698814544002,
+                "short_pnl": 1.53857557422772
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": -0.6763636088134152,
+                  "total_trades": 3,
+                  "wins": 2,
+                  "losses": 1,
+                  "win_rate": 0.6666666666666666,
+                  "profit_factor": 0.8278961365576228
+                },
+                "3d": {
+                  "net_pnl": -7.7773250531359635,
+                  "total_trades": 9,
+                  "wins": 4,
+                  "losses": 5,
+                  "win_rate": 0.4444444444444444,
+                  "profit_factor": 0.4114157955096005
+                },
+                "7d": {
+                  "net_pnl": -11.128248158594145,
+                  "total_trades": 11,
+                  "wins": 4,
+                  "losses": 7,
+                  "win_rate": 0.36363636363636365,
+                  "profit_factor": 0.3281884402289315
+                }
+              }
+            },
+            "500": {
+              "account_start": 500.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": -30.194450577622604,
+                "total_pnl": 6.544818185607062,
+                "total_fees": 36.73926876322954,
+                "return_pct": -0.06038890115524521,
+                "total_trades": 61,
+                "wins": 34,
+                "losses": 27,
+                "win_rate": 0.5573770491803278,
+                "win_loss_gap": 7,
+                "profit_factor": 1.0450511182731637,
+                "max_drawdown_pct": 0.1316170970292471,
+                "avg_rr": 0.4632313085350336,
+                "best_trade": 20.11396674130902,
+                "worst_trade": -15.467416784559253,
+                "long_pnl": 1.4162329381813286,
+                "short_pnl": 5.128585247425734
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": -2.2545453627113874,
+                  "total_trades": 3,
+                  "wins": 2,
+                  "losses": 1,
+                  "win_rate": 0.6666666666666666,
+                  "profit_factor": 0.8278961365576227
+                },
+                "3d": {
+                  "net_pnl": -25.924416843786553,
+                  "total_trades": 9,
+                  "wins": 4,
+                  "losses": 5,
+                  "win_rate": 0.4444444444444444,
+                  "profit_factor": 0.4114157955096004
+                },
+                "7d": {
+                  "net_pnl": -37.09416052864716,
+                  "total_trades": 11,
+                  "wins": 4,
+                  "losses": 7,
+                  "win_rate": 0.36363636363636365,
+                  "profit_factor": 0.3281884402289314
+                }
+              }
+            }
+          }
+        },
+        {
+          "rank": 5,
           "case_id": "dx_agent_long_guard_short_pressure_v1",
           "role": "challenger",
           "family": "agent_stage3",
@@ -1774,9 +2498,9 @@
           "lifecycle_state": "knocked_out",
           "promotion_target": "graveyard",
           "time_floor_met": false,
-          "elapsed_hours": 0.8668452772222222,
+          "elapsed_hours": 1.7821326236111112,
           "stage_floor_hours": 168.0,
-          "hours_to_floor": 167.1331547227778,
+          "hours_to_floor": 166.21786737638888,
           "arena_badge": "[RIP]",
           "arena_title": "Graveyard",
           "score": {
@@ -1923,7 +2647,7 @@
           }
         },
         {
-          "rank": 3,
+          "rank": 6,
           "case_id": "dx_agent_setupq_close_bias_v1",
           "role": "challenger",
           "family": "setup_quality",
@@ -1940,9 +2664,9 @@
           "lifecycle_state": "knocked_out",
           "promotion_target": "graveyard",
           "time_floor_met": false,
-          "elapsed_hours": 0.0,
+          "elapsed_hours": 0.9152873463888889,
           "stage_floor_hours": 24.0,
-          "hours_to_floor": 24.0,
+          "hours_to_floor": 23.08471265361111,
           "arena_badge": "[RIP]",
           "arena_title": "Graveyard",
           "score": {
@@ -2089,7 +2813,173 @@
           }
         },
         {
-          "rank": 4,
+          "rank": 7,
+          "case_id": "dx_agent_sui_elastic_guard_v1",
+          "role": "challenger",
+          "family": "setup_quality_sui",
+          "base_strategy": "liquidity_sweep",
+          "stage": "stage1",
+          "stage_label": "Stage 1 constrained",
+          "fingerprint": "dx|setup_quality_sui|dx_agent_sui_elastic_guard_v1",
+          "mutation_summary": "Stage 1 elastic SUI guard that tightens SUI longs but still scales strength instead of using a pure hard clamp",
+          "description": "DX liquidity_sweep variant with an elastic SUI-specific long guard around the stronger part of the Seal Fox region.",
+          "nickname": "Current Needle",
+          "verdict": "knocked-out",
+          "beats_champion": true,
+          "promotion_pass": false,
+          "lifecycle_state": "knocked_out",
+          "promotion_target": "graveyard",
+          "time_floor_met": false,
+          "elapsed_hours": 0.0,
+          "stage_floor_hours": 24.0,
+          "hours_to_floor": 24.0,
+          "arena_badge": "[RIP]",
+          "arena_title": "Graveyard",
+          "score": {
+            "net_pnl": -10.99381894140572,
+            "total_pnl": 0.7524111606749366,
+            "total_fees": 11.746230102080773,
+            "return_pct": -0.07329212627603814,
+            "total_trades": 65,
+            "wins": 36,
+            "losses": 29,
+            "win_rate": 0.5538461538461539,
+            "win_loss_gap": 7,
+            "profit_factor": 1.0164030483489332,
+            "max_drawdown_pct": 0.13193248018372805,
+            "avg_rr": 0.44727817074535403,
+            "best_trade": 5.837568878225393,
+            "worst_trade": -4.392161953225322,
+            "long_pnl": 0.4869955648928736,
+            "short_pnl": 0.2654155957820631
+          },
+          "session_scores": {
+            "1d": {
+              "net_pnl": -0.6670754342497468,
+              "total_trades": 3,
+              "wins": 2,
+              "losses": 1,
+              "win_rate": 0.6666666666666666,
+              "profit_factor": 0.8278961365576226
+            },
+            "3d": {
+              "net_pnl": -9.830005398938132,
+              "total_trades": 10,
+              "wins": 4,
+              "losses": 6,
+              "win_rate": 0.4,
+              "profit_factor": 0.3529332901040663
+            },
+            "7d": {
+              "net_pnl": -13.18817400180451,
+              "total_trades": 12,
+              "wins": 4,
+              "losses": 8,
+              "win_rate": 0.3333333333333333,
+              "profit_factor": 0.2890399404959678
+            }
+          },
+          "bankroll_scores": {
+            "150": {
+              "account_start": 150.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": -10.99381894140572,
+                "total_pnl": 0.7524111606749366,
+                "total_fees": 11.746230102080773,
+                "return_pct": -0.07329212627603814,
+                "total_trades": 65,
+                "wins": 36,
+                "losses": 29,
+                "win_rate": 0.5538461538461539,
+                "win_loss_gap": 7,
+                "profit_factor": 1.0164030483489332,
+                "max_drawdown_pct": 0.13193248018372805,
+                "avg_rr": 0.44727817074535403,
+                "best_trade": 5.837568878225393,
+                "worst_trade": -4.392161953225322,
+                "long_pnl": 0.4869955648928736,
+                "short_pnl": 0.2654155957820631
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": -0.6670754342497468,
+                  "total_trades": 3,
+                  "wins": 2,
+                  "losses": 1,
+                  "win_rate": 0.6666666666666666,
+                  "profit_factor": 0.8278961365576226
+                },
+                "3d": {
+                  "net_pnl": -9.830005398938132,
+                  "total_trades": 10,
+                  "wins": 4,
+                  "losses": 6,
+                  "win_rate": 0.4,
+                  "profit_factor": 0.3529332901040663
+                },
+                "7d": {
+                  "net_pnl": -13.18817400180451,
+                  "total_trades": 12,
+                  "wins": 4,
+                  "losses": 8,
+                  "win_rate": 0.3333333333333333,
+                  "profit_factor": 0.2890399404959678
+                }
+              }
+            },
+            "500": {
+              "account_start": 500.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": -36.646063138019656,
+                "total_pnl": 2.5080372022497945,
+                "total_fees": 39.15410034026921,
+                "return_pct": -0.07329212627603932,
+                "total_trades": 65,
+                "wins": 36,
+                "losses": 29,
+                "win_rate": 0.5538461538461539,
+                "win_loss_gap": 7,
+                "profit_factor": 1.0164030483489335,
+                "max_drawdown_pct": 0.13193248018372924,
+                "avg_rr": 0.44727817074535403,
+                "best_trade": 19.458562927417947,
+                "worst_trade": -14.640539844084392,
+                "long_pnl": 1.6233185496429197,
+                "short_pnl": 0.8847186526068747
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": -2.2235847808324833,
+                  "total_trades": 3,
+                  "wins": 2,
+                  "losses": 1,
+                  "win_rate": 0.6666666666666666,
+                  "profit_factor": 0.8278961365576227
+                },
+                "3d": {
+                  "net_pnl": -32.76668466312706,
+                  "total_trades": 10,
+                  "wins": 4,
+                  "losses": 6,
+                  "win_rate": 0.4,
+                  "profit_factor": 0.3529332901040664
+                },
+                "7d": {
+                  "net_pnl": -43.96058000601497,
+                  "total_trades": 12,
+                  "wins": 4,
+                  "losses": 8,
+                  "win_rate": 0.3333333333333333,
+                  "profit_factor": 0.2890399404959679
+                }
+              }
+            }
+          }
+        },
+        {
+          "rank": 8,
           "case_id": "dx_challenger_asym_strict_long_loose_short",
           "role": "challenger",
           "family": "asymmetric_hybrid",
@@ -2106,9 +2996,9 @@
           "lifecycle_state": "knocked_out",
           "promotion_target": "graveyard",
           "time_floor_met": false,
-          "elapsed_hours": 1.8642025905555557,
+          "elapsed_hours": 2.7794899369444446,
           "stage_floor_hours": 72.0,
-          "hours_to_floor": 70.13579740944445,
+          "hours_to_floor": 69.22051006305556,
           "arena_badge": "[RIP]",
           "arena_title": "Graveyard",
           "score": {
@@ -2255,7 +3145,7 @@
           }
         },
         {
-          "rank": 5,
+          "rank": 9,
           "case_id": "dx_challenger_confidence_scale_balanced",
           "role": "challenger",
           "family": "candle_confidence",
@@ -2272,9 +3162,9 @@
           "lifecycle_state": "knocked_out",
           "promotion_target": "graveyard",
           "time_floor_met": false,
-          "elapsed_hours": 1.8642025905555557,
+          "elapsed_hours": 2.7794899369444446,
           "stage_floor_hours": 24.0,
-          "hours_to_floor": 22.135797409444443,
+          "hours_to_floor": 21.220510063055556,
           "arena_badge": "[RIP]",
           "arena_title": "Graveyard",
           "score": {
@@ -2421,7 +3311,7 @@
           }
         },
         {
-          "rank": 6,
+          "rank": 10,
           "case_id": "dx_agent_setupq_balanced_v1",
           "role": "challenger",
           "family": "setup_quality",
@@ -2438,9 +3328,9 @@
           "lifecycle_state": "knocked_out",
           "promotion_target": "graveyard",
           "time_floor_met": false,
-          "elapsed_hours": 0.0,
+          "elapsed_hours": 0.9152873463888889,
           "stage_floor_hours": 24.0,
-          "hours_to_floor": 24.0,
+          "hours_to_floor": 23.08471265361111,
           "arena_badge": "[RIP]",
           "arena_title": "Graveyard",
           "score": {
@@ -2587,7 +3477,7 @@
           }
         },
         {
-          "rank": 7,
+          "rank": 11,
           "case_id": "dx_agent_setupq_guarded_longs_v1",
           "role": "challenger",
           "family": "setup_quality",
@@ -2604,9 +3494,9 @@
           "lifecycle_state": "knocked_out",
           "promotion_target": "graveyard",
           "time_floor_met": false,
-          "elapsed_hours": 0.0,
+          "elapsed_hours": 0.9152873463888889,
           "stage_floor_hours": 24.0,
-          "hours_to_floor": 24.0,
+          "hours_to_floor": 23.08471265361111,
           "arena_badge": "[RIP]",
           "arena_title": "Graveyard",
           "score": {
@@ -2753,7 +3643,7 @@
           }
         },
         {
-          "rank": 8,
+          "rank": 12,
           "case_id": "dx_agent_setupq_short_pressure_v1",
           "role": "challenger",
           "family": "setup_quality",
@@ -2770,9 +3660,9 @@
           "lifecycle_state": "knocked_out",
           "promotion_target": "graveyard",
           "time_floor_met": false,
-          "elapsed_hours": 0.0,
+          "elapsed_hours": 0.9152873463888889,
           "stage_floor_hours": 24.0,
-          "hours_to_floor": 24.0,
+          "hours_to_floor": 23.08471265361111,
           "arena_badge": "[RIP]",
           "arena_title": "Graveyard",
           "score": {
@@ -2919,7 +3809,7 @@
           }
         },
         {
-          "rank": 9,
+          "rank": 13,
           "case_id": "dx_challenger_oi_scale_very_loose_lb2",
           "role": "challenger",
           "family": "oi_filter",
@@ -2936,9 +3826,9 @@
           "lifecycle_state": "knocked_out",
           "promotion_target": "graveyard",
           "time_floor_met": false,
-          "elapsed_hours": 1.8642025905555557,
+          "elapsed_hours": 2.7794899369444446,
           "stage_floor_hours": 24.0,
-          "hours_to_floor": 22.135797409444443,
+          "hours_to_floor": 21.220510063055556,
           "arena_badge": "[RIP]",
           "arena_title": "Graveyard",
           "score": {
@@ -3085,7 +3975,7 @@
           }
         },
         {
-          "rank": 10,
+          "rank": 14,
           "case_id": "dx_champion_liquidity_sweep_current",
           "role": "champion",
           "family": "liquidity_sweep",
@@ -3102,9 +3992,9 @@
           "lifecycle_state": "active",
           "promotion_target": "champion",
           "time_floor_met": true,
-          "elapsed_hours": 1.8642025905555557,
+          "elapsed_hours": 2.7794899369444446,
           "stage_floor_hours": 168.0,
-          "hours_to_floor": 166.13579740944445,
+          "hours_to_floor": 165.22051006305554,
           "arena_badge": "[KING]",
           "arena_title": "Crown Holder",
           "score": {
@@ -3258,7 +4148,7 @@
     const LIVE_STATUS = {
   "state": "running",
   "interval_minutes": 30.0,
-  "last_refresh_started_at": "2026-04-11T16:54:40.654515+00:00",
+  "last_refresh_started_at": "2026-04-11T17:44:50.107660+00:00",
   "last_refresh_finished_at": "",
   "next_refresh_at": "",
   "last_error": ""
@@ -3405,11 +4295,20 @@
                 .join(" / ");
               const signClass = Number(score.net_pnl || 0) >= 0 ? "good" : "bad";
               const fillClass = Number(score.net_pnl || 0) >= 0 ? "" : " loss";
+              const cardClass = row.rank === 1
+                ? " is-leader"
+                : row.promotion_target === "shadow" || row.promotion_target === "live-filter"
+                  ? " is-shadow"
+                  : "";
               const barWidth = Math.max(8, Math.min(100, (Math.abs(Number(score.net_pnl || 0)) / scoreScale) * 100));
+              const signedLane = Math.max(-92, Math.min(92, (Number(score.net_pnl || 0) / scoreScale) * 92));
               const sessions = row.session_scores || {};
               const badge = badgeMap[(row.arena_badge || "").replace(/[[\]]/g, "")] || row.arena_title || "Contender";
+              const runnerGlyph = Number(score.net_pnl || 0) >= 0
+                ? (row.rank === 1 ? "👑" : "⚡")
+                : "☠";
               return `
-                <article class="bot-card" data-sign="${Number(score.net_pnl || 0) >= 0 ? "gain" : "loss"}">
+                <article class="bot-card${cardClass}" data-sign="${Number(score.net_pnl || 0) >= 0 ? "gain" : "loss"}">
                   <div class="bot-top">
                     <div>
                       <div class="bot-rank">#${row.rank} • ${badge}</div>
@@ -3424,6 +4323,18 @@
                     <span class="chip subtle">${shortStage(row.stage)} gate ${Math.round(Number(row.hours_to_floor || 0))}h</span>
                     <span class="chip subtle">${row.promotion_target || "hold"}</span>
                     <span class="chip subtle">${Number(score.total_trades || 0)} trades</span>
+                  </div>
+
+                  <div class="race-lane">
+                    <div class="lane-grid"></div>
+                    <div class="lane-mid"></div>
+                    <div class="lane-finish lane-finish-left"></div>
+                    <div class="lane-finish lane-finish-right"></div>
+                    <div class="lane-caption lane-caption-left">risk zone</div>
+                    <div class="lane-caption lane-caption-right">profit lane</div>
+                    <div class="lane-runner${fillClass}${row.rank === 1 ? " leader" : ""}" data-lane="${signedLane.toFixed(1)}">
+                      <span class="runner-core">${runnerGlyph}</span>
+                    </div>
                   </div>
 
                   <div class="powerbar">
@@ -3481,6 +4392,9 @@
     requestAnimationFrame(() => {
       for (const fill of document.querySelectorAll(".powerbar-fill")) {
         fill.style.width = `${fill.dataset.width}%`;
+      }
+      for (const runner of document.querySelectorAll(".lane-runner")) {
+        runner.style.transform = `translateX(calc(${runner.dataset.lane}% - 50%))`;
       }
     });
 
