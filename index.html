@@ -5,514 +5,183 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Battle Royale Arena</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap');
-
   :root {
-    --bg: #080b12;
-    --card: rgba(14,18,30,0.95);
-    --border: rgba(255,255,255,0.05);
-    --text: #e8edf8;
-    --muted: #5d6f88;
-    --green: #34d399;
-    --green-g: rgba(52,211,153,0.15);
-    --red: #f87171;
-    --red-g: rgba(248,113,113,0.12);
-    --amber: #fbbf24;
-    --amber-g: rgba(251,191,36,0.1);
-    --cyan: #22d3ee;
-    --font: "Outfit", sans-serif;
-    --mono: "JetBrains Mono", monospace;
+    --bg: #0b1020;
+    --panel: #121931;
+    --panel-2: #182241;
+    --line: rgba(255,255,255,0.08);
+    --text: #edf2ff;
+    --muted: #99a6c7;
+    --good: #3ddc97;
+    --bad: #ff7b72;
+    --warn: #f3b54a;
+    --accent: #68a0ff;
+    --mono: "JetBrains Mono", "Consolas", monospace;
+    --sans: "Segoe UI", system-ui, sans-serif;
   }
-
-  * { box-sizing: border-box; margin: 0; }
+  * { box-sizing: border-box; }
   body {
-    background: var(--bg); color: var(--text);
-    font-family: var(--font); min-height: 100vh;
-    overflow-x: hidden; -webkit-font-smoothing: antialiased;
+    margin: 0;
+    background: linear-gradient(180deg, #0b1020 0%, #0f1730 100%);
+    color: var(--text);
+    font-family: var(--sans);
   }
-
-  .venue-swiper {
-    display: flex; width: 200vw;
-    transition: transform 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  .shell {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 16px 14px 32px;
   }
-  .venue-swiper.show-dx { transform: translateX(-100vw); }
-
-  .venue-page {
-    width: 100vw; min-height: 100vh;
-    padding: 12px 14px 32px; flex-shrink: 0;
-  }
-
-  .venue-toggle {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 50;
-    display: flex; height: 52px;
-    background: rgba(8,11,18,0.92);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--border);
-  }
-
-  .vt-btn {
-    flex: 1; display: flex; align-items: center; justify-content: center;
-    gap: 8px; border: none; background: none;
-    font-family: var(--font); font-size: 14px; font-weight: 700;
-    color: var(--muted); cursor: pointer; transition: all 200ms;
-    position: relative;
-  }
-
-  .vt-btn.active { color: var(--text); }
-
-  .vt-btn::after {
-    content: ""; position: absolute;
-    bottom: 0; left: 20%; right: 20%; height: 3px;
-    border-radius: 3px 3px 0 0;
-    background: transparent; transition: background 200ms;
-  }
-
-  .vt-btn.hl.active::after { background: var(--green); box-shadow: 0 0 12px var(--green-g); }
-  .vt-btn.dx.active::after { background: var(--red); box-shadow: 0 0 12px var(--red-g); }
-
-  .vt-pnl { font-family: var(--mono); font-size: 13px; font-weight: 700; }
-  .vt-pnl.good { color: var(--green); }
-  .vt-pnl.bad { color: var(--red); }
-
-  .spacer { height: 60px; }
-
-  .money-stream {
-    position: relative; height: 80px;
-    border-radius: 16px; overflow: hidden;
+  .hero {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 18px 16px;
     margin-bottom: 14px;
-    background: rgba(255,255,255,0.02);
-    border: 1px solid var(--border);
   }
-
-  .stream-canvas { position: absolute; inset: 0; }
-
-  .neon-line {
-    position: absolute; height: 2px;
-    border-radius: 1px; opacity: 0; filter: blur(0.5px);
+  .hero h1 {
+    margin: 0 0 6px;
+    font-size: 24px;
   }
-
-  .neon-line.gain {
-    background: linear-gradient(90deg, transparent, var(--green), transparent);
-    box-shadow: 0 0 8px var(--green-g), 0 0 20px var(--green-g);
-    animation: neonFlowRight 3s ease-in-out infinite;
+  .hero p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
   }
-
-  .neon-line.gain:nth-child(1) { top: 15%; width: 40%; animation-delay: 0s; }
-  .neon-line.gain:nth-child(2) { top: 35%; width: 55%; animation-delay: 0.6s; }
-  .neon-line.gain:nth-child(3) { top: 55%; width: 35%; animation-delay: 1.2s; }
-  .neon-line.gain:nth-child(4) { top: 75%; width: 48%; animation-delay: 1.8s; }
-  .neon-line.gain:nth-child(5) { top: 25%; width: 30%; animation-delay: 2.4s; }
-  .neon-line.gain:nth-child(6) { top: 65%; width: 42%; animation-delay: 0.3s; }
-
-  .neon-line.loss {
-    background: linear-gradient(270deg, transparent, var(--red), transparent);
-    box-shadow: 0 0 8px var(--red-g), 0 0 20px var(--red-g);
-    animation: neonFlowLeft 2.5s ease-in-out infinite;
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
   }
-
-  .neon-line.loss:nth-child(1) { top: 12%; width: 45%; animation-delay: 0s; }
-  .neon-line.loss:nth-child(2) { top: 30%; width: 38%; animation-delay: 0.5s; }
-  .neon-line.loss:nth-child(3) { top: 48%; width: 52%; animation-delay: 1.0s; }
-  .neon-line.loss:nth-child(4) { top: 66%; width: 34%; animation-delay: 1.5s; }
-  .neon-line.loss:nth-child(5) { top: 82%; width: 46%; animation-delay: 2.0s; }
-  .neon-line.loss:nth-child(6) { top: 40%; width: 40%; animation-delay: 0.8s; }
-
-  .neon-orb {
-    position: absolute; width: 6px; height: 6px;
-    border-radius: 50%; opacity: 0;
+  .tab {
+    flex: 1;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--muted);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-weight: 700;
   }
-
-  .neon-orb.gain {
-    background: var(--green);
-    box-shadow: 0 0 10px var(--green), 0 0 24px var(--green-g);
-    animation: orbRight 2.5s ease-in-out infinite;
+  .tab.active {
+    background: var(--panel-2);
+    color: var(--text);
+    border-color: rgba(104,160,255,0.35);
   }
-
-  .neon-orb.loss {
-    background: var(--red);
-    box-shadow: 0 0 10px var(--red), 0 0 24px var(--red-g);
-    animation: orbLeft 2s ease-in-out infinite;
+  .venue {
+    display: none;
+    gap: 12px;
+    flex-direction: column;
   }
-
-  .neon-orb:nth-child(7) { top: 18%; animation-delay: 0.2s; }
-  .neon-orb:nth-child(8) { top: 42%; animation-delay: 0.8s; }
-  .neon-orb:nth-child(9) { top: 68%; animation-delay: 1.4s; }
-
-  .stream-label {
-    position: absolute; top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    font-family: var(--mono); font-size: 32px;
-    font-weight: 700; z-index: 2; letter-spacing: -0.03em;
+  .venue.active { display: flex; }
+  .venue-head {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 14px;
   }
-
-  .stream-label.good { color: var(--green); text-shadow: 0 0 40px var(--green-g); }
-  .stream-label.bad { color: var(--red); text-shadow: 0 0 40px var(--red-g); }
-
-  .stream-sub {
-    position: absolute; bottom: 8px; left: 50%;
-    transform: translateX(-50%);
-    font-size: 11px; color: var(--muted); z-index: 2; white-space: nowrap;
+  .venue-head h2 {
+    margin: 0 0 6px;
+    font-size: 20px;
   }
-
-  .bot-card {
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 16px; padding: 16px; margin-bottom: 10px;
-    position: relative; overflow: hidden;
-    animation: fadeUp 400ms ease-out both;
+  .venue-head .sub {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 4px;
   }
-
-  .bot-card:nth-child(2) { animation-delay: 60ms; }
-  .bot-card:nth-child(3) { animation-delay: 120ms; }
-  .bot-card:nth-child(4) { animation-delay: 180ms; }
-  .bot-card:nth-child(5) { animation-delay: 240ms; }
-
-  .bot-card.leader { border-color: rgba(251,191,36,0.2); }
-
-  .bot-card::before {
-    content: ""; position: absolute;
-    top: 12px; bottom: 12px; left: 0; width: 3px;
-    border-radius: 0 3px 3px 0;
+  .venue-head .focus {
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 700;
   }
-
-  .bot-card.positive::before { background: var(--green); box-shadow: 0 0 8px var(--green-g); }
-  .bot-card.negative::before { background: var(--red); box-shadow: 0 0 8px var(--red-g); }
-  .bot-card.dead { opacity: 0.4; }
-
-  .bot-head {
-    display: flex; justify-content: space-between;
-    align-items: flex-start; margin-bottom: 12px;
+  .cards {
+    display: grid;
+    gap: 10px;
   }
-
-  .bot-name { font-size: 17px; font-weight: 800; line-height: 1.2; }
-  .bot-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
-
-  .bot-pnl { font-family: var(--mono); font-size: 22px; font-weight: 700; }
-  .bot-pnl.good { color: var(--green); }
-  .bot-pnl.bad { color: var(--red); }
-
-  .stats-bar {
-    display: grid; grid-template-columns: repeat(5, 1fr);
-    gap: 6px; margin-bottom: 12px;
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 14px;
   }
-
-  .sb-item {
-    text-align: center; padding: 8px 4px;
-    border-radius: 8px;
-    background: rgba(255,255,255,0.025);
-    border: 1px solid rgba(255,255,255,0.03);
+  .card.leader {
+    border-color: rgba(104,160,255,0.35);
+    background: linear-gradient(180deg, #182241 0%, #121931 100%);
   }
-
-  .sb-label {
-    font-size: 9px; font-weight: 700;
-    letter-spacing: 0.1em; text-transform: uppercase;
-    color: var(--muted); margin-bottom: 3px;
+  .row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: flex-start;
   }
-
-  .sb-val { font-family: var(--mono); font-size: 13px; font-weight: 700; }
-  .sb-val.good { color: var(--green); }
-  .sb-val.bad { color: var(--red); }
-  .sb-val.amber { color: var(--amber); }
-
-  .stats-bar-2 {
-    display: grid; grid-template-columns: repeat(4, 1fr);
-    gap: 6px; margin-bottom: 14px;
+  .title {
+    font-size: 17px;
+    font-weight: 800;
+    margin: 0 0 4px;
   }
-
-  .ops-strip {
-    display: grid; grid-template-columns: repeat(2, 1fr);
-    gap: 8px; margin: 10px 0 12px;
+  .meta {
+    color: var(--muted);
+    font-size: 12px;
   }
-
-  .ops-card {
-    padding: 10px 12px; border-radius: 12px;
+  .pnl {
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .pnl.good { color: var(--good); }
+  .pnl.bad { color: var(--bad); }
+  .grid {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  .metric {
     background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 10px;
+    padding: 8px;
   }
-
-  .ops-title {
-    font-size: 10px; font-weight: 800;
-    letter-spacing: 0.12em; text-transform: uppercase;
-    color: var(--muted); margin-bottom: 4px;
+  .metric .k {
+    color: var(--muted);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
   }
-
-  .ops-value {
-    font-family: var(--mono); font-size: 14px; font-weight: 700;
-    color: var(--text); line-height: 1.35;
+  .metric .v {
+    margin-top: 4px;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
   }
-
-  .ops-value.good { color: var(--green); }
-  .ops-value.bad { color: var(--red); }
-  .ops-value.amber { color: var(--amber); }
-
-  .gate-timeline { position: relative; padding: 8px 0 4px; }
-
-  .gate-track {
-    display: flex; align-items: center;
-    height: 32px; position: relative;
+  .line {
+    margin-top: 10px;
+    font-size: 13px;
+    color: var(--muted);
   }
-
-  .gate-rail {
-    position: absolute; top: 50%; left: 0; right: 0;
-    height: 4px; transform: translateY(-50%);
-    border-radius: 2px; background: rgba(255,255,255,0.06);
-  }
-
-  .gate-fill {
-    position: absolute; top: 0; left: 0; bottom: 0;
-    border-radius: 2px;
-    transition: width 800ms cubic-bezier(0.2,0.8,0.2,1);
-  }
-
-  .gate-fill.good { background: linear-gradient(90deg, var(--green), rgba(52,211,153,0.4)); }
-  .gate-fill.bad { background: linear-gradient(90deg, var(--red), rgba(248,113,113,0.3)); }
-  .gate-fill.amber { background: linear-gradient(90deg, var(--amber), rgba(251,191,36,0.3)); }
-
-  .gate-node {
-    position: absolute; top: 50%; transform: translate(-50%, -50%);
-    width: 24px; height: 24px; border-radius: 50%;
-    display: grid; place-items: center;
-    font-size: 9px; font-weight: 800; z-index: 2; border: 2px solid;
-  }
-
-  .gate-node.passed {
-    background: var(--green-g); border-color: var(--green); color: var(--green);
-  }
-
-  .gate-node.current {
-    border-color: var(--amber); background: var(--amber-g); color: var(--amber);
-    animation: gatePulse 2s ease-in-out infinite;
-  }
-
-  .gate-node.locked {
-    border-color: rgba(255,255,255,0.1);
-    background: rgba(255,255,255,0.03); color: var(--muted);
-  }
-
-  .gate-node.failed {
-    border-color: var(--red); background: var(--red-g); color: var(--red);
-  }
-
-  .gate-labels {
-    display: flex; justify-content: space-between; margin-top: 6px;
-  }
-
-  .gate-label {
-    font-size: 9px; font-weight: 600;
-    letter-spacing: 0.06em; text-transform: uppercase;
-    color: var(--muted); text-align: center; width: 60px;
-  }
-
-  .gate-label.active { color: var(--amber); }
-  .gate-label.fail { color: var(--red); }
-
-  .gate-eta {
-    text-align: center; font-size: 11px;
-    color: var(--muted); margin-top: 4px;
-  }
-
-  .gate-eta strong { color: var(--amber); font-weight: 700; }
-  .gate-eta .fail { color: var(--red); }
-
-  .timestamp {
-    text-align: center; font-size: 11px;
-    color: var(--muted); margin-top: 16px; padding-bottom: 24px;
-  }
-
-  .live-dot {
-    display: inline-block; width: 6px; height: 6px;
-    border-radius: 50%; background: var(--green);
-    margin-right: 6px; animation: livePulse 2s ease-in-out infinite;
-  }
-
-  @keyframes neonFlowRight {
-    0% { left: -50%; opacity: 0; }
-    15% { opacity: 0.8; }
-    85% { opacity: 0.6; }
-    100% { left: 110%; opacity: 0; }
-  }
-
-  @keyframes neonFlowLeft {
-    0% { right: -50%; opacity: 0; }
-    15% { opacity: 0.7; }
-    85% { opacity: 0.5; }
-    100% { right: 110%; opacity: 0; }
-  }
-
-  @keyframes orbRight {
-    0% { left: -5%; opacity: 0; }
-    10% { opacity: 1; }
-    90% { opacity: 0.8; }
-    100% { left: 105%; opacity: 0; }
-  }
-
-  @keyframes orbLeft {
-    0% { right: -5%; opacity: 0; }
-    10% { opacity: 1; }
-    90% { opacity: 0.7; }
-    100% { right: 105%; opacity: 0; }
-  }
-
-  @keyframes gatePulse {
-    0%, 100% { box-shadow: 0 0 0 rgba(251,191,36,0); }
-    50% { box-shadow: 0 0 12px rgba(251,191,36,0.3); }
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: none; }
-  }
-
-  @keyframes livePulse {
-    0%, 100% { opacity: 0.4; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.3); }
+  .line strong { color: var(--text); }
+  @media (max-width: 680px) {
+    .grid { grid-template-columns: repeat(2, 1fr); }
   }
 </style>
 </head>
 <body>
-
-  <div class="venue-toggle">
-    <button class="vt-btn hl active" onclick="showVenue('hl')">
-      HL <span class="vt-pnl" id="hl-tab-pnl"></span>
-    </button>
-    <button class="vt-btn dx" onclick="showVenue('dx')">
-      DX <span class="vt-pnl" id="dx-tab-pnl"></span>
-    </button>
+  <div class="shell">
+    <section class="hero">
+      <h1>Battle Royale Arena</h1>
+      <p>snapshot 7.0h ago | error | next in 30m | 30m cadence</p>
+    </section>
+    <div class="tabs" id="tabs"></div>
+    <div id="venues"></div>
   </div>
-
-  <div class="venue-swiper" id="swiper">
-    <div class="venue-page" id="hl-page"><div class="spacer"></div></div>
-    <div class="venue-page" id="dx-page"><div class="spacer"></div></div>
-  </div>
-
   <script>
-    var SNAPSHOT = {
-  "generated_at": "2026-04-16T10:51:16.902658+00:00",
-  "config_path": "C:\\Users\\God level Mode\\Claude Projects\\Decentralised Trading\\config\\battle_royale.json",
-  "registry_path": "C:\\Users\\God level Mode\\Claude Projects\\Decentralised Trading\\data\\battle_royale_registry.json",
-  "stage_policies": {
-    "stage1": {
-      "label": "Stage 1 constrained",
-      "min_hours": 24.0,
-      "require_beats_champion": false,
-      "promotion_target": "advance-stage2"
-    },
-    "stage2": {
-      "label": "Stage 2 compositional",
-      "min_hours": 72.0,
-      "require_beats_champion": true,
-      "promotion_target": "shadow"
-    },
-    "stage3": {
-      "label": "Stage 3 open invention",
-      "min_hours": 168.0,
-      "require_beats_champion": true,
-      "promotion_target": "live-filter"
-    }
-  },
+    const VIEW = {
   "venues": [
     {
       "venue": "HL",
-      "generated_at": "2026-04-16T10:51:16.902658+00:00",
       "days": 30,
-      "account_start": 150.0,
-      "primary_account_start": 150.0,
-      "account_starts": [
-        150.0,
-        500.0
-      ],
-      "coins": [
-        "BTC",
-        "ETH",
-        "SOL"
-      ],
-      "asset_ownership_rules": {
-        "min_trades": 3,
-        "min_net_pnl": 0.0,
-        "min_profit_factor": 1.0,
-        "require_more_wins_than_losses": true
-      },
-      "promotion_rules": {
-        "min_net_pnl": 0.0,
-        "min_profit_factor": 1.05,
-        "max_drawdown_pct": 0.12,
-        "min_trades": 8,
-        "require_more_wins_than_losses": true
-      },
-      "session_leaders": {
-        "1d": {
-          "case_id": "hl_challenger_scalper_review",
-          "nickname": "Spark Chaser",
-          "arena_badge": "[HOT]",
-          "arena_title": "Hot Streak",
-          "net_pnl": 5.991972796126334,
-          "wins": 2,
-          "losses": 0
-        },
-        "3d": {
-          "case_id": "hl_challenger_scalper_review",
-          "nickname": "Spark Chaser",
-          "arena_badge": "[HOT]",
-          "arena_title": "Hot Streak",
-          "net_pnl": 21.4445470296743,
-          "wins": 8,
-          "losses": 0
-        },
-        "7d": {
-          "case_id": "hl_challenger_scalper_review",
-          "nickname": "Spark Chaser",
-          "arena_badge": "[HOT]",
-          "arena_title": "Hot Streak",
-          "net_pnl": 28.107949465730858,
-          "wins": 12,
-          "losses": 2
-        }
-      },
-      "rotation_status": {
-        "enabled": true,
-        "active_agent_cases": 5,
-        "max_agent_cases": 5,
-        "free_agent_slots": 0,
-        "requested_group_count": 5,
-        "active_group_count": 3,
-        "requested_groups": [
-          "hl_donchian_adx_short_batch_v1",
-          "hl_breakout_scalper_v3_batch_v1",
-          "hl_supertrend_rsi_batch_v1",
-          "hl_oi_velocity_reclaim_reserve_batch_v1",
-          "hl_regime_rotation_reserve_batch_v1"
-        ],
-        "active_groups": [
-          "hl_donchian_adx_short_batch_v1",
-          "hl_oi_velocity_reclaim_reserve_batch_v1",
-          "hl_regime_rotation_reserve_batch_v1"
-        ],
-        "benched_case_count": 5,
-        "benched_groups": [
-          "hl_breakout_scalper_v3_batch_v1",
-          "hl_oi_velocity_reclaim_reserve_batch_v1",
-          "hl_supertrend_rsi_batch_v1"
-        ]
-      },
-      "replenishment_status": {
-        "enabled": true,
-        "state": "active",
-        "queue_size": 2,
-        "seeded_count": 2,
-        "active_seeded_count": 2,
-        "seeded_groups": [
-          "hl_oi_velocity_reclaim_reserve_batch_v1",
-          "hl_regime_rotation_reserve_batch_v1"
-        ],
-        "active_seeded_groups": [
-          "hl_oi_velocity_reclaim_reserve_batch_v1",
-          "hl_regime_rotation_reserve_batch_v1"
-        ],
-        "pending_groups": [],
-        "next_group": "",
-        "next_label": ""
-      },
-      "duplicate_rejections": [],
-      "leaderboard": [
+      "focus_label": "HL live path",
+      "strategy_summary": "HL live path: target dip_rip; track dip_rip, oi_filter, directional",
+      "rows": [
         {
           "rank": 1,
           "case_id": "hl_champion_dip_rip_current",
@@ -738,7 +407,8 @@
                 }
               }
             }
-          }
+          },
+          "stage_gate_label": "S3 gate 52h"
         },
         {
           "rank": 2,
@@ -965,224 +635,8 @@
                 }
               }
             }
-          }
-        },
-        {
-          "rank": 3,
-          "case_id": "hl_challenger_grid_trailing_ex_btc",
-          "role": "challenger",
-          "family": "grid",
-          "base_strategy": "grid",
-          "stage": "stage2",
-          "stage_label": "Stage 2 compositional",
-          "fingerprint": "hl|grid|trailing|ex_btc|eth_sol|v1",
-          "mutation_summary": "Trend-adaptive trailing grid for ETH/SOL only.",
-          "description": "Drift Ladder variant that drops BTC so the arena can isolate the stronger HL grid pair on ETH and SOL.",
-          "nickname": "Drift Ladder Duo",
-          "coin_universe": [
-            "ETH",
-            "SOL"
-          ],
-          "coverage_targets": [
-            "ETH",
-            "SOL"
-          ],
-          "invention_spec": null,
-          "verdict": "keep-testing",
-          "beats_champion": false,
-          "promotion_pass": true,
-          "lifecycle_state": "active",
-          "promotion_target": "hold",
-          "time_floor_met": false,
-          "elapsed_hours": 53.863183909166665,
-          "stage_floor_hours": 72.0,
-          "hours_to_floor": 18.136816090833335,
-          "arena_badge": "[LIVE]",
-          "arena_title": "Live Wire",
-          "score": {
-            "net_pnl": 20.839933043613087,
-            "total_pnl": 22.864252925179187,
-            "total_fees": 4.048639763131832,
-            "return_pct": 0.13893288695742056,
-            "total_trades": 681,
-            "wins": 632,
-            "losses": 49,
-            "win_rate": 0.9280469897209985,
-            "win_loss_gap": 583,
-            "profit_factor": 1.4868596428790266,
-            "max_drawdown_pct": 0.07493329907735197,
-            "avg_rr": 0.0,
-            "best_trade": 0.45827161290339496,
-            "worst_trade": -2.6277138217621943,
-            "long_pnl": 16.810770741813943,
-            "short_pnl": 6.053482183365245
           },
-          "coverage": {
-            "requested_assets": [
-              "ETH",
-              "SOL"
-            ],
-            "traded_assets": [
-              "ETH",
-              "SOL"
-            ],
-            "profitable_assets": [
-              "ETH",
-              "SOL"
-            ],
-            "owned_assets": [
-              "ETH",
-              "SOL"
-            ],
-            "watch_assets": [],
-            "weak_assets": [],
-            "coverage_ratio": 1.0,
-            "profitable_coverage_ratio": 1.0,
-            "owned_ratio": 1.0,
-            "coverage_bonus": 1.75,
-            "asset_scores": [
-              {
-                "asset": "ETH",
-                "trades": 346,
-                "wins": 323,
-                "losses": 23,
-                "net_pnl": 14.262439909009164,
-                "profit_factor": 1.610452668634997
-              },
-              {
-                "asset": "SOL",
-                "trades": 335,
-                "wins": 309,
-                "losses": 26,
-                "net_pnl": 8.601813016170043,
-                "profit_factor": 1.3644989179555735
-              }
-            ]
-          },
-          "session_scores": {
-            "1d": {
-              "net_pnl": 0.6962492816659274,
-              "total_trades": 37,
-              "wins": 28,
-              "losses": 9,
-              "win_rate": 0.7567567567567568,
-              "profit_factor": 1.2971635627560425
-            },
-            "3d": {
-              "net_pnl": -7.986126867563709,
-              "total_trades": 95,
-              "wins": 78,
-              "losses": 17,
-              "win_rate": 0.8210526315789474,
-              "profit_factor": 0.5380082658772825
-            },
-            "7d": {
-              "net_pnl": 1.2451256708505838,
-              "total_trades": 171,
-              "wins": 154,
-              "losses": 17,
-              "win_rate": 0.9005847953216374,
-              "profit_factor": 1.072029630560134
-            }
-          },
-          "bankroll_scores": {
-            "150": {
-              "account_start": 150.0,
-              "promotion_pass": true,
-              "score": {
-                "net_pnl": 20.839933043613087,
-                "total_pnl": 22.864252925179187,
-                "total_fees": 4.048639763131832,
-                "return_pct": 0.13893288695742056,
-                "total_trades": 681,
-                "wins": 632,
-                "losses": 49,
-                "win_rate": 0.9280469897209985,
-                "win_loss_gap": 583,
-                "profit_factor": 1.4868596428790266,
-                "max_drawdown_pct": 0.07493329907735197,
-                "avg_rr": 0.0,
-                "best_trade": 0.45827161290339496,
-                "worst_trade": -2.6277138217621943,
-                "long_pnl": 16.810770741813943,
-                "short_pnl": 6.053482183365245
-              },
-              "session_scores": {
-                "1d": {
-                  "net_pnl": 0.6962492816659274,
-                  "total_trades": 37,
-                  "wins": 28,
-                  "losses": 9,
-                  "win_rate": 0.7567567567567568,
-                  "profit_factor": 1.2971635627560425
-                },
-                "3d": {
-                  "net_pnl": -7.986126867563709,
-                  "total_trades": 95,
-                  "wins": 78,
-                  "losses": 17,
-                  "win_rate": 0.8210526315789474,
-                  "profit_factor": 0.5380082658772825
-                },
-                "7d": {
-                  "net_pnl": 1.2451256708505838,
-                  "total_trades": 171,
-                  "wins": 154,
-                  "losses": 17,
-                  "win_rate": 0.9005847953216374,
-                  "profit_factor": 1.072029630560134
-                }
-              }
-            },
-            "500": {
-              "account_start": 500.0,
-              "promotion_pass": true,
-              "score": {
-                "net_pnl": 69.4664434787112,
-                "total_pnl": 76.21417641726403,
-                "total_fees": 13.495465877106117,
-                "return_pct": 0.1389328869574224,
-                "total_trades": 681,
-                "wins": 632,
-                "losses": 49,
-                "win_rate": 0.9280469897209985,
-                "win_loss_gap": 583,
-                "profit_factor": 1.4868596428790268,
-                "max_drawdown_pct": 0.07493329907735184,
-                "avg_rr": 0.0,
-                "best_trade": 1.527572043011316,
-                "worst_trade": -8.759046072540661,
-                "long_pnl": 56.03590247271324,
-                "short_pnl": 20.17827394455079
-              },
-              "session_scores": {
-                "1d": {
-                  "net_pnl": 2.3208309388864254,
-                  "total_trades": 37,
-                  "wins": 28,
-                  "losses": 9,
-                  "win_rate": 0.7567567567567568,
-                  "profit_factor": 1.2971635627560418
-                },
-                "3d": {
-                  "net_pnl": -26.62042289187908,
-                  "total_trades": 95,
-                  "wins": 78,
-                  "losses": 17,
-                  "win_rate": 0.8210526315789474,
-                  "profit_factor": 0.5380082658772823
-                },
-                "7d": {
-                  "net_pnl": 4.1504189028352805,
-                  "total_trades": 171,
-                  "wins": 154,
-                  "losses": 17,
-                  "win_rate": 0.9005847953216374,
-                  "profit_factor": 1.0720296305601338
-                }
-              }
-            }
-          }
+          "stage_gate_label": "S1 ready -> S2"
         },
         {
           "rank": 4,
@@ -1413,238 +867,8 @@
                 }
               }
             }
-          }
-        },
-        {
-          "rank": 5,
-          "case_id": "hl_challenger_grid_trailing",
-          "role": "challenger",
-          "family": "grid",
-          "base_strategy": "grid",
-          "stage": "stage2",
-          "stage_label": "Stage 2 compositional",
-          "fingerprint": "hl|grid|trailing|v1",
-          "mutation_summary": "Trend-adaptive trailing grid for Hyperliquid majors.",
-          "description": "HL trailing grid chosen because it materially outperformed the safer static grids while keeping a strong win rate and acceptable drawdown.",
-          "nickname": "Drift Ladder",
-          "coin_universe": [
-            "BTC",
-            "ETH",
-            "SOL"
-          ],
-          "coverage_targets": [
-            "BTC",
-            "ETH",
-            "SOL"
-          ],
-          "invention_spec": null,
-          "verdict": "keep-testing",
-          "beats_champion": false,
-          "promotion_pass": true,
-          "lifecycle_state": "probation",
-          "promotion_target": "hold",
-          "time_floor_met": false,
-          "elapsed_hours": 68.07315987555556,
-          "stage_floor_hours": 72.0,
-          "hours_to_floor": 3.926840124444439,
-          "arena_badge": "[ROPE]",
-          "arena_title": "On the Ropes",
-          "score": {
-            "net_pnl": 16.275710655950945,
-            "total_pnl": 18.07947803992017,
-            "total_fees": 3.6075347679384873,
-            "return_pct": 0.10850473770633963,
-            "total_trades": 917,
-            "wins": 851,
-            "losses": 66,
-            "win_rate": 0.9280261723009815,
-            "win_loss_gap": 785,
-            "profit_factor": 1.4089127250347797,
-            "max_drawdown_pct": 0.07013387470565167,
-            "avg_rr": 0.0,
-            "best_trade": 0.3055144086022635,
-            "worst_trade": -1.7518092145081314,
-            "long_pnl": 14.570795471443756,
-            "short_pnl": 3.5086825684764134
           },
-          "coverage": {
-            "requested_assets": [
-              "BTC",
-              "ETH",
-              "SOL"
-            ],
-            "traded_assets": [
-              "BTC",
-              "ETH",
-              "SOL"
-            ],
-            "profitable_assets": [
-              "BTC",
-              "ETH",
-              "SOL"
-            ],
-            "owned_assets": [
-              "BTC",
-              "ETH",
-              "SOL"
-            ],
-            "watch_assets": [],
-            "weak_assets": [],
-            "coverage_ratio": 1.0,
-            "profitable_coverage_ratio": 1.0,
-            "owned_ratio": 1.0,
-            "coverage_bonus": 1.75,
-            "asset_scores": [
-              {
-                "asset": "ETH",
-                "trades": 346,
-                "wins": 323,
-                "losses": 23,
-                "net_pnl": 9.508293272672782,
-                "profit_factor": 1.6104526686349971
-              },
-              {
-                "asset": "SOL",
-                "trades": 335,
-                "wins": 309,
-                "losses": 26,
-                "net_pnl": 5.734542010780032,
-                "profit_factor": 1.364498917955574
-              },
-              {
-                "asset": "BTC",
-                "trades": 236,
-                "wins": 219,
-                "losses": 17,
-                "net_pnl": 2.836642756467367,
-                "profit_factor": 1.219808609235538
-              }
-            ]
-          },
-          "session_scores": {
-            "1d": {
-              "net_pnl": 1.0875835669819236,
-              "total_trades": 49,
-              "wins": 39,
-              "losses": 10,
-              "win_rate": 0.7959183673469388,
-              "profit_factor": 1.6846497083683787
-            },
-            "3d": {
-              "net_pnl": -12.231673378422174,
-              "total_trades": 126,
-              "wins": 100,
-              "losses": 26,
-              "win_rate": 0.7936507936507936,
-              "profit_factor": 0.3809708961149334
-            },
-            "7d": {
-              "net_pnl": -5.299107215683428,
-              "total_trades": 214,
-              "wins": 188,
-              "losses": 26,
-              "win_rate": 0.8785046728971962,
-              "profit_factor": 0.7318190659912351
-            }
-          },
-          "bankroll_scores": {
-            "150": {
-              "account_start": 150.0,
-              "promotion_pass": true,
-              "score": {
-                "net_pnl": 16.275710655950945,
-                "total_pnl": 18.07947803992017,
-                "total_fees": 3.6075347679384873,
-                "return_pct": 0.10850473770633963,
-                "total_trades": 917,
-                "wins": 851,
-                "losses": 66,
-                "win_rate": 0.9280261723009815,
-                "win_loss_gap": 785,
-                "profit_factor": 1.4089127250347797,
-                "max_drawdown_pct": 0.07013387470565167,
-                "avg_rr": 0.0,
-                "best_trade": 0.3055144086022635,
-                "worst_trade": -1.7518092145081314,
-                "long_pnl": 14.570795471443756,
-                "short_pnl": 3.5086825684764134
-              },
-              "session_scores": {
-                "1d": {
-                  "net_pnl": 1.0875835669819236,
-                  "total_trades": 49,
-                  "wins": 39,
-                  "losses": 10,
-                  "win_rate": 0.7959183673469388,
-                  "profit_factor": 1.6846497083683787
-                },
-                "3d": {
-                  "net_pnl": -12.231673378422174,
-                  "total_trades": 126,
-                  "wins": 100,
-                  "losses": 26,
-                  "win_rate": 0.7936507936507936,
-                  "profit_factor": 0.3809708961149334
-                },
-                "7d": {
-                  "net_pnl": -5.299107215683428,
-                  "total_trades": 214,
-                  "wins": 188,
-                  "losses": 26,
-                  "win_rate": 0.8785046728971962,
-                  "profit_factor": 0.7318190659912351
-                }
-              }
-            },
-            "500": {
-              "account_start": 500.0,
-              "promotion_pass": true,
-              "score": {
-                "net_pnl": 54.25236885317054,
-                "total_pnl": 60.264926799733956,
-                "total_fees": 12.025115893128302,
-                "return_pct": 0.10850473770634107,
-                "total_trades": 917,
-                "wins": 851,
-                "losses": 66,
-                "win_rate": 0.9280261723009815,
-                "win_loss_gap": 785,
-                "profit_factor": 1.40891272503478,
-                "max_drawdown_pct": 0.07013387470565151,
-                "avg_rr": 0.0,
-                "best_trade": 1.0183813620075453,
-                "worst_trade": -5.839364048360446,
-                "long_pnl": 48.56931823814593,
-                "short_pnl": 11.69560856158802
-              },
-              "session_scores": {
-                "1d": {
-                  "net_pnl": 3.625278556606419,
-                  "total_trades": 49,
-                  "wins": 39,
-                  "losses": 10,
-                  "win_rate": 0.7959183673469388,
-                  "profit_factor": 1.6846497083683796
-                },
-                "3d": {
-                  "net_pnl": -40.772244594740656,
-                  "total_trades": 126,
-                  "wins": 100,
-                  "losses": 26,
-                  "win_rate": 0.7936507936507936,
-                  "profit_factor": 0.3809708961149333
-                },
-                "7d": {
-                  "net_pnl": -17.66369071894481,
-                  "total_trades": 214,
-                  "wins": 188,
-                  "losses": 26,
-                  "win_rate": 0.8785046728971962,
-                  "profit_factor": 0.7318190659912348
-                }
-              }
-            }
-          }
+          "stage_gate_label": "S2 gate 4h"
         },
         {
           "rank": 6,
@@ -1875,2254 +1099,245 @@
                 }
               }
             }
-          }
-        },
-        {
-          "rank": 7,
-          "case_id": "hl_agent_oi_reclaim_guard_v1",
-          "role": "challenger",
-          "family": "agent_stage3",
-          "base_strategy": "dip_rip",
-          "stage": "stage3",
-          "stage_label": "Stage 3 open invention",
-          "fingerprint": "hl|agent_stage3|dip_rip|oi_reclaim_guard_v1",
-          "mutation_summary": "Agent proposal: tighter HL OI guard with gentle strength scaling around dip_rip reclaims",
-          "description": "Stage 3 agent-proposed HL dip_rip variant using a tighter OI guard plus light strength scaling to reduce weak reclaim entries.",
-          "nickname": "Reclaim Warden",
-          "coin_universe": [
-            "BTC",
-            "ETH",
-            "SOL"
-          ],
-          "coverage_targets": [],
-          "invention_spec": null,
-          "verdict": "keep-testing",
-          "beats_champion": false,
-          "promotion_pass": true,
-          "lifecycle_state": "active",
-          "promotion_target": "hold",
-          "time_floor_met": false,
-          "elapsed_hours": 115.01428580027779,
-          "stage_floor_hours": 168.0,
-          "hours_to_floor": 52.98571419972221,
-          "arena_badge": "[HOT]",
-          "arena_title": "Hot Streak",
-          "score": {
-            "net_pnl": 14.878342462144843,
-            "total_pnl": 15.629815795478224,
-            "total_fees": 0.7514733333333335,
-            "return_pct": 0.09918894974763229,
-            "total_trades": 17,
-            "wins": 11,
-            "losses": 6,
-            "win_rate": 0.6470588235294118,
-            "win_loss_gap": 5,
-            "profit_factor": 1.5143626677607978,
-            "max_drawdown_pct": 0.11625202139718205,
-            "avg_rr": 0.6176408717678474,
-            "best_trade": 8.788397642400806,
-            "worst_trade": -5.0653333333333475,
-            "long_pnl": 28.768544389919374,
-            "short_pnl": -13.138728594441147
           },
-          "coverage": {
-            "requested_assets": [
-              "BTC",
-              "ETH",
-              "SOL"
-            ],
-            "traded_assets": [
-              "BTC",
-              "ETH",
-              "SOL"
-            ],
-            "profitable_assets": [
-              "ETH",
-              "SOL"
-            ],
-            "owned_assets": [
-              "ETH",
-              "SOL"
-            ],
-            "watch_assets": [],
-            "weak_assets": [
-              "BTC"
-            ],
-            "coverage_ratio": 1.0,
-            "profitable_coverage_ratio": 0.6666666666666666,
-            "owned_ratio": 0.6666666666666666,
-            "coverage_bonus": 1.25,
-            "asset_scores": [
-              {
-                "asset": "SOL",
-                "trades": 6,
-                "wins": 5,
-                "losses": 1,
-                "net_pnl": 16.660454369489337,
-                "profit_factor": 4.2891131290121
-              },
-              {
-                "asset": "ETH",
-                "trades": 5,
-                "wins": 4,
-                "losses": 1,
-                "net_pnl": 12.108090020430033,
-                "profit_factor": 3.3903836576263555
-              },
-              {
-                "asset": "BTC",
-                "trades": 6,
-                "wins": 2,
-                "losses": 4,
-                "net_pnl": -13.138728594441147,
-                "profit_factor": 0.3513691264559563
-              }
-            ]
-          },
-          "session_scores": {
-            "1d": {
-              "net_pnl": 3.6683837477056875,
-              "total_trades": 1,
-              "wins": 1,
-              "losses": 0,
-              "win_rate": 1.0,
-              "profit_factor": Infinity
-            },
-            "3d": {
-              "net_pnl": 8.834657461149401,
-              "total_trades": 4,
-              "wins": 3,
-              "losses": 1,
-              "win_rate": 0.75,
-              "profit_factor": 2.744870799895002
-            },
-            "7d": {
-              "net_pnl": 15.834031897540807,
-              "total_trades": 6,
-              "wins": 5,
-              "losses": 1,
-              "win_rate": 0.8333333333333334,
-              "profit_factor": 4.127267811357852
-            }
-          },
-          "bankroll_scores": {
-            "150": {
-              "account_start": 150.0,
-              "promotion_pass": true,
-              "score": {
-                "net_pnl": 14.878342462144843,
-                "total_pnl": 15.629815795478224,
-                "total_fees": 0.7514733333333335,
-                "return_pct": 0.09918894974763229,
-                "total_trades": 17,
-                "wins": 11,
-                "losses": 6,
-                "win_rate": 0.6470588235294118,
-                "win_loss_gap": 5,
-                "profit_factor": 1.5143626677607978,
-                "max_drawdown_pct": 0.11625202139718205,
-                "avg_rr": 0.6176408717678474,
-                "best_trade": 8.788397642400806,
-                "worst_trade": -5.0653333333333475,
-                "long_pnl": 28.768544389919374,
-                "short_pnl": -13.138728594441147
-              },
-              "session_scores": {
-                "1d": {
-                  "net_pnl": 3.6683837477056875,
-                  "total_trades": 1,
-                  "wins": 1,
-                  "losses": 0,
-                  "win_rate": 1.0,
-                  "profit_factor": Infinity
-                },
-                "3d": {
-                  "net_pnl": 8.834657461149401,
-                  "total_trades": 4,
-                  "wins": 3,
-                  "losses": 1,
-                  "win_rate": 0.75,
-                  "profit_factor": 2.744870799895002
-                },
-                "7d": {
-                  "net_pnl": 15.834031897540807,
-                  "total_trades": 6,
-                  "wins": 5,
-                  "losses": 1,
-                  "win_rate": 0.8333333333333334,
-                  "profit_factor": 4.127267811357852
-                }
-              }
-            },
-            "500": {
-              "account_start": 500.0,
-              "promotion_pass": true,
-              "score": {
-                "net_pnl": 14.878342462144815,
-                "total_pnl": 15.629815795478224,
-                "total_fees": 0.7514733333333335,
-                "return_pct": 0.02975668492428963,
-                "total_trades": 17,
-                "wins": 11,
-                "losses": 6,
-                "win_rate": 0.6470588235294118,
-                "win_loss_gap": 5,
-                "profit_factor": 1.5143626677607978,
-                "max_drawdown_pct": 0.03641425990675219,
-                "avg_rr": 0.6176408717678474,
-                "best_trade": 8.788397642400806,
-                "worst_trade": -5.0653333333333475,
-                "long_pnl": 28.768544389919374,
-                "short_pnl": -13.138728594441147
-              },
-              "session_scores": {
-                "1d": {
-                  "net_pnl": 3.6683837477056875,
-                  "total_trades": 1,
-                  "wins": 1,
-                  "losses": 0,
-                  "win_rate": 1.0,
-                  "profit_factor": Infinity
-                },
-                "3d": {
-                  "net_pnl": 8.834657461149401,
-                  "total_trades": 4,
-                  "wins": 3,
-                  "losses": 1,
-                  "win_rate": 0.75,
-                  "profit_factor": 2.744870799895002
-                },
-                "7d": {
-                  "net_pnl": 15.834031897540807,
-                  "total_trades": 6,
-                  "wins": 5,
-                  "losses": 1,
-                  "win_rate": 0.8333333333333334,
-                  "profit_factor": 4.127267811357852
-                }
-              }
-            }
-          }
-        },
-        {
-          "rank": 8,
-          "case_id": "hl_challenger_oi_scale_balanced",
-          "role": "challenger",
-          "family": "oi_filter",
-          "base_strategy": "dip_rip",
-          "stage": "stage2",
-          "stage_label": "Stage 2 compositional",
-          "fingerprint": "hl|dip_rip|oi_scale_balanced|lb4",
-          "mutation_summary": "Balanced OI score-based sizing on HL dip_rip",
-          "description": "HL dip_rip with balanced OI score-based sizing proxy.",
-          "nickname": "Pulse Weaver",
-          "coin_universe": [
-            "BTC",
-            "ETH",
-            "SOL"
-          ],
-          "coverage_targets": [],
-          "invention_spec": null,
-          "verdict": "keep-testing",
-          "beats_champion": false,
-          "promotion_pass": true,
-          "lifecycle_state": "active",
-          "promotion_target": "hold",
-          "time_floor_met": true,
-          "elapsed_hours": 116.01164311361111,
-          "stage_floor_hours": 72.0,
-          "hours_to_floor": 0.0,
-          "arena_badge": "[HOT]",
-          "arena_title": "Hot Streak",
-          "score": {
-            "net_pnl": 10.915466940745745,
-            "total_pnl": 11.712020274079075,
-            "total_fees": 0.7965533333333334,
-            "return_pct": 0.07276977960497164,
-            "total_trades": 18,
-            "wins": 11,
-            "losses": 7,
-            "win_rate": 0.6111111111111112,
-            "win_loss_gap": 4,
-            "profit_factor": 1.339240585275286,
-            "max_drawdown_pct": 0.11676479902237484,
-            "avg_rr": 0.5578373556852644,
-            "best_trade": 9.023801150679397,
-            "worst_trade": -5.0670833333333345,
-            "long_pnl": 29.360077889059045,
-            "short_pnl": -17.648057614979972
-          },
-          "coverage": {
-            "requested_assets": [
-              "BTC",
-              "ETH",
-              "SOL"
-            ],
-            "traded_assets": [
-              "BTC",
-              "ETH",
-              "SOL"
-            ],
-            "profitable_assets": [
-              "ETH",
-              "SOL"
-            ],
-            "owned_assets": [
-              "ETH",
-              "SOL"
-            ],
-            "watch_assets": [],
-            "weak_assets": [
-              "BTC"
-            ],
-            "coverage_ratio": 1.0,
-            "profitable_coverage_ratio": 0.6666666666666666,
-            "owned_ratio": 0.6666666666666666,
-            "coverage_bonus": 1.25,
-            "asset_scores": [
-              {
-                "asset": "ETH",
-                "trades": 5,
-                "wins": 4,
-                "losses": 1,
-                "net_pnl": 12.401937338234255,
-                "profit_factor": 3.4475495116982326
-              },
-              {
-                "asset": "SOL",
-                "trades": 7,
-                "wins": 5,
-                "losses": 2,
-                "net_pnl": 12.386418884158125,
-                "profit_factor": 2.2850575236409627
-              },
-              {
-                "asset": "BTC",
-                "trades": 6,
-                "wins": 2,
-                "losses": 4,
-                "net_pnl": -13.076335948313307,
-                "profit_factor": 0.3401902329464079
-              }
-            ]
-          },
-          "session_scores": {
-            "1d": {
-              "net_pnl": 3.7260570698667275,
-              "total_trades": 1,
-              "wins": 1,
-              "losses": 0,
-              "win_rate": 1.0,
-              "profit_factor": Infinity
-            },
-            "3d": {
-              "net_pnl": 4.5912708009324446,
-              "total_trades": 5,
-              "wins": 3,
-              "losses": 2,
-              "win_rate": 0.6,
-              "profit_factor": 1.476357897978938
-            },
-            "7d": {
-              "net_pnl": 11.522578846551287,
-              "total_trades": 7,
-              "wins": 5,
-              "losses": 2,
-              "win_rate": 0.7142857142857143,
-              "profit_factor": 2.195501567349285
-            }
-          },
-          "bankroll_scores": {
-            "150": {
-              "account_start": 150.0,
-              "promotion_pass": true,
-              "score": {
-                "net_pnl": 10.915466940745745,
-                "total_pnl": 11.712020274079075,
-                "total_fees": 0.7965533333333334,
-                "return_pct": 0.07276977960497164,
-                "total_trades": 18,
-                "wins": 11,
-                "losses": 7,
-                "win_rate": 0.6111111111111112,
-                "win_loss_gap": 4,
-                "profit_factor": 1.339240585275286,
-                "max_drawdown_pct": 0.11676479902237484,
-                "avg_rr": 0.5578373556852644,
-                "best_trade": 9.023801150679397,
-                "worst_trade": -5.0670833333333345,
-                "long_pnl": 29.360077889059045,
-                "short_pnl": -17.648057614979972
-              },
-              "session_scores": {
-                "1d": {
-                  "net_pnl": 3.7260570698667275,
-                  "total_trades": 1,
-                  "wins": 1,
-                  "losses": 0,
-                  "win_rate": 1.0,
-                  "profit_factor": Infinity
-                },
-                "3d": {
-                  "net_pnl": 4.5912708009324446,
-                  "total_trades": 5,
-                  "wins": 3,
-                  "losses": 2,
-                  "win_rate": 0.6,
-                  "profit_factor": 1.476357897978938
-                },
-                "7d": {
-                  "net_pnl": 11.522578846551287,
-                  "total_trades": 7,
-                  "wins": 5,
-                  "losses": 2,
-                  "win_rate": 0.7142857142857143,
-                  "profit_factor": 2.195501567349285
-                }
-              }
-            },
-            "500": {
-              "account_start": 500.0,
-              "promotion_pass": true,
-              "score": {
-                "net_pnl": 10.915466940745603,
-                "total_pnl": 11.712020274079075,
-                "total_fees": 0.7965533333333334,
-                "return_pct": 0.021830933881491207,
-                "total_trades": 18,
-                "wins": 11,
-                "losses": 7,
-                "win_rate": 0.6111111111111112,
-                "win_loss_gap": 4,
-                "profit_factor": 1.339240585275286,
-                "max_drawdown_pct": 0.03658983821630324,
-                "avg_rr": 0.5578373556852644,
-                "best_trade": 9.023801150679397,
-                "worst_trade": -5.0670833333333345,
-                "long_pnl": 29.360077889059045,
-                "short_pnl": -17.648057614979972
-              },
-              "session_scores": {
-                "1d": {
-                  "net_pnl": 3.7260570698667275,
-                  "total_trades": 1,
-                  "wins": 1,
-                  "losses": 0,
-                  "win_rate": 1.0,
-                  "profit_factor": Infinity
-                },
-                "3d": {
-                  "net_pnl": 4.5912708009324446,
-                  "total_trades": 5,
-                  "wins": 3,
-                  "losses": 2,
-                  "win_rate": 0.6,
-                  "profit_factor": 1.476357897978938
-                },
-                "7d": {
-                  "net_pnl": 11.522578846551287,
-                  "total_trades": 7,
-                  "wins": 5,
-                  "losses": 2,
-                  "win_rate": 0.7142857142857143,
-                  "profit_factor": 2.195501567349285
-                }
-              }
-            }
-          }
-        },
-        {
-          "rank": 9,
-          "case_id": "hl_challenger_grid_funding_arb",
-          "role": "challenger",
-          "family": "grid",
-          "base_strategy": "grid",
-          "stage": "stage2",
-          "stage_label": "Stage 2 compositional",
-          "fingerprint": "hl|grid|funding_arb|v1",
-          "mutation_summary": "Funding-aware carry grid for Hyperliquid majors.",
-          "description": "HL funding-aware grid picked for the strongest balance of win rate, drawdown, and zero kill-switch events in the first HL suite.",
-          "nickname": "Carry Current",
-          "coin_universe": [
-            "BTC",
-            "ETH",
-            "SOL"
-          ],
-          "coverage_targets": [
-            "BTC",
-            "ETH",
-            "SOL"
-          ],
-          "invention_spec": null,
-          "verdict": "keep-testing",
-          "beats_champion": false,
-          "promotion_pass": true,
-          "lifecycle_state": "active",
-          "promotion_target": "hold",
-          "time_floor_met": false,
-          "elapsed_hours": 68.07315987555556,
-          "stage_floor_hours": 72.0,
-          "hours_to_floor": 3.926840124444439,
-          "arena_badge": "[LIVE]",
-          "arena_title": "Live Wire",
-          "score": {
-            "net_pnl": 5.911208620765535,
-            "total_pnl": 4.586313830103032,
-            "total_fees": 0.5220972291637793,
-            "return_pct": 0.03940805747177024,
-            "total_trades": 140,
-            "wins": 123,
-            "losses": 17,
-            "win_rate": 0.8785714285714286,
-            "win_loss_gap": 106,
-            "profit_factor": 1.8071400576855903,
-            "max_drawdown_pct": 0.07966362015711977,
-            "avg_rr": 0.0,
-            "best_trade": 0.4021071003588848,
-            "worst_trade": -1.1273958050320565,
-            "long_pnl": 1.349360224169765,
-            "short_pnl": 3.2369536059332673
-          },
-          "coverage": {
-            "requested_assets": [
-              "BTC",
-              "ETH",
-              "SOL"
-            ],
-            "traded_assets": [
-              "BTC",
-              "ETH",
-              "SOL"
-            ],
-            "profitable_assets": [
-              "BTC",
-              "ETH"
-            ],
-            "owned_assets": [
-              "BTC",
-              "ETH"
-            ],
-            "watch_assets": [],
-            "weak_assets": [
-              "SOL"
-            ],
-            "coverage_ratio": 1.0,
-            "profitable_coverage_ratio": 0.6666666666666666,
-            "owned_ratio": 0.6666666666666666,
-            "coverage_bonus": 1.25,
-            "asset_scores": [
-              {
-                "asset": "BTC",
-                "trades": 67,
-                "wins": 63,
-                "losses": 4,
-                "net_pnl": 4.123583170692469,
-                "profit_factor": 5.257814876898355
-              },
-              {
-                "asset": "ETH",
-                "trades": 46,
-                "wins": 37,
-                "losses": 9,
-                "net_pnl": 2.2969580602915154,
-                "profit_factor": 2.8606552692469918
-              },
-              {
-                "asset": "SOL",
-                "trades": 27,
-                "wins": 23,
-                "losses": 4,
-                "net_pnl": -1.8342274008809512,
-                "profit_factor": 0.4728043314799902
-              }
-            ]
-          },
-          "session_scores": {
-            "1d": {
-              "net_pnl": -4.797659312309188,
-              "total_trades": 39,
-              "wins": 22,
-              "losses": 17,
-              "win_rate": 0.5641025641025641,
-              "profit_factor": 0.1556654957460569
-            },
-            "3d": {
-              "net_pnl": -2.486619999909509,
-              "total_trades": 69,
-              "wins": 52,
-              "losses": 17,
-              "win_rate": 0.7536231884057971,
-              "profit_factor": 0.562382626981282
-            },
-            "7d": {
-              "net_pnl": 0.06459449301785522,
-              "total_trades": 92,
-              "wins": 75,
-              "losses": 17,
-              "win_rate": 0.8152173913043478,
-              "profit_factor": 1.0113679099930744
-            }
-          },
-          "bankroll_scores": {
-            "150": {
-              "account_start": 150.0,
-              "promotion_pass": true,
-              "score": {
-                "net_pnl": 5.911208620765535,
-                "total_pnl": 4.586313830103032,
-                "total_fees": 0.5220972291637793,
-                "return_pct": 0.03940805747177024,
-                "total_trades": 140,
-                "wins": 123,
-                "losses": 17,
-                "win_rate": 0.8785714285714286,
-                "win_loss_gap": 106,
-                "profit_factor": 1.8071400576855903,
-                "max_drawdown_pct": 0.07966362015711977,
-                "avg_rr": 0.0,
-                "best_trade": 0.4021071003588848,
-                "worst_trade": -1.1273958050320565,
-                "long_pnl": 1.349360224169765,
-                "short_pnl": 3.2369536059332673
-              },
-              "session_scores": {
-                "1d": {
-                  "net_pnl": -4.797659312309188,
-                  "total_trades": 39,
-                  "wins": 22,
-                  "losses": 17,
-                  "win_rate": 0.5641025641025641,
-                  "profit_factor": 0.1556654957460569
-                },
-                "3d": {
-                  "net_pnl": -2.486619999909509,
-                  "total_trades": 69,
-                  "wins": 52,
-                  "losses": 17,
-                  "win_rate": 0.7536231884057971,
-                  "profit_factor": 0.562382626981282
-                },
-                "7d": {
-                  "net_pnl": 0.06459449301785522,
-                  "total_trades": 92,
-                  "wins": 75,
-                  "losses": 17,
-                  "win_rate": 0.8152173913043478,
-                  "profit_factor": 1.0113679099930744
-                }
-              }
-            },
-            "500": {
-              "account_start": 500.0,
-              "promotion_pass": true,
-              "score": {
-                "net_pnl": 19.70402873588546,
-                "total_pnl": 15.287712767010138,
-                "total_fees": 1.7403240972126053,
-                "return_pct": 0.03940805747177092,
-                "total_trades": 140,
-                "wins": 123,
-                "losses": 17,
-                "win_rate": 0.8785714285714286,
-                "win_loss_gap": 106,
-                "profit_factor": 1.8071400576855883,
-                "max_drawdown_pct": 0.07966362015712326,
-                "avg_rr": 0.0,
-                "best_trade": 1.3403570011962842,
-                "worst_trade": -3.757986016773524,
-                "long_pnl": 4.497867413899243,
-                "short_pnl": 10.789845353110895
-              },
-              "session_scores": {
-                "1d": {
-                  "net_pnl": -15.992197707697356,
-                  "total_trades": 39,
-                  "wins": 22,
-                  "losses": 17,
-                  "win_rate": 0.5641025641025641,
-                  "profit_factor": 0.15566549574605745
-                },
-                "3d": {
-                  "net_pnl": -8.288733333031745,
-                  "total_trades": 69,
-                  "wins": 52,
-                  "losses": 17,
-                  "win_rate": 0.7536231884057971,
-                  "profit_factor": 0.5623826269812817
-                },
-                "7d": {
-                  "net_pnl": 0.2153149767261886,
-                  "total_trades": 92,
-                  "wins": 75,
-                  "losses": 17,
-                  "win_rate": 0.8152173913043478,
-                  "profit_factor": 1.0113679099930746
-                }
-              }
-            }
-          }
-        },
-        {
-          "rank": 10,
-          "case_id": "hl_challenger_grid_neutral",
-          "role": "challenger",
-          "family": "grid",
-          "base_strategy": "grid",
-          "stage": "stage2",
-          "stage_label": "Stage 2 compositional",
-          "fingerprint": "hl|grid|neutral|v1",
-          "mutation_summary": "Sideways maker-style neutral grid for Hyperliquid majors.",
-          "description": "HL neutral grid challenger added to compare a true two-sided range ladder against the carry and trailing variants.",
-          "nickname": "Range Tide",
-          "coin_universe": [
-            "BTC",
-            "ETH",
-            "SOL"
-          ],
-          "coverage_targets": [
-            "BTC",
-            "ETH",
-            "SOL"
-          ],
-          "invention_spec": null,
-          "verdict": "keep-testing",
-          "beats_champion": false,
-          "promotion_pass": true,
-          "lifecycle_state": "active",
-          "promotion_target": "hold",
-          "time_floor_met": false,
-          "elapsed_hours": 63.70946418333333,
-          "stage_floor_hours": 72.0,
-          "hours_to_floor": 8.290535816666669,
-          "arena_badge": "[LIVE]",
-          "arena_title": "Live Wire",
-          "score": {
-            "net_pnl": 3.109164953094762,
-            "total_pnl": 3.4062151995234355,
-            "total_fees": 0.5941004928572547,
-            "return_pct": 0.02072776635396508,
-            "total_trades": 155,
-            "wins": 143,
-            "losses": 12,
-            "win_rate": 0.9225806451612903,
-            "win_loss_gap": 131,
-            "profit_factor": 1.648793933090293,
-            "max_drawdown_pct": 0.10531063415182797,
-            "avg_rr": 0.0,
-            "best_trade": 0.2783791703840388,
-            "worst_trade": -0.9075637696963719,
-            "long_pnl": -0.07338774487707367,
-            "short_pnl": 3.479602944400509
-          },
-          "coverage": {
-            "requested_assets": [
-              "BTC",
-              "ETH",
-              "SOL"
-            ],
-            "traded_assets": [
-              "BTC",
-              "ETH",
-              "SOL"
-            ],
-            "profitable_assets": [
-              "BTC",
-              "ETH"
-            ],
-            "owned_assets": [
-              "BTC",
-              "ETH"
-            ],
-            "watch_assets": [],
-            "weak_assets": [
-              "SOL"
-            ],
-            "coverage_ratio": 1.0,
-            "profitable_coverage_ratio": 0.6666666666666666,
-            "owned_ratio": 0.6666666666666666,
-            "coverage_bonus": 1.25,
-            "asset_scores": [
-              {
-                "asset": "BTC",
-                "trades": 66,
-                "wins": 64,
-                "losses": 2,
-                "net_pnl": 3.072629983826191,
-                "profit_factor": 7.2929568934006825
-              },
-              {
-                "asset": "ETH",
-                "trades": 61,
-                "wins": 56,
-                "losses": 5,
-                "net_pnl": 2.922333015313595,
-                "profit_factor": 5.244339296069301
-              },
-              {
-                "asset": "SOL",
-                "trades": 28,
-                "wins": 23,
-                "losses": 5,
-                "net_pnl": -2.588747799616351,
-                "profit_factor": 0.36445664643427844
-              }
-            ]
-          },
-          "session_scores": {
-            "1d": {
-              "net_pnl": -3.606232627987152,
-              "total_trades": 41,
-              "wins": 29,
-              "losses": 12,
-              "win_rate": 0.7073170731707317,
-              "profit_factor": 0.31310803537084925
-            },
-            "3d": {
-              "net_pnl": -0.9300571198555804,
-              "total_trades": 80,
-              "wins": 68,
-              "losses": 12,
-              "win_rate": 0.85,
-              "profit_factor": 0.8228487099481689
-            },
-            "7d": {
-              "net_pnl": 0.2832055793448221,
-              "total_trades": 102,
-              "wins": 90,
-              "losses": 12,
-              "win_rate": 0.8823529411764706,
-              "profit_factor": 1.0539431747359795
-            }
-          },
-          "bankroll_scores": {
-            "150": {
-              "account_start": 150.0,
-              "promotion_pass": true,
-              "score": {
-                "net_pnl": 3.109164953094762,
-                "total_pnl": 3.4062151995234355,
-                "total_fees": 0.5941004928572547,
-                "return_pct": 0.02072776635396508,
-                "total_trades": 155,
-                "wins": 143,
-                "losses": 12,
-                "win_rate": 0.9225806451612903,
-                "win_loss_gap": 131,
-                "profit_factor": 1.648793933090293,
-                "max_drawdown_pct": 0.10531063415182797,
-                "avg_rr": 0.0,
-                "best_trade": 0.2783791703840388,
-                "worst_trade": -0.9075637696963719,
-                "long_pnl": -0.07338774487707367,
-                "short_pnl": 3.479602944400509
-              },
-              "session_scores": {
-                "1d": {
-                  "net_pnl": -3.606232627987152,
-                  "total_trades": 41,
-                  "wins": 29,
-                  "losses": 12,
-                  "win_rate": 0.7073170731707317,
-                  "profit_factor": 0.31310803537084925
-                },
-                "3d": {
-                  "net_pnl": -0.9300571198555804,
-                  "total_trades": 80,
-                  "wins": 68,
-                  "losses": 12,
-                  "win_rate": 0.85,
-                  "profit_factor": 0.8228487099481689
-                },
-                "7d": {
-                  "net_pnl": 0.2832055793448221,
-                  "total_trades": 102,
-                  "wins": 90,
-                  "losses": 12,
-                  "win_rate": 0.8823529411764706,
-                  "profit_factor": 1.0539431747359795
-                }
-              }
-            },
-            "500": {
-              "account_start": 500.0,
-              "promotion_pass": true,
-              "score": {
-                "net_pnl": 10.363883176982426,
-                "total_pnl": 11.354050665078118,
-                "total_fees": 1.9803349761908486,
-                "return_pct": 0.020727766353964852,
-                "total_trades": 155,
-                "wins": 143,
-                "losses": 12,
-                "win_rate": 0.9225806451612903,
-                "win_loss_gap": 131,
-                "profit_factor": 1.6487939330902932,
-                "max_drawdown_pct": 0.1053106341518277,
-                "avg_rr": 0.0,
-                "best_trade": 0.9279305679467967,
-                "worst_trade": -3.0252125656545714,
-                "long_pnl": -0.2446258162569145,
-                "short_pnl": 11.598676481335033
-              },
-              "session_scores": {
-                "1d": {
-                  "net_pnl": -12.020775426623835,
-                  "total_trades": 41,
-                  "wins": 29,
-                  "losses": 12,
-                  "win_rate": 0.7073170731707317,
-                  "profit_factor": 0.31310803537084936
-                },
-                "3d": {
-                  "net_pnl": -3.100190399518598,
-                  "total_trades": 80,
-                  "wins": 68,
-                  "losses": 12,
-                  "win_rate": 0.85,
-                  "profit_factor": 0.822848709948169
-                },
-                "7d": {
-                  "net_pnl": 0.9440185978160757,
-                  "total_trades": 102,
-                  "wins": 90,
-                  "losses": 12,
-                  "win_rate": 0.8823529411764706,
-                  "profit_factor": 1.0539431747359798
-                }
-              }
-            }
-          }
-        },
-        {
-          "rank": 11,
-          "case_id": "hl_challenger_sweep_short_helper",
-          "role": "challenger",
-          "family": "liquidity_sweep",
-          "base_strategy": "liquidity_sweep",
-          "stage": "stage1",
-          "stage_label": "Stage 1 constrained",
-          "fingerprint": "hl|liquidity_sweep|short_helper|full_contender",
-          "mutation_summary": "HL helper-only liquidity sweep treated as contender",
-          "description": "HL short-only liquidity_sweep helper treated as a full contender.",
-          "nickname": "Night Hook",
-          "coin_universe": [
-            "BTC",
-            "ETH",
-            "SOL"
-          ],
-          "coverage_targets": [],
-          "invention_spec": null,
-          "verdict": "research-only",
-          "beats_champion": false,
-          "promotion_pass": false,
-          "lifecycle_state": "probation",
-          "promotion_target": "hold",
-          "time_floor_met": true,
-          "elapsed_hours": 116.01164311361111,
-          "stage_floor_hours": 24.0,
-          "hours_to_floor": 0.0,
-          "arena_badge": "[ROPE]",
-          "arena_title": "On the Ropes",
-          "score": {
-            "net_pnl": 0.0,
-            "total_pnl": 0.0,
-            "total_fees": 0.0,
-            "return_pct": 0.0,
-            "total_trades": 0,
-            "wins": 0,
-            "losses": 0,
-            "win_rate": 0.0,
-            "win_loss_gap": 0,
-            "profit_factor": 0.0,
-            "max_drawdown_pct": 0.0,
-            "avg_rr": 0.0,
-            "best_trade": 0.0,
-            "worst_trade": 0.0,
-            "long_pnl": 0.0,
-            "short_pnl": 0.0
-          },
-          "coverage": {
-            "requested_assets": [
-              "BTC",
-              "ETH",
-              "SOL"
-            ],
-            "traded_assets": [],
-            "profitable_assets": [],
-            "owned_assets": [],
-            "watch_assets": [],
-            "weak_assets": [
-              "BTC",
-              "ETH",
-              "SOL"
-            ],
-            "coverage_ratio": 0.0,
-            "profitable_coverage_ratio": 0.0,
-            "owned_ratio": 0.0,
-            "coverage_bonus": 0.0,
-            "asset_scores": []
-          },
-          "session_scores": {
-            "1d": {
-              "net_pnl": 0.0,
-              "total_trades": 0,
-              "wins": 0,
-              "losses": 0,
-              "win_rate": 0.0,
-              "profit_factor": 0.0
-            },
-            "3d": {
-              "net_pnl": 0.0,
-              "total_trades": 0,
-              "wins": 0,
-              "losses": 0,
-              "win_rate": 0.0,
-              "profit_factor": 0.0
-            },
-            "7d": {
-              "net_pnl": 0.0,
-              "total_trades": 0,
-              "wins": 0,
-              "losses": 0,
-              "win_rate": 0.0,
-              "profit_factor": 0.0
-            }
-          },
-          "bankroll_scores": {
-            "150": {
-              "account_start": 150.0,
-              "promotion_pass": false,
-              "score": {
-                "net_pnl": 0.0,
-                "total_pnl": 0.0,
-                "total_fees": 0.0,
-                "return_pct": 0.0,
-                "total_trades": 0,
-                "wins": 0,
-                "losses": 0,
-                "win_rate": 0.0,
-                "win_loss_gap": 0,
-                "profit_factor": 0.0,
-                "max_drawdown_pct": 0.0,
-                "avg_rr": 0.0,
-                "best_trade": 0.0,
-                "worst_trade": 0.0,
-                "long_pnl": 0.0,
-                "short_pnl": 0.0
-              },
-              "session_scores": {
-                "1d": {
-                  "net_pnl": 0.0,
-                  "total_trades": 0,
-                  "wins": 0,
-                  "losses": 0,
-                  "win_rate": 0.0,
-                  "profit_factor": 0.0
-                },
-                "3d": {
-                  "net_pnl": 0.0,
-                  "total_trades": 0,
-                  "wins": 0,
-                  "losses": 0,
-                  "win_rate": 0.0,
-                  "profit_factor": 0.0
-                },
-                "7d": {
-                  "net_pnl": 0.0,
-                  "total_trades": 0,
-                  "wins": 0,
-                  "losses": 0,
-                  "win_rate": 0.0,
-                  "profit_factor": 0.0
-                }
-              }
-            },
-            "500": {
-              "account_start": 500.0,
-              "promotion_pass": false,
-              "score": {
-                "net_pnl": 0.0,
-                "total_pnl": 0.0,
-                "total_fees": 0.0,
-                "return_pct": 0.0,
-                "total_trades": 0,
-                "wins": 0,
-                "losses": 0,
-                "win_rate": 0.0,
-                "win_loss_gap": 0,
-                "profit_factor": 0.0,
-                "max_drawdown_pct": 0.0,
-                "avg_rr": 0.0,
-                "best_trade": 0.0,
-                "worst_trade": 0.0,
-                "long_pnl": 0.0,
-                "short_pnl": 0.0
-              },
-              "session_scores": {
-                "1d": {
-                  "net_pnl": 0.0,
-                  "total_trades": 0,
-                  "wins": 0,
-                  "losses": 0,
-                  "win_rate": 0.0,
-                  "profit_factor": 0.0
-                },
-                "3d": {
-                  "net_pnl": 0.0,
-                  "total_trades": 0,
-                  "wins": 0,
-                  "losses": 0,
-                  "win_rate": 0.0,
-                  "profit_factor": 0.0
-                },
-                "7d": {
-                  "net_pnl": 0.0,
-                  "total_trades": 0,
-                  "wins": 0,
-                  "losses": 0,
-                  "win_rate": 0.0,
-                  "profit_factor": 0.0
-                }
-              }
-            }
-          }
-        },
-        {
-          "rank": 12,
-          "case_id": "hl_agent_donchian_adx_short_core_v1",
-          "role": "challenger",
-          "family": "donchian_adx",
-          "base_strategy": "donchian_adx",
-          "stage": "stage2",
-          "stage_label": "Stage 2 compositional",
-          "fingerprint": "hl|donchian_adx|hl_agent_donchian_adx_short_core_v1",
-          "mutation_summary": "Short-biased Donchian + ADX helper on the core HL majors.",
-          "description": "1h Donchian breakout with ADX confirmation, focused on bearish breakdown ownership across BTC/ETH/SOL.",
-          "nickname": "Grim Channel",
-          "coin_universe": [
-            "BTC",
-            "ETH",
-            "SOL"
-          ],
-          "coverage_targets": [
-            "BTC",
-            "ETH",
-            "SOL"
-          ],
-          "invention_spec": null,
-          "verdict": "research-only",
-          "beats_champion": false,
-          "promotion_pass": false,
-          "lifecycle_state": "probation",
-          "promotion_target": "hold",
-          "time_floor_met": true,
-          "elapsed_hours": 93.3356657311111,
-          "stage_floor_hours": 72.0,
-          "hours_to_floor": 0.0,
-          "arena_badge": "[ROPE]",
-          "arena_title": "On the Ropes",
-          "score": {
-            "net_pnl": 0.0,
-            "total_pnl": 0.0,
-            "total_fees": 0.0,
-            "return_pct": 0.0,
-            "total_trades": 0,
-            "wins": 0,
-            "losses": 0,
-            "win_rate": 0.0,
-            "win_loss_gap": 0,
-            "profit_factor": 0.0,
-            "max_drawdown_pct": 0.0,
-            "avg_rr": 0.0,
-            "best_trade": 0.0,
-            "worst_trade": 0.0,
-            "long_pnl": 0.0,
-            "short_pnl": 0.0
-          },
-          "coverage": {
-            "requested_assets": [
-              "BTC",
-              "ETH",
-              "SOL"
-            ],
-            "traded_assets": [],
-            "profitable_assets": [],
-            "owned_assets": [],
-            "watch_assets": [],
-            "weak_assets": [
-              "BTC",
-              "ETH",
-              "SOL"
-            ],
-            "coverage_ratio": 0.0,
-            "profitable_coverage_ratio": 0.0,
-            "owned_ratio": 0.0,
-            "coverage_bonus": 0.0,
-            "asset_scores": []
-          },
-          "session_scores": {
-            "1d": {
-              "net_pnl": 0.0,
-              "total_trades": 0,
-              "wins": 0,
-              "losses": 0,
-              "win_rate": 0.0,
-              "profit_factor": 0.0
-            },
-            "3d": {
-              "net_pnl": 0.0,
-              "total_trades": 0,
-              "wins": 0,
-              "losses": 0,
-              "win_rate": 0.0,
-              "profit_factor": 0.0
-            },
-            "7d": {
-              "net_pnl": 0.0,
-              "total_trades": 0,
-              "wins": 0,
-              "losses": 0,
-              "win_rate": 0.0,
-              "profit_factor": 0.0
-            }
-          },
-          "bankroll_scores": {
-            "150": {
-              "account_start": 150.0,
-              "promotion_pass": false,
-              "score": {
-                "net_pnl": 0.0,
-                "total_pnl": 0.0,
-                "total_fees": 0.0,
-                "return_pct": 0.0,
-                "total_trades": 0,
-                "wins": 0,
-                "losses": 0,
-                "win_rate": 0.0,
-                "win_loss_gap": 0,
-                "profit_factor": 0.0,
-                "max_drawdown_pct": 0.0,
-                "avg_rr": 0.0,
-                "best_trade": 0.0,
-                "worst_trade": 0.0,
-                "long_pnl": 0.0,
-                "short_pnl": 0.0
-              },
-              "session_scores": {
-                "1d": {
-                  "net_pnl": 0.0,
-                  "total_trades": 0,
-                  "wins": 0,
-                  "losses": 0,
-                  "win_rate": 0.0,
-                  "profit_factor": 0.0
-                },
-                "3d": {
-                  "net_pnl": 0.0,
-                  "total_trades": 0,
-                  "wins": 0,
-                  "losses": 0,
-                  "win_rate": 0.0,
-                  "profit_factor": 0.0
-                },
-                "7d": {
-                  "net_pnl": 0.0,
-                  "total_trades": 0,
-                  "wins": 0,
-                  "losses": 0,
-                  "win_rate": 0.0,
-                  "profit_factor": 0.0
-                }
-              }
-            },
-            "500": {
-              "account_start": 500.0,
-              "promotion_pass": false,
-              "score": {
-                "net_pnl": 0.0,
-                "total_pnl": 0.0,
-                "total_fees": 0.0,
-                "return_pct": 0.0,
-                "total_trades": 0,
-                "wins": 0,
-                "losses": 0,
-                "win_rate": 0.0,
-                "win_loss_gap": 0,
-                "profit_factor": 0.0,
-                "max_drawdown_pct": 0.0,
-                "avg_rr": 0.0,
-                "best_trade": 0.0,
-                "worst_trade": 0.0,
-                "long_pnl": 0.0,
-                "short_pnl": 0.0
-              },
-              "session_scores": {
-                "1d": {
-                  "net_pnl": 0.0,
-                  "total_trades": 0,
-                  "wins": 0,
-                  "losses": 0,
-                  "win_rate": 0.0,
-                  "profit_factor": 0.0
-                },
-                "3d": {
-                  "net_pnl": 0.0,
-                  "total_trades": 0,
-                  "wins": 0,
-                  "losses": 0,
-                  "win_rate": 0.0,
-                  "profit_factor": 0.0
-                },
-                "7d": {
-                  "net_pnl": 0.0,
-                  "total_trades": 0,
-                  "wins": 0,
-                  "losses": 0,
-                  "win_rate": 0.0,
-                  "profit_factor": 0.0
-                }
-              }
-            }
-          }
-        },
-        {
-          "rank": 13,
-          "case_id": "hl_agent_regime_rotation_trend_long_v1",
-          "role": "challenger",
-          "family": "regime_rotation",
-          "base_strategy": "donchian_adx",
-          "stage": "stage2",
-          "stage_label": "Stage 2 compositional",
-          "fingerprint": "hl|regime_rotation|hl_agent_regime_rotation_trend_long_v1",
-          "mutation_summary": "Reserve HL regime challenger that leans into 1h trend continuation on the core majors.",
-          "description": "1h Donchian+ADX long-only lane on BTC/ETH/SOL as a genuinely different helper from dip_rip reversals.",
-          "nickname": "Sun Rail",
-          "coin_universe": [
-            "BTC",
-            "ETH",
-            "SOL"
-          ],
-          "coverage_targets": [
-            "BTC",
-            "ETH",
-            "SOL"
-          ],
-          "invention_spec": null,
-          "verdict": "research-only",
-          "beats_champion": false,
-          "promotion_pass": false,
-          "lifecycle_state": "probation",
-          "promotion_target": "hold",
-          "time_floor_met": false,
-          "elapsed_hours": 62.419445065000005,
-          "stage_floor_hours": 72.0,
-          "hours_to_floor": 9.580554934999995,
-          "arena_badge": "[ROPE]",
-          "arena_title": "On the Ropes",
-          "score": {
-            "net_pnl": 0.0,
-            "total_pnl": 0.0,
-            "total_fees": 0.0,
-            "return_pct": 0.0,
-            "total_trades": 0,
-            "wins": 0,
-            "losses": 0,
-            "win_rate": 0.0,
-            "win_loss_gap": 0,
-            "profit_factor": 0.0,
-            "max_drawdown_pct": 0.0,
-            "avg_rr": 0.0,
-            "best_trade": 0.0,
-            "worst_trade": 0.0,
-            "long_pnl": 0.0,
-            "short_pnl": 0.0
-          },
-          "coverage": {
-            "requested_assets": [
-              "BTC",
-              "ETH",
-              "SOL"
-            ],
-            "traded_assets": [],
-            "profitable_assets": [],
-            "owned_assets": [],
-            "watch_assets": [],
-            "weak_assets": [
-              "BTC",
-              "ETH",
-              "SOL"
-            ],
-            "coverage_ratio": 0.0,
-            "profitable_coverage_ratio": 0.0,
-            "owned_ratio": 0.0,
-            "coverage_bonus": 0.0,
-            "asset_scores": []
-          },
-          "session_scores": {
-            "1d": {
-              "net_pnl": 0.0,
-              "total_trades": 0,
-              "wins": 0,
-              "losses": 0,
-              "win_rate": 0.0,
-              "profit_factor": 0.0
-            },
-            "3d": {
-              "net_pnl": 0.0,
-              "total_trades": 0,
-              "wins": 0,
-              "losses": 0,
-              "win_rate": 0.0,
-              "profit_factor": 0.0
-            },
-            "7d": {
-              "net_pnl": 0.0,
-              "total_trades": 0,
-              "wins": 0,
-              "losses": 0,
-              "win_rate": 0.0,
-              "profit_factor": 0.0
-            }
-          },
-          "bankroll_scores": {
-            "150": {
-              "account_start": 150.0,
-              "promotion_pass": false,
-              "score": {
-                "net_pnl": 0.0,
-                "total_pnl": 0.0,
-                "total_fees": 0.0,
-                "return_pct": 0.0,
-                "total_trades": 0,
-                "wins": 0,
-                "losses": 0,
-                "win_rate": 0.0,
-                "win_loss_gap": 0,
-                "profit_factor": 0.0,
-                "max_drawdown_pct": 0.0,
-                "avg_rr": 0.0,
-                "best_trade": 0.0,
-                "worst_trade": 0.0,
-                "long_pnl": 0.0,
-                "short_pnl": 0.0
-              },
-              "session_scores": {
-                "1d": {
-                  "net_pnl": 0.0,
-                  "total_trades": 0,
-                  "wins": 0,
-                  "losses": 0,
-                  "win_rate": 0.0,
-                  "profit_factor": 0.0
-                },
-                "3d": {
-                  "net_pnl": 0.0,
-                  "total_trades": 0,
-                  "wins": 0,
-                  "losses": 0,
-                  "win_rate": 0.0,
-                  "profit_factor": 0.0
-                },
-                "7d": {
-                  "net_pnl": 0.0,
-                  "total_trades": 0,
-                  "wins": 0,
-                  "losses": 0,
-                  "win_rate": 0.0,
-                  "profit_factor": 0.0
-                }
-              }
-            },
-            "500": {
-              "account_start": 500.0,
-              "promotion_pass": false,
-              "score": {
-                "net_pnl": 0.0,
-                "total_pnl": 0.0,
-                "total_fees": 0.0,
-                "return_pct": 0.0,
-                "total_trades": 0,
-                "wins": 0,
-                "losses": 0,
-                "win_rate": 0.0,
-                "win_loss_gap": 0,
-                "profit_factor": 0.0,
-                "max_drawdown_pct": 0.0,
-                "avg_rr": 0.0,
-                "best_trade": 0.0,
-                "worst_trade": 0.0,
-                "long_pnl": 0.0,
-                "short_pnl": 0.0
-              },
-              "session_scores": {
-                "1d": {
-                  "net_pnl": 0.0,
-                  "total_trades": 0,
-                  "wins": 0,
-                  "losses": 0,
-                  "win_rate": 0.0,
-                  "profit_factor": 0.0
-                },
-                "3d": {
-                  "net_pnl": 0.0,
-                  "total_trades": 0,
-                  "wins": 0,
-                  "losses": 0,
-                  "win_rate": 0.0,
-                  "profit_factor": 0.0
-                },
-                "7d": {
-                  "net_pnl": 0.0,
-                  "total_trades": 0,
-                  "wins": 0,
-                  "losses": 0,
-                  "win_rate": 0.0,
-                  "profit_factor": 0.0
-                }
-              }
-            }
-          }
-        },
-        {
-          "rank": 14,
-          "case_id": "hl_agent_donchian_adx_short_wide_v1",
-          "role": "challenger",
-          "family": "donchian_adx",
-          "base_strategy": "donchian_adx",
-          "stage": "stage1",
-          "stage_label": "Stage 1 constrained",
-          "fingerprint": "hl|donchian_adx|hl_agent_donchian_adx_short_wide_v1",
-          "mutation_summary": "Wider Donchian + ADX short helper with a slower channel to reduce churn.",
-          "description": "1h Donchian breakout using a slower 30-bar channel and higher ADX gate to test a cleaner HL bear-helper lane.",
-          "nickname": "Bear Tunnel",
-          "coin_universe": [
-            "BTC",
-            "ETH",
-            "SOL"
-          ],
-          "coverage_targets": [
-            "BTC",
-            "ETH",
-            "SOL"
-          ],
-          "invention_spec": null,
-          "verdict": "research-only",
-          "beats_champion": false,
-          "promotion_pass": false,
-          "lifecycle_state": "probation",
-          "promotion_target": "hold",
-          "time_floor_met": true,
-          "elapsed_hours": 93.3356657311111,
-          "stage_floor_hours": 24.0,
-          "hours_to_floor": 0.0,
-          "arena_badge": "[ROPE]",
-          "arena_title": "On the Ropes",
-          "score": {
-            "net_pnl": 0.0,
-            "total_pnl": 0.0,
-            "total_fees": 0.0,
-            "return_pct": 0.0,
-            "total_trades": 0,
-            "wins": 0,
-            "losses": 0,
-            "win_rate": 0.0,
-            "win_loss_gap": 0,
-            "profit_factor": 0.0,
-            "max_drawdown_pct": 0.0,
-            "avg_rr": 0.0,
-            "best_trade": 0.0,
-            "worst_trade": 0.0,
-            "long_pnl": 0.0,
-            "short_pnl": 0.0
-          },
-          "coverage": {
-            "requested_assets": [
-              "BTC",
-              "ETH",
-              "SOL"
-            ],
-            "traded_assets": [],
-            "profitable_assets": [],
-            "owned_assets": [],
-            "watch_assets": [],
-            "weak_assets": [
-              "BTC",
-              "ETH",
-              "SOL"
-            ],
-            "coverage_ratio": 0.0,
-            "profitable_coverage_ratio": 0.0,
-            "owned_ratio": 0.0,
-            "coverage_bonus": 0.0,
-            "asset_scores": []
-          },
-          "session_scores": {
-            "1d": {
-              "net_pnl": 0.0,
-              "total_trades": 0,
-              "wins": 0,
-              "losses": 0,
-              "win_rate": 0.0,
-              "profit_factor": 0.0
-            },
-            "3d": {
-              "net_pnl": 0.0,
-              "total_trades": 0,
-              "wins": 0,
-              "losses": 0,
-              "win_rate": 0.0,
-              "profit_factor": 0.0
-            },
-            "7d": {
-              "net_pnl": 0.0,
-              "total_trades": 0,
-              "wins": 0,
-              "losses": 0,
-              "win_rate": 0.0,
-              "profit_factor": 0.0
-            }
-          },
-          "bankroll_scores": {
-            "150": {
-              "account_start": 150.0,
-              "promotion_pass": false,
-              "score": {
-                "net_pnl": 0.0,
-                "total_pnl": 0.0,
-                "total_fees": 0.0,
-                "return_pct": 0.0,
-                "total_trades": 0,
-                "wins": 0,
-                "losses": 0,
-                "win_rate": 0.0,
-                "win_loss_gap": 0,
-                "profit_factor": 0.0,
-                "max_drawdown_pct": 0.0,
-                "avg_rr": 0.0,
-                "best_trade": 0.0,
-                "worst_trade": 0.0,
-                "long_pnl": 0.0,
-                "short_pnl": 0.0
-              },
-              "session_scores": {
-                "1d": {
-                  "net_pnl": 0.0,
-                  "total_trades": 0,
-                  "wins": 0,
-                  "losses": 0,
-                  "win_rate": 0.0,
-                  "profit_factor": 0.0
-                },
-                "3d": {
-                  "net_pnl": 0.0,
-                  "total_trades": 0,
-                  "wins": 0,
-                  "losses": 0,
-                  "win_rate": 0.0,
-                  "profit_factor": 0.0
-                },
-                "7d": {
-                  "net_pnl": 0.0,
-                  "total_trades": 0,
-                  "wins": 0,
-                  "losses": 0,
-                  "win_rate": 0.0,
-                  "profit_factor": 0.0
-                }
-              }
-            },
-            "500": {
-              "account_start": 500.0,
-              "promotion_pass": false,
-              "score": {
-                "net_pnl": 0.0,
-                "total_pnl": 0.0,
-                "total_fees": 0.0,
-                "return_pct": 0.0,
-                "total_trades": 0,
-                "wins": 0,
-                "losses": 0,
-                "win_rate": 0.0,
-                "win_loss_gap": 0,
-                "profit_factor": 0.0,
-                "max_drawdown_pct": 0.0,
-                "avg_rr": 0.0,
-                "best_trade": 0.0,
-                "worst_trade": 0.0,
-                "long_pnl": 0.0,
-                "short_pnl": 0.0
-              },
-              "session_scores": {
-                "1d": {
-                  "net_pnl": 0.0,
-                  "total_trades": 0,
-                  "wins": 0,
-                  "losses": 0,
-                  "win_rate": 0.0,
-                  "profit_factor": 0.0
-                },
-                "3d": {
-                  "net_pnl": 0.0,
-                  "total_trades": 0,
-                  "wins": 0,
-                  "losses": 0,
-                  "win_rate": 0.0,
-                  "profit_factor": 0.0
-                },
-                "7d": {
-                  "net_pnl": 0.0,
-                  "total_trades": 0,
-                  "wins": 0,
-                  "losses": 0,
-                  "win_rate": 0.0,
-                  "profit_factor": 0.0
-                }
-              }
-            }
-          }
-        },
-        {
-          "rank": 15,
-          "case_id": "hl_challenger_grid_funding_arb_oi_gate",
-          "role": "challenger",
-          "family": "grid",
-          "base_strategy": "grid",
-          "stage": "stage2",
-          "stage_label": "Stage 2 compositional",
-          "fingerprint": "hl|grid|funding_arb|oi_gate|v1",
-          "mutation_summary": "Funding-aware carry grid for HL majors with balanced OI entry gate.",
-          "description": "Carry Current variant that keeps the same funding-aware grid but only opens new entries when the balanced HL OI signal agrees.",
-          "nickname": "Carry Current Gate",
-          "coin_universe": [
-            "BTC",
-            "ETH",
-            "SOL"
-          ],
-          "coverage_targets": [
-            "BTC",
-            "ETH",
-            "SOL"
-          ],
-          "invention_spec": null,
-          "verdict": "knocked-out",
-          "beats_champion": false,
-          "promotion_pass": false,
-          "lifecycle_state": "knocked_out",
-          "promotion_target": "graveyard",
-          "time_floor_met": false,
-          "elapsed_hours": 53.863183909166665,
-          "stage_floor_hours": 72.0,
-          "hours_to_floor": 18.136816090833335,
-          "arena_badge": "[RIP]",
-          "arena_title": "Graveyard",
-          "score": {
-            "net_pnl": -0.9386086544137129,
-            "total_pnl": -1.4822847663799064,
-            "total_fees": 0.3713722819858953,
-            "return_pct": -0.006257391029424753,
-            "total_trades": 105,
-            "wins": 86,
-            "losses": 19,
-            "win_rate": 0.819047619047619,
-            "win_loss_gap": 67,
-            "profit_factor": 0.8340217830538145,
-            "max_drawdown_pct": 0.03764971020207115,
-            "avg_rr": 0.0,
-            "best_trade": 0.4736052638278865,
-            "worst_trade": -1.7032668264155202,
-            "long_pnl": 2.681803502914113,
-            "short_pnl": -4.1640882692940195
-          },
-          "coverage": {
-            "requested_assets": [
-              "BTC",
-              "ETH",
-              "SOL"
-            ],
-            "traded_assets": [
-              "BTC",
-              "ETH",
-              "SOL"
-            ],
-            "profitable_assets": [
-              "SOL"
-            ],
-            "owned_assets": [
-              "SOL"
-            ],
-            "watch_assets": [],
-            "weak_assets": [
-              "BTC",
-              "ETH"
-            ],
-            "coverage_ratio": 1.0,
-            "profitable_coverage_ratio": 0.3333333333333333,
-            "owned_ratio": 0.3333333333333333,
-            "coverage_bonus": 0.75,
-            "asset_scores": [
-              {
-                "asset": "SOL",
-                "trades": 23,
-                "wins": 19,
-                "losses": 4,
-                "net_pnl": 1.613721109398614,
-                "profit_factor": 8.782921998116205
-              },
-              {
-                "asset": "ETH",
-                "trades": 43,
-                "wins": 39,
-                "losses": 4,
-                "net_pnl": -1.4662557000482852,
-                "profit_factor": 0.7116472703730538
-              },
-              {
-                "asset": "BTC",
-                "trades": 39,
-                "wins": 28,
-                "losses": 11,
-                "net_pnl": -1.6297501757302335,
-                "profit_factor": 0.5520595819641683
-              }
-            ]
-          },
-          "session_scores": {
-            "1d": {
-              "net_pnl": -7.087299382720724,
-              "total_trades": 15,
-              "wins": 3,
-              "losses": 12,
-              "win_rate": 0.2,
-              "profit_factor": 0.01290506133467595
-            },
-            "3d": {
-              "net_pnl": -5.941506241242465,
-              "total_trades": 24,
-              "wins": 12,
-              "losses": 12,
-              "win_rate": 0.5,
-              "profit_factor": 0.1724872307387363
-            },
-            "7d": {
-              "net_pnl": -4.944922889603864,
-              "total_trades": 38,
-              "wins": 26,
-              "losses": 12,
-              "win_rate": 0.6842105263157895,
-              "profit_factor": 0.31128796840179657
-            }
-          },
-          "bankroll_scores": {
-            "150": {
-              "account_start": 150.0,
-              "promotion_pass": false,
-              "score": {
-                "net_pnl": -0.9386086544137129,
-                "total_pnl": -1.4822847663799064,
-                "total_fees": 0.3713722819858953,
-                "return_pct": -0.006257391029424753,
-                "total_trades": 105,
-                "wins": 86,
-                "losses": 19,
-                "win_rate": 0.819047619047619,
-                "win_loss_gap": 67,
-                "profit_factor": 0.8340217830538145,
-                "max_drawdown_pct": 0.03764971020207115,
-                "avg_rr": 0.0,
-                "best_trade": 0.4736052638278865,
-                "worst_trade": -1.7032668264155202,
-                "long_pnl": 2.681803502914113,
-                "short_pnl": -4.1640882692940195
-              },
-              "session_scores": {
-                "1d": {
-                  "net_pnl": -7.087299382720724,
-                  "total_trades": 15,
-                  "wins": 3,
-                  "losses": 12,
-                  "win_rate": 0.2,
-                  "profit_factor": 0.01290506133467595
-                },
-                "3d": {
-                  "net_pnl": -5.941506241242465,
-                  "total_trades": 24,
-                  "wins": 12,
-                  "losses": 12,
-                  "win_rate": 0.5,
-                  "profit_factor": 0.1724872307387363
-                },
-                "7d": {
-                  "net_pnl": -4.944922889603864,
-                  "total_trades": 38,
-                  "wins": 26,
-                  "losses": 12,
-                  "win_rate": 0.6842105263157895,
-                  "profit_factor": 0.31128796840179657
-                }
-              }
-            },
-            "500": {
-              "account_start": 500.0,
-              "promotion_pass": false,
-              "score": {
-                "net_pnl": -3.1286955147140816,
-                "total_pnl": -4.940949221266346,
-                "total_fees": 1.2379076066196506,
-                "return_pct": -0.006257391029428163,
-                "total_trades": 105,
-                "wins": 86,
-                "losses": 19,
-                "win_rate": 0.819047619047619,
-                "win_loss_gap": 67,
-                "profit_factor": 0.8340217830538147,
-                "max_drawdown_pct": 0.03764971020207553,
-                "avg_rr": 0.0,
-                "best_trade": 1.5786842127596197,
-                "worst_trade": -5.677556088051759,
-                "long_pnl": 8.93934500971372,
-                "short_pnl": -13.880294230980066
-              },
-              "session_scores": {
-                "1d": {
-                  "net_pnl": -23.624331275735788,
-                  "total_trades": 15,
-                  "wins": 3,
-                  "losses": 12,
-                  "win_rate": 0.2,
-                  "profit_factor": 0.012905061334676
-                },
-                "3d": {
-                  "net_pnl": -19.805020804141577,
-                  "total_trades": 24,
-                  "wins": 12,
-                  "losses": 12,
-                  "win_rate": 0.5,
-                  "profit_factor": 0.17248723073873667
-                },
-                "7d": {
-                  "net_pnl": -16.483076298679585,
-                  "total_trades": 38,
-                  "wins": 26,
-                  "losses": 12,
-                  "win_rate": 0.6842105263157895,
-                  "profit_factor": 0.31128796840179623
-                }
-              }
-            }
-          }
-        },
-        {
-          "rank": 16,
-          "case_id": "hl_challenger_scalper_review",
-          "role": "challenger",
-          "family": "scalp",
-          "base_strategy": "scalp",
-          "stage": "stage1",
-          "stage_label": "Stage 1 constrained",
-          "fingerprint": "hl|scalp|review|live_aligned",
-          "mutation_summary": "Disabled HL scalper rerun through live-aligned path",
-          "description": "Disabled HL scalper rerun through the live-aligned backtest path.",
-          "nickname": "Spark Chaser",
-          "coin_universe": [
-            "BTC",
-            "ETH",
-            "SOL"
-          ],
-          "coverage_targets": [],
-          "invention_spec": null,
-          "verdict": "research-only",
-          "beats_champion": false,
-          "promotion_pass": false,
-          "lifecycle_state": "probation",
-          "promotion_target": "hold",
-          "time_floor_met": true,
-          "elapsed_hours": 116.01164311361111,
-          "stage_floor_hours": 24.0,
-          "hours_to_floor": 0.0,
-          "arena_badge": "[HOT]",
-          "arena_title": "Hot Streak",
-          "score": {
-            "net_pnl": -45.8073455431732,
-            "total_pnl": -41.63227564883386,
-            "total_fees": 4.175069894339464,
-            "return_pct": -0.30538230362115465,
-            "total_trades": 88,
-            "wins": 40,
-            "losses": 48,
-            "win_rate": 0.45454545454545453,
-            "win_loss_gap": -8,
-            "profit_factor": 0.7289895302937784,
-            "max_drawdown_pct": 0.5196983870037373,
-            "avg_rr": 0.2970708104351823,
-            "best_trade": 10.35968113006842,
-            "worst_trade": -5.087500000000016,
-            "long_pnl": -13.453020860567328,
-            "short_pnl": -28.179254788266512
-          },
-          "coverage": {
-            "requested_assets": [
-              "BTC",
-              "ETH",
-              "SOL"
-            ],
-            "traded_assets": [
-              "BTC",
-              "ETH",
-              "SOL"
-            ],
-            "profitable_assets": [
-              "SOL"
-            ],
-            "owned_assets": [
-              "SOL"
-            ],
-            "watch_assets": [],
-            "weak_assets": [
-              "BTC",
-              "ETH"
-            ],
-            "coverage_ratio": 1.0,
-            "profitable_coverage_ratio": 0.3333333333333333,
-            "owned_ratio": 0.3333333333333333,
-            "coverage_bonus": 0.75,
-            "asset_scores": [
-              {
-                "asset": "SOL",
-                "trades": 31,
-                "wins": 17,
-                "losses": 14,
-                "net_pnl": 11.29169806471704,
-                "profit_factor": 1.3975906000989222
-              },
-              {
-                "asset": "BTC",
-                "trades": 21,
-                "wins": 9,
-                "losses": 12,
-                "net_pnl": -25.562754449921563,
-                "profit_factor": 0.5231095600499538
-              },
-              {
-                "asset": "ETH",
-                "trades": 36,
-                "wins": 14,
-                "losses": 22,
-                "net_pnl": -27.361219263629284,
-                "profit_factor": 0.6179421982898065
-              }
-            ]
-          },
-          "session_scores": {
-            "1d": {
-              "net_pnl": 5.991972796126334,
-              "total_trades": 2,
-              "wins": 2,
-              "losses": 0,
-              "win_rate": 1.0,
-              "profit_factor": Infinity
-            },
-            "3d": {
-              "net_pnl": 21.4445470296743,
-              "total_trades": 8,
-              "wins": 8,
-              "losses": 0,
-              "win_rate": 1.0,
-              "profit_factor": Infinity
-            },
-            "7d": {
-              "net_pnl": 28.107949465730858,
-              "total_trades": 14,
-              "wins": 12,
-              "losses": 2,
-              "win_rate": 0.8571428571428571,
-              "profit_factor": 8.860177231727628
-            }
-          },
-          "bankroll_scores": {
-            "150": {
-              "account_start": 150.0,
-              "promotion_pass": false,
-              "score": {
-                "net_pnl": -45.8073455431732,
-                "total_pnl": -41.63227564883386,
-                "total_fees": 4.175069894339464,
-                "return_pct": -0.30538230362115465,
-                "total_trades": 88,
-                "wins": 40,
-                "losses": 48,
-                "win_rate": 0.45454545454545453,
-                "win_loss_gap": -8,
-                "profit_factor": 0.7289895302937784,
-                "max_drawdown_pct": 0.5196983870037373,
-                "avg_rr": 0.2970708104351823,
-                "best_trade": 10.35968113006842,
-                "worst_trade": -5.087500000000016,
-                "long_pnl": -13.453020860567328,
-                "short_pnl": -28.179254788266512
-              },
-              "session_scores": {
-                "1d": {
-                  "net_pnl": 5.991972796126334,
-                  "total_trades": 2,
-                  "wins": 2,
-                  "losses": 0,
-                  "win_rate": 1.0,
-                  "profit_factor": Infinity
-                },
-                "3d": {
-                  "net_pnl": 21.4445470296743,
-                  "total_trades": 8,
-                  "wins": 8,
-                  "losses": 0,
-                  "win_rate": 1.0,
-                  "profit_factor": Infinity
-                },
-                "7d": {
-                  "net_pnl": 28.107949465730858,
-                  "total_trades": 14,
-                  "wins": 12,
-                  "losses": 2,
-                  "win_rate": 0.8571428571428571,
-                  "profit_factor": 8.860177231727628
-                }
-              }
-            },
-            "500": {
-              "account_start": 500.0,
-              "promotion_pass": false,
-              "score": {
-                "net_pnl": -27.332351301522408,
-                "total_pnl": -21.294851301523735,
-                "total_fees": 6.0375,
-                "return_pct": -0.05466470260304482,
-                "total_trades": 88,
-                "wins": 40,
-                "losses": 48,
-                "win_rate": 0.45454545454545453,
-                "win_loss_gap": -8,
-                "profit_factor": 0.8957157135086988,
-                "max_drawdown_pct": 0.16628312240146026,
-                "avg_rr": 0.2970708104351827,
-                "best_trade": 13.766942910885305,
-                "worst_trade": -5.087500000000026,
-                "long_pnl": -0.9132965543521006,
-                "short_pnl": -20.38155474717166
-              },
-              "session_scores": {
-                "1d": {
-                  "net_pnl": 7.619139845606728,
-                  "total_trades": 2,
-                  "wins": 2,
-                  "losses": 0,
-                  "win_rate": 1.0,
-                  "profit_factor": Infinity
-                },
-                "3d": {
-                  "net_pnl": 37.97533487136435,
-                  "total_trades": 8,
-                  "wins": 8,
-                  "losses": 0,
-                  "win_rate": 1.0,
-                  "profit_factor": Infinity
-                },
-                "7d": {
-                  "net_pnl": 49.005999421561114,
-                  "total_trades": 14,
-                  "wins": 12,
-                  "losses": 2,
-                  "win_rate": 0.8571428571428571,
-                  "profit_factor": 10.469758342330696
-                }
-              }
-            }
-          }
+          "stage_gate_label": "S3 gate 100h"
         }
-      ],
-      "champion": "hl_champion_dip_rip_current"
+      ]
     },
     {
       "venue": "DX",
-      "generated_at": "2026-04-16T10:51:16.902658+00:00",
       "days": 30,
-      "account_start": 150.0,
-      "primary_account_start": 150.0,
-      "account_starts": [
-        150.0,
-        500.0
-      ],
-      "coins": [
-        "SUI",
-        "LINK",
-        "XRP"
-      ],
-      "asset_ownership_rules": {
-        "min_trades": 3,
-        "min_net_pnl": 0.0,
-        "min_profit_factor": 1.0,
-        "require_more_wins_than_losses": true
-      },
-      "promotion_rules": {
-        "min_net_pnl": 0.0,
-        "min_profit_factor": 1.05,
-        "max_drawdown_pct": 0.12,
-        "min_trades": 12,
-        "require_more_wins_than_losses": true
-      },
-      "session_leaders": {
-        "1d": {
+      "focus_label": "DX live path",
+      "strategy_summary": "DX live path: target grid; track grid",
+      "rows": [
+        {
+          "rank": 7,
           "case_id": "dx_champion_liquidity_sweep_current",
+          "role": "champion",
+          "family": "liquidity_sweep",
+          "base_strategy": "liquidity_sweep",
+          "stage": "stage3",
+          "stage_label": "Stage 3 open invention",
+          "fingerprint": "dx|liquidity_sweep|current_live",
+          "mutation_summary": "Current live DX liquidity_sweep baseline",
+          "description": "Current DX live liquidity_sweep baseline.",
           "nickname": "Street Sweeper",
+          "coin_universe": [
+            "SUI",
+            "LINK",
+            "XRP"
+          ],
+          "coverage_targets": [],
+          "invention_spec": null,
+          "verdict": "champion",
+          "beats_champion": false,
+          "promotion_pass": false,
+          "lifecycle_state": "active",
+          "promotion_target": "champion",
+          "time_floor_met": true,
+          "elapsed_hours": 116.01164311361111,
+          "stage_floor_hours": 168.0,
+          "hours_to_floor": 51.988356886388885,
           "arena_badge": "[KING]",
           "arena_title": "Crown Holder",
-          "net_pnl": 12.51325199191634,
-          "wins": 20,
-          "losses": 6
+          "score": {
+            "net_pnl": -8.382013584115668,
+            "total_pnl": 14.341034810413916,
+            "total_fees": 22.723048394529474,
+            "return_pct": -0.055880090560771124,
+            "total_trades": 141,
+            "wins": 84,
+            "losses": 57,
+            "win_rate": 0.5957446808510638,
+            "win_loss_gap": 27,
+            "profit_factor": 1.168087909134936,
+            "max_drawdown_pct": 0.17013875168562728,
+            "avg_rr": 0.48953208600427145,
+            "best_trade": 5.669464016872395,
+            "worst_trade": -4.233459546955368,
+            "long_pnl": 13.836153839264567,
+            "short_pnl": 0.50488097114935
+          },
+          "coverage": {
+            "requested_assets": [
+              "SUI",
+              "LINK",
+              "XRP"
+            ],
+            "traded_assets": [
+              "LINK",
+              "SUI",
+              "XRP"
+            ],
+            "profitable_assets": [
+              "SUI",
+              "LINK"
+            ],
+            "owned_assets": [
+              "SUI",
+              "LINK"
+            ],
+            "watch_assets": [],
+            "weak_assets": [
+              "XRP"
+            ],
+            "coverage_ratio": 1.0,
+            "profitable_coverage_ratio": 0.6666666666666666,
+            "owned_ratio": 0.6666666666666666,
+            "coverage_bonus": 1.25,
+            "asset_scores": [
+              {
+                "asset": "SUI",
+                "trades": 45,
+                "wins": 28,
+                "losses": 17,
+                "net_pnl": 10.76453241410705,
+                "profit_factor": 1.4079105893641903
+              },
+              {
+                "asset": "LINK",
+                "trades": 46,
+                "wins": 28,
+                "losses": 18,
+                "net_pnl": 7.49032666134043,
+                "profit_factor": 1.265142097481849
+              },
+              {
+                "asset": "XRP",
+                "trades": 50,
+                "wins": 28,
+                "losses": 22,
+                "net_pnl": -3.9138242650335657,
+                "profit_factor": 0.872426525600134
+              }
+            ]
+          },
+          "session_scores": {
+            "1d": {
+              "net_pnl": 12.51325199191634,
+              "total_trades": 26,
+              "wins": 20,
+              "losses": 6,
+              "win_rate": 0.7692307692307693,
+              "profit_factor": 2.470067893030661
+            },
+            "3d": {
+              "net_pnl": 14.121505310666691,
+              "total_trades": 32,
+              "wins": 24,
+              "losses": 8,
+              "win_rate": 0.75,
+              "profit_factor": 2.3710730003102403
+            },
+            "7d": {
+              "net_pnl": 8.01232734275214,
+              "total_trades": 47,
+              "wins": 32,
+              "losses": 15,
+              "win_rate": 0.6808510638297872,
+              "profit_factor": 1.322195741781066
+            }
+          },
+          "bankroll_scores": {
+            "150": {
+              "account_start": 150.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": -8.382013584115668,
+                "total_pnl": 14.341034810413916,
+                "total_fees": 22.723048394529474,
+                "return_pct": -0.055880090560771124,
+                "total_trades": 141,
+                "wins": 84,
+                "losses": 57,
+                "win_rate": 0.5957446808510638,
+                "win_loss_gap": 27,
+                "profit_factor": 1.168087909134936,
+                "max_drawdown_pct": 0.17013875168562728,
+                "avg_rr": 0.48953208600427145,
+                "best_trade": 5.669464016872395,
+                "worst_trade": -4.233459546955368,
+                "long_pnl": 13.836153839264567,
+                "short_pnl": 0.50488097114935
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": 12.51325199191634,
+                  "total_trades": 26,
+                  "wins": 20,
+                  "losses": 6,
+                  "win_rate": 0.7692307692307693,
+                  "profit_factor": 2.470067893030661
+                },
+                "3d": {
+                  "net_pnl": 14.121505310666691,
+                  "total_trades": 32,
+                  "wins": 24,
+                  "losses": 8,
+                  "win_rate": 0.75,
+                  "profit_factor": 2.3710730003102403
+                },
+                "7d": {
+                  "net_pnl": 8.01232734275214,
+                  "total_trades": 47,
+                  "wins": 32,
+                  "losses": 15,
+                  "win_rate": 0.6808510638297872,
+                  "profit_factor": 1.322195741781066
+                }
+              }
+            },
+            "500": {
+              "account_start": 500.0,
+              "promotion_pass": false,
+              "score": {
+                "net_pnl": -27.940045280385164,
+                "total_pnl": 47.80344936804644,
+                "total_fees": 75.74349464843161,
+                "return_pct": -0.055880090560770326,
+                "total_trades": 141,
+                "wins": 84,
+                "losses": 57,
+                "win_rate": 0.5957446808510638,
+                "win_loss_gap": 27,
+                "profit_factor": 1.1680879091349363,
+                "max_drawdown_pct": 0.17013875168562664,
+                "avg_rr": 0.48953208600427145,
+                "best_trade": 18.89821338957466,
+                "worst_trade": -14.111531823184569,
+                "long_pnl": 46.120512797548606,
+                "short_pnl": 1.6829365704978358
+              },
+              "session_scores": {
+                "1d": {
+                  "net_pnl": 41.710839973054476,
+                  "total_trades": 26,
+                  "wins": 20,
+                  "losses": 6,
+                  "win_rate": 0.7692307692307693,
+                  "profit_factor": 2.470067893030661
+                },
+                "3d": {
+                  "net_pnl": 47.07168436888899,
+                  "total_trades": 32,
+                  "wins": 24,
+                  "losses": 8,
+                  "win_rate": 0.75,
+                  "profit_factor": 2.37107300031024
+                },
+                "7d": {
+                  "net_pnl": 26.707757809173803,
+                  "total_trades": 47,
+                  "wins": 32,
+                  "losses": 15,
+                  "win_rate": 0.6808510638297872,
+                  "profit_factor": 1.322195741781066
+                }
+              }
+            }
+          },
+          "stage_gate_label": "S3 gate 52h"
         },
-        "3d": {
-          "case_id": "dx_champion_liquidity_sweep_current",
-          "nickname": "Street Sweeper",
-          "arena_badge": "[KING]",
-          "arena_title": "Crown Holder",
-          "net_pnl": 14.121505310666691,
-          "wins": 24,
-          "losses": 8
-        },
-        "7d": {
-          "case_id": "dx_champion_liquidity_sweep_current",
-          "nickname": "Street Sweeper",
-          "arena_badge": "[KING]",
-          "arena_title": "Crown Holder",
-          "net_pnl": 8.01232734275214,
-          "wins": 32,
-          "losses": 15
-        }
-      },
-      "rotation_status": {
-        "enabled": false,
-        "active_agent_cases": 0,
-        "max_agent_cases": 0,
-        "free_agent_slots": 0,
-        "requested_group_count": 0,
-        "active_group_count": 0,
-        "requested_groups": [],
-        "active_groups": [],
-        "benched_case_count": 0,
-        "benched_groups": []
-      },
-      "replenishment_status": {
-        "enabled": false,
-        "state": "none",
-        "queue_size": 0,
-        "seeded_count": 0,
-        "active_seeded_count": 0,
-        "seeded_groups": [],
-        "active_seeded_groups": [],
-        "pending_groups": [],
-        "next_group": "",
-        "next_label": ""
-      },
-      "duplicate_rejections": [],
-      "leaderboard": [
         {
           "rank": 1,
           "case_id": "dx_challenger_grid_trailing_core",
@@ -4352,7 +1567,8 @@
                 }
               }
             }
-          }
+          },
+          "stage_gate_label": "S2 gate 18h"
         },
         {
           "rank": 2,
@@ -4624,7 +1840,8 @@
                 }
               }
             }
-          }
+          },
+          "stage_gate_label": "S2 gate 8h"
         },
         {
           "rank": 3,
@@ -4855,1299 +2072,88 @@
                 }
               }
             }
-          }
-        },
-        {
-          "rank": 4,
-          "case_id": "dx_challenger_grid_neutral_core",
-          "role": "challenger",
-          "family": "grid",
-          "base_strategy": "grid",
-          "stage": "stage2",
-          "stage_label": "Stage 2 compositional",
-          "fingerprint": "dx|grid|neutral|core|btc_eth_link|v1",
-          "mutation_summary": "Neutral grid narrowed to the live BTC/ETH/LINK sleeve mix.",
-          "description": "Range Mason core challenger that scores the neutral grid only on the three DX coins we actually fund live.",
-          "nickname": "Range Mason Core",
-          "coin_universe": [
-            "BTC",
-            "ETH",
-            "LINK"
-          ],
-          "coverage_targets": [
-            "BTC",
-            "ETH",
-            "LINK"
-          ],
-          "invention_spec": null,
-          "verdict": "keep-testing",
-          "beats_champion": true,
-          "promotion_pass": true,
-          "lifecycle_state": "active",
-          "promotion_target": "hold",
-          "time_floor_met": false,
-          "elapsed_hours": 53.863183909166665,
-          "stage_floor_hours": 72.0,
-          "hours_to_floor": 18.136816090833335,
-          "arena_badge": "[LIVE]",
-          "arena_title": "Live Wire",
-          "score": {
-            "net_pnl": 4.722150294656728,
-            "total_pnl": 4.986013181032219,
-            "total_fees": 0.5277257727510716,
-            "return_pct": 0.03148100196437819,
-            "total_trades": 137,
-            "wins": 120,
-            "losses": 17,
-            "win_rate": 0.8759124087591241,
-            "win_loss_gap": 103,
-            "profit_factor": 2.189333609702743,
-            "max_drawdown_pct": 0.0834719773145423,
-            "avg_rr": 0.0,
-            "best_trade": 0.2771481929011717,
-            "worst_trade": -0.3991964379572264,
-            "long_pnl": 0.8005916331193323,
-            "short_pnl": 4.1854215479128865
           },
-          "coverage": {
-            "requested_assets": [
-              "BTC",
-              "ETH",
-              "LINK"
-            ],
-            "traded_assets": [
-              "BTC",
-              "ETH",
-              "LINK"
-            ],
-            "profitable_assets": [
-              "BTC",
-              "ETH"
-            ],
-            "owned_assets": [
-              "BTC",
-              "ETH"
-            ],
-            "watch_assets": [],
-            "weak_assets": [
-              "LINK"
-            ],
-            "coverage_ratio": 1.0,
-            "profitable_coverage_ratio": 0.6666666666666666,
-            "owned_ratio": 0.6666666666666666,
-            "coverage_bonus": 1.25,
-            "asset_scores": [
-              {
-                "asset": "BTC",
-                "trades": 76,
-                "wins": 70,
-                "losses": 6,
-                "net_pnl": 3.388302882357732,
-                "profit_factor": 3.3756418617670576
-              },
-              {
-                "asset": "ETH",
-                "trades": 54,
-                "wins": 47,
-                "losses": 7,
-                "net_pnl": 2.704552737731866,
-                "profit_factor": 2.8072038824328773
-              },
-              {
-                "asset": "LINK",
-                "trades": 7,
-                "wins": 3,
-                "losses": 4,
-                "net_pnl": -1.1068424390573819,
-                "profit_factor": 0.12810417724645037
-              }
-            ]
-          },
-          "session_scores": {
-            "1d": {
-              "net_pnl": -2.740739575697338,
-              "total_trades": 40,
-              "wins": 23,
-              "losses": 17,
-              "win_rate": 0.575,
-              "profit_factor": 0.3462404581641209
-            },
-            "3d": {
-              "net_pnl": -0.26729911289893854,
-              "total_trades": 71,
-              "wins": 54,
-              "losses": 17,
-              "win_rate": 0.7605633802816901,
-              "profit_factor": 0.9362400765357342
-            },
-            "7d": {
-              "net_pnl": 1.852966698662383,
-              "total_trades": 99,
-              "wins": 82,
-              "losses": 17,
-              "win_rate": 0.8282828282828283,
-              "profit_factor": 1.4419955367873436
-            }
-          },
-          "bankroll_scores": {
-            "150": {
-              "account_start": 150.0,
-              "promotion_pass": true,
-              "score": {
-                "net_pnl": 4.722150294656728,
-                "total_pnl": 4.986013181032219,
-                "total_fees": 0.5277257727510716,
-                "return_pct": 0.03148100196437819,
-                "total_trades": 137,
-                "wins": 120,
-                "losses": 17,
-                "win_rate": 0.8759124087591241,
-                "win_loss_gap": 103,
-                "profit_factor": 2.189333609702743,
-                "max_drawdown_pct": 0.0834719773145423,
-                "avg_rr": 0.0,
-                "best_trade": 0.2771481929011717,
-                "worst_trade": -0.3991964379572264,
-                "long_pnl": 0.8005916331193323,
-                "short_pnl": 4.1854215479128865
-              },
-              "session_scores": {
-                "1d": {
-                  "net_pnl": -2.740739575697338,
-                  "total_trades": 40,
-                  "wins": 23,
-                  "losses": 17,
-                  "win_rate": 0.575,
-                  "profit_factor": 0.3462404581641209
-                },
-                "3d": {
-                  "net_pnl": -0.26729911289893854,
-                  "total_trades": 71,
-                  "wins": 54,
-                  "losses": 17,
-                  "win_rate": 0.7605633802816901,
-                  "profit_factor": 0.9362400765357342
-                },
-                "7d": {
-                  "net_pnl": 1.852966698662383,
-                  "total_trades": 99,
-                  "wins": 82,
-                  "losses": 17,
-                  "win_rate": 0.8282828282828283,
-                  "profit_factor": 1.4419955367873436
-                }
-              }
-            },
-            "500": {
-              "account_start": 500.0,
-              "promotion_pass": true,
-              "score": {
-                "net_pnl": 15.740500982188905,
-                "total_pnl": 16.620043936774056,
-                "total_fees": 1.7590859091702382,
-                "return_pct": 0.03148100196437781,
-                "total_trades": 137,
-                "wins": 120,
-                "losses": 17,
-                "win_rate": 0.8759124087591241,
-                "win_loss_gap": 103,
-                "profit_factor": 2.189333609702742,
-                "max_drawdown_pct": 0.08347197731454227,
-                "avg_rr": 0.0,
-                "best_trade": 0.9238273096705726,
-                "worst_trade": -1.3306547931907546,
-                "long_pnl": 2.66863877706444,
-                "short_pnl": 13.95140515970962
-              },
-              "session_scores": {
-                "1d": {
-                  "net_pnl": -9.135798585657794,
-                  "total_trades": 40,
-                  "wins": 23,
-                  "losses": 17,
-                  "win_rate": 0.575,
-                  "profit_factor": 0.3462404581641207
-                },
-                "3d": {
-                  "net_pnl": -0.8909970429964654,
-                  "total_trades": 71,
-                  "wins": 54,
-                  "losses": 17,
-                  "win_rate": 0.7605633802816901,
-                  "profit_factor": 0.9362400765357338
-                },
-                "7d": {
-                  "net_pnl": 6.176555662207939,
-                  "total_trades": 99,
-                  "wins": 82,
-                  "losses": 17,
-                  "win_rate": 0.8282828282828283,
-                  "profit_factor": 1.4419955367873432
-                }
-              }
-            }
-          }
-        },
-        {
-          "rank": 5,
-          "case_id": "dx_challenger_grid_funding_arb",
-          "role": "challenger",
-          "family": "grid",
-          "base_strategy": "grid",
-          "stage": "stage2",
-          "stage_label": "Stage 2 compositional",
-          "fingerprint": "dx|grid|funding_arb|v1",
-          "mutation_summary": "Funding-aware neutral grid for dYdX perps.",
-          "description": "Funding-biased grid challenger for DX that tries to earn spread plus funding with cleaner perp risk than the raw grid winner.",
-          "nickname": "Carry Lattice",
-          "coin_universe": [
-            "SUI",
-            "LINK",
-            "AVAX",
-            "ETH",
-            "XRP",
-            "BTC"
-          ],
-          "coverage_targets": [
-            "SUI",
-            "LINK",
-            "AVAX",
-            "ETH",
-            "XRP",
-            "BTC"
-          ],
-          "invention_spec": null,
-          "verdict": "keep-testing",
-          "beats_champion": true,
-          "promotion_pass": true,
-          "lifecycle_state": "probation",
-          "promotion_target": "hold",
-          "time_floor_met": true,
-          "elapsed_hours": 73.58966042472223,
-          "stage_floor_hours": 72.0,
-          "hours_to_floor": 0.0,
-          "arena_badge": "[ROPE]",
-          "arena_title": "On the Ropes",
-          "score": {
-            "net_pnl": 2.3081134297940764,
-            "total_pnl": 0.8974853426869935,
-            "total_fees": 0.41649229134113297,
-            "return_pct": 0.015387422865293843,
-            "total_trades": 195,
-            "wins": 163,
-            "losses": 32,
-            "win_rate": 0.8358974358974359,
-            "win_loss_gap": 131,
-            "profit_factor": 1.1550154161121697,
-            "max_drawdown_pct": 0.09438929499412536,
-            "avg_rr": 0.0,
-            "best_trade": 0.16867276929840705,
-            "worst_trade": -0.47448490534956417,
-            "long_pnl": -1.9879852080890832,
-            "short_pnl": 2.885470550776077
-          },
-          "coverage": {
-            "requested_assets": [
-              "SUI",
-              "LINK",
-              "AVAX",
-              "ETH",
-              "XRP",
-              "BTC"
-            ],
-            "traded_assets": [
-              "AVAX",
-              "BTC",
-              "ETH",
-              "LINK",
-              "SUI",
-              "XRP"
-            ],
-            "profitable_assets": [
-              "ETH",
-              "BTC"
-            ],
-            "owned_assets": [
-              "ETH",
-              "BTC"
-            ],
-            "watch_assets": [],
-            "weak_assets": [
-              "SUI",
-              "LINK",
-              "AVAX",
-              "XRP"
-            ],
-            "coverage_ratio": 1.0,
-            "profitable_coverage_ratio": 0.3333333333333333,
-            "owned_ratio": 0.3333333333333333,
-            "coverage_bonus": 0.75,
-            "asset_scores": [
-              {
-                "asset": "ETH",
-                "trades": 79,
-                "wins": 68,
-                "losses": 11,
-                "net_pnl": 1.6894636605781486,
-                "profit_factor": 2.2543777296193745
-              },
-              {
-                "asset": "BTC",
-                "trades": 71,
-                "wins": 65,
-                "losses": 6,
-                "net_pnl": 1.5919904991674523,
-                "profit_factor": 3.481013659517565
-              },
-              {
-                "asset": "SUI",
-                "trades": 17,
-                "wins": 13,
-                "losses": 4,
-                "net_pnl": -0.34094467548398477,
-                "profit_factor": 0.6043726137853722
-              },
-              {
-                "asset": "LINK",
-                "trades": 7,
-                "wins": 3,
-                "losses": 4,
-                "net_pnl": -0.6186655725283189,
-                "profit_factor": 0.1614987065695201
-              },
-              {
-                "asset": "AVAX",
-                "trades": 9,
-                "wins": 6,
-                "losses": 3,
-                "net_pnl": -0.6904766551981723,
-                "profit_factor": 0.3531667348115621
-              },
-              {
-                "asset": "XRP",
-                "trades": 12,
-                "wins": 8,
-                "losses": 4,
-                "net_pnl": -0.7338819138481316,
-                "profit_factor": 0.3528669679804176
-              }
-            ]
-          },
-          "session_scores": {
-            "1d": {
-              "net_pnl": -3.6379195686514576,
-              "total_trades": 55,
-              "wins": 29,
-              "losses": 26,
-              "win_rate": 0.5272727272727272,
-              "profit_factor": 0.19474007138947777
-            },
-            "3d": {
-              "net_pnl": -3.4797763251132463,
-              "total_trades": 90,
-              "wins": 58,
-              "losses": 32,
-              "win_rate": 0.6444444444444445,
-              "profit_factor": 0.3989662567638899
-            },
-            "7d": {
-              "net_pnl": -2.1420333863015086,
-              "total_trades": 124,
-              "wins": 92,
-              "losses": 32,
-              "win_rate": 0.7419354838709677,
-              "profit_factor": 0.6300238222169012
-            }
-          },
-          "bankroll_scores": {
-            "150": {
-              "account_start": 150.0,
-              "promotion_pass": true,
-              "score": {
-                "net_pnl": 2.3081134297940764,
-                "total_pnl": 0.8974853426869935,
-                "total_fees": 0.41649229134113297,
-                "return_pct": 0.015387422865293843,
-                "total_trades": 195,
-                "wins": 163,
-                "losses": 32,
-                "win_rate": 0.8358974358974359,
-                "win_loss_gap": 131,
-                "profit_factor": 1.1550154161121697,
-                "max_drawdown_pct": 0.09438929499412536,
-                "avg_rr": 0.0,
-                "best_trade": 0.16867276929840705,
-                "worst_trade": -0.47448490534956417,
-                "long_pnl": -1.9879852080890832,
-                "short_pnl": 2.885470550776077
-              },
-              "session_scores": {
-                "1d": {
-                  "net_pnl": -3.6379195686514576,
-                  "total_trades": 55,
-                  "wins": 29,
-                  "losses": 26,
-                  "win_rate": 0.5272727272727272,
-                  "profit_factor": 0.19474007138947777
-                },
-                "3d": {
-                  "net_pnl": -3.4797763251132463,
-                  "total_trades": 90,
-                  "wins": 58,
-                  "losses": 32,
-                  "win_rate": 0.6444444444444445,
-                  "profit_factor": 0.3989662567638899
-                },
-                "7d": {
-                  "net_pnl": -2.1420333863015086,
-                  "total_trades": 124,
-                  "wins": 92,
-                  "losses": 32,
-                  "win_rate": 0.7419354838709677,
-                  "profit_factor": 0.6300238222169012
-                }
-              }
-            },
-            "500": {
-              "account_start": 500.0,
-              "promotion_pass": true,
-              "score": {
-                "net_pnl": 7.69371143264766,
-                "total_pnl": 2.991617808956544,
-                "total_fees": 1.388307637803768,
-                "return_pct": 0.015387422865295321,
-                "total_trades": 195,
-                "wins": 163,
-                "losses": 32,
-                "win_rate": 0.8358974358974359,
-                "win_loss_gap": 131,
-                "profit_factor": 1.1550154161121648,
-                "max_drawdown_pct": 0.09438929499412844,
-                "avg_rr": 0.0,
-                "best_trade": 0.5622425643280223,
-                "worst_trade": -1.5816163511652181,
-                "long_pnl": -6.626617360296985,
-                "short_pnl": 9.618235169253529
-              },
-              "session_scores": {
-                "1d": {
-                  "net_pnl": -12.126398562171511,
-                  "total_trades": 55,
-                  "wins": 29,
-                  "losses": 26,
-                  "win_rate": 0.5272727272727272,
-                  "profit_factor": 0.19474007138947705
-                },
-                "3d": {
-                  "net_pnl": -11.599254417044186,
-                  "total_trades": 90,
-                  "wins": 58,
-                  "losses": 32,
-                  "win_rate": 0.6444444444444445,
-                  "profit_factor": 0.3989662567638871
-                },
-                "7d": {
-                  "net_pnl": -7.140111287671786,
-                  "total_trades": 124,
-                  "wins": 92,
-                  "losses": 32,
-                  "win_rate": 0.7419354838709677,
-                  "profit_factor": 0.6300238222168959
-                }
-              }
-            }
-          }
-        },
-        {
-          "rank": 6,
-          "case_id": "dx_challenger_grid_neutral",
-          "role": "challenger",
-          "family": "grid",
-          "base_strategy": "grid",
-          "stage": "stage2",
-          "stage_label": "Stage 2 compositional",
-          "fingerprint": "dx|grid|neutral|v1",
-          "mutation_summary": "Sideways maker-style neutral grid for dYdX perps.",
-          "description": "Neutral grid challenger for DX chosen for very high win rate and zero kill-switch events in the first suite.",
-          "nickname": "Range Mason",
-          "coin_universe": [
-            "SUI",
-            "LINK",
-            "AVAX",
-            "ETH",
-            "XRP",
-            "BTC"
-          ],
-          "coverage_targets": [
-            "SUI",
-            "LINK",
-            "AVAX",
-            "ETH",
-            "XRP",
-            "BTC"
-          ],
-          "invention_spec": null,
-          "verdict": "keep-testing",
-          "beats_champion": true,
-          "promotion_pass": true,
-          "lifecycle_state": "probation",
-          "promotion_target": "hold",
-          "time_floor_met": true,
-          "elapsed_hours": 73.58966042472223,
-          "stage_floor_hours": 72.0,
-          "hours_to_floor": 0.0,
-          "arena_badge": "[ROPE]",
-          "arena_title": "On the Ropes",
-          "score": {
-            "net_pnl": 0.3583426732540431,
-            "total_pnl": 0.5298871937869528,
-            "total_fees": 0.343089041065878,
-            "return_pct": 0.002388951155026954,
-            "total_trades": 179,
-            "wins": 151,
-            "losses": 28,
-            "win_rate": 0.8435754189944135,
-            "win_loss_gap": 123,
-            "profit_factor": 1.0959850737640775,
-            "max_drawdown_pct": 0.09182768862959347,
-            "avg_rr": 0.0,
-            "best_trade": 0.13857409645058585,
-            "worst_trade": -0.3787006350003699,
-            "long_pnl": -2.501827157347247,
-            "short_pnl": 3.0317143511341995
-          },
-          "coverage": {
-            "requested_assets": [
-              "SUI",
-              "LINK",
-              "AVAX",
-              "ETH",
-              "XRP",
-              "BTC"
-            ],
-            "traded_assets": [
-              "AVAX",
-              "BTC",
-              "ETH",
-              "LINK",
-              "SUI",
-              "XRP"
-            ],
-            "profitable_assets": [
-              "ETH",
-              "BTC"
-            ],
-            "owned_assets": [
-              "ETH",
-              "BTC"
-            ],
-            "watch_assets": [],
-            "weak_assets": [
-              "SUI",
-              "LINK",
-              "AVAX",
-              "XRP"
-            ],
-            "coverage_ratio": 1.0,
-            "profitable_coverage_ratio": 0.3333333333333333,
-            "owned_ratio": 0.3333333333333333,
-            "coverage_bonus": 0.75,
-            "asset_scores": [
-              {
-                "asset": "BTC",
-                "trades": 76,
-                "wins": 70,
-                "losses": 6,
-                "net_pnl": 1.694151441178866,
-                "profit_factor": 3.3756418617670576
-              },
-              {
-                "asset": "ETH",
-                "trades": 54,
-                "wins": 47,
-                "losses": 7,
-                "net_pnl": 1.352276368865933,
-                "profit_factor": 2.8072038824328773
-              },
-              {
-                "asset": "SUI",
-                "trades": 19,
-                "wins": 15,
-                "losses": 4,
-                "net_pnl": -0.31113302343199134,
-                "profit_factor": 0.6798791597474219
-              },
-              {
-                "asset": "LINK",
-                "trades": 7,
-                "wins": 3,
-                "losses": 4,
-                "net_pnl": -0.5534212195286909,
-                "profit_factor": 0.12810417724645037
-              },
-              {
-                "asset": "AVAX",
-                "trades": 9,
-                "wins": 6,
-                "losses": 3,
-                "net_pnl": -0.8090458151941534,
-                "profit_factor": 0.25367879682926764
-              },
-              {
-                "asset": "XRP",
-                "trades": 14,
-                "wins": 10,
-                "losses": 4,
-                "net_pnl": -0.842940558103012,
-                "profit_factor": 0.38400023958732055
-              }
-            ]
-          },
-          "session_scores": {
-            "1d": {
-              "net_pnl": -4.794749054089044,
-              "total_trades": 51,
-              "wins": 23,
-              "losses": 28,
-              "win_rate": 0.45098039215686275,
-              "profit_factor": 0.13146732543603037
-            },
-            "3d": {
-              "net_pnl": -3.558028822689844,
-              "total_trades": 82,
-              "wins": 54,
-              "losses": 28,
-              "win_rate": 0.6585365853658537,
-              "profit_factor": 0.35548987972351287
-            },
-            "7d": {
-              "net_pnl": -2.4978959169091834,
-              "total_trades": 110,
-              "wins": 82,
-              "losses": 28,
-              "win_rate": 0.7454545454545455,
-              "profit_factor": 0.5475249701242734
-            }
-          },
-          "bankroll_scores": {
-            "150": {
-              "account_start": 150.0,
-              "promotion_pass": true,
-              "score": {
-                "net_pnl": 0.3583426732540431,
-                "total_pnl": 0.5298871937869528,
-                "total_fees": 0.343089041065878,
-                "return_pct": 0.002388951155026954,
-                "total_trades": 179,
-                "wins": 151,
-                "losses": 28,
-                "win_rate": 0.8435754189944135,
-                "win_loss_gap": 123,
-                "profit_factor": 1.0959850737640775,
-                "max_drawdown_pct": 0.09182768862959347,
-                "avg_rr": 0.0,
-                "best_trade": 0.13857409645058585,
-                "worst_trade": -0.3787006350003699,
-                "long_pnl": -2.501827157347247,
-                "short_pnl": 3.0317143511341995
-              },
-              "session_scores": {
-                "1d": {
-                  "net_pnl": -4.794749054089044,
-                  "total_trades": 51,
-                  "wins": 23,
-                  "losses": 28,
-                  "win_rate": 0.45098039215686275,
-                  "profit_factor": 0.13146732543603037
-                },
-                "3d": {
-                  "net_pnl": -3.558028822689844,
-                  "total_trades": 82,
-                  "wins": 54,
-                  "losses": 28,
-                  "win_rate": 0.6585365853658537,
-                  "profit_factor": 0.35548987972351287
-                },
-                "7d": {
-                  "net_pnl": -2.4978959169091834,
-                  "total_trades": 110,
-                  "wins": 82,
-                  "losses": 28,
-                  "win_rate": 0.7454545454545455,
-                  "profit_factor": 0.5475249701242734
-                }
-              }
-            },
-            "500": {
-              "account_start": 500.0,
-              "promotion_pass": true,
-              "score": {
-                "net_pnl": 1.1944755775134013,
-                "total_pnl": 1.7662906459565073,
-                "total_fees": 1.1436301368862598,
-                "return_pct": 0.0023889511550268024,
-                "total_trades": 179,
-                "wins": 151,
-                "losses": 28,
-                "win_rate": 0.8435754189944135,
-                "win_loss_gap": 123,
-                "profit_factor": 1.0959850737640775,
-                "max_drawdown_pct": 0.09182768862959358,
-                "avg_rr": 0.0,
-                "best_trade": 0.4619136548352863,
-                "worst_trade": -1.2623354500012332,
-                "long_pnl": -8.339423857824157,
-                "short_pnl": 10.105714503780662
-              },
-              "session_scores": {
-                "1d": {
-                  "net_pnl": -15.982496846963478,
-                  "total_trades": 51,
-                  "wins": 23,
-                  "losses": 28,
-                  "win_rate": 0.45098039215686275,
-                  "profit_factor": 0.1314673254360303
-                },
-                "3d": {
-                  "net_pnl": -11.860096075632814,
-                  "total_trades": 82,
-                  "wins": 54,
-                  "losses": 28,
-                  "win_rate": 0.6585365853658537,
-                  "profit_factor": 0.35548987972351276
-                },
-                "7d": {
-                  "net_pnl": -8.326319723030613,
-                  "total_trades": 110,
-                  "wins": 82,
-                  "losses": 28,
-                  "win_rate": 0.7454545454545455,
-                  "profit_factor": 0.5475249701242733
-                }
-              }
-            }
-          }
-        },
-        {
-          "rank": 7,
-          "case_id": "dx_champion_liquidity_sweep_current",
-          "role": "champion",
-          "family": "liquidity_sweep",
-          "base_strategy": "liquidity_sweep",
-          "stage": "stage3",
-          "stage_label": "Stage 3 open invention",
-          "fingerprint": "dx|liquidity_sweep|current_live",
-          "mutation_summary": "Current live DX liquidity_sweep baseline",
-          "description": "Current DX live liquidity_sweep baseline.",
-          "nickname": "Street Sweeper",
-          "coin_universe": [
-            "SUI",
-            "LINK",
-            "XRP"
-          ],
-          "coverage_targets": [],
-          "invention_spec": null,
-          "verdict": "champion",
-          "beats_champion": false,
-          "promotion_pass": false,
-          "lifecycle_state": "active",
-          "promotion_target": "champion",
-          "time_floor_met": true,
-          "elapsed_hours": 116.01164311361111,
-          "stage_floor_hours": 168.0,
-          "hours_to_floor": 51.988356886388885,
-          "arena_badge": "[KING]",
-          "arena_title": "Crown Holder",
-          "score": {
-            "net_pnl": -8.382013584115668,
-            "total_pnl": 14.341034810413916,
-            "total_fees": 22.723048394529474,
-            "return_pct": -0.055880090560771124,
-            "total_trades": 141,
-            "wins": 84,
-            "losses": 57,
-            "win_rate": 0.5957446808510638,
-            "win_loss_gap": 27,
-            "profit_factor": 1.168087909134936,
-            "max_drawdown_pct": 0.17013875168562728,
-            "avg_rr": 0.48953208600427145,
-            "best_trade": 5.669464016872395,
-            "worst_trade": -4.233459546955368,
-            "long_pnl": 13.836153839264567,
-            "short_pnl": 0.50488097114935
-          },
-          "coverage": {
-            "requested_assets": [
-              "SUI",
-              "LINK",
-              "XRP"
-            ],
-            "traded_assets": [
-              "LINK",
-              "SUI",
-              "XRP"
-            ],
-            "profitable_assets": [
-              "SUI",
-              "LINK"
-            ],
-            "owned_assets": [
-              "SUI",
-              "LINK"
-            ],
-            "watch_assets": [],
-            "weak_assets": [
-              "XRP"
-            ],
-            "coverage_ratio": 1.0,
-            "profitable_coverage_ratio": 0.6666666666666666,
-            "owned_ratio": 0.6666666666666666,
-            "coverage_bonus": 1.25,
-            "asset_scores": [
-              {
-                "asset": "SUI",
-                "trades": 45,
-                "wins": 28,
-                "losses": 17,
-                "net_pnl": 10.76453241410705,
-                "profit_factor": 1.4079105893641903
-              },
-              {
-                "asset": "LINK",
-                "trades": 46,
-                "wins": 28,
-                "losses": 18,
-                "net_pnl": 7.49032666134043,
-                "profit_factor": 1.265142097481849
-              },
-              {
-                "asset": "XRP",
-                "trades": 50,
-                "wins": 28,
-                "losses": 22,
-                "net_pnl": -3.9138242650335657,
-                "profit_factor": 0.872426525600134
-              }
-            ]
-          },
-          "session_scores": {
-            "1d": {
-              "net_pnl": 12.51325199191634,
-              "total_trades": 26,
-              "wins": 20,
-              "losses": 6,
-              "win_rate": 0.7692307692307693,
-              "profit_factor": 2.470067893030661
-            },
-            "3d": {
-              "net_pnl": 14.121505310666691,
-              "total_trades": 32,
-              "wins": 24,
-              "losses": 8,
-              "win_rate": 0.75,
-              "profit_factor": 2.3710730003102403
-            },
-            "7d": {
-              "net_pnl": 8.01232734275214,
-              "total_trades": 47,
-              "wins": 32,
-              "losses": 15,
-              "win_rate": 0.6808510638297872,
-              "profit_factor": 1.322195741781066
-            }
-          },
-          "bankroll_scores": {
-            "150": {
-              "account_start": 150.0,
-              "promotion_pass": false,
-              "score": {
-                "net_pnl": -8.382013584115668,
-                "total_pnl": 14.341034810413916,
-                "total_fees": 22.723048394529474,
-                "return_pct": -0.055880090560771124,
-                "total_trades": 141,
-                "wins": 84,
-                "losses": 57,
-                "win_rate": 0.5957446808510638,
-                "win_loss_gap": 27,
-                "profit_factor": 1.168087909134936,
-                "max_drawdown_pct": 0.17013875168562728,
-                "avg_rr": 0.48953208600427145,
-                "best_trade": 5.669464016872395,
-                "worst_trade": -4.233459546955368,
-                "long_pnl": 13.836153839264567,
-                "short_pnl": 0.50488097114935
-              },
-              "session_scores": {
-                "1d": {
-                  "net_pnl": 12.51325199191634,
-                  "total_trades": 26,
-                  "wins": 20,
-                  "losses": 6,
-                  "win_rate": 0.7692307692307693,
-                  "profit_factor": 2.470067893030661
-                },
-                "3d": {
-                  "net_pnl": 14.121505310666691,
-                  "total_trades": 32,
-                  "wins": 24,
-                  "losses": 8,
-                  "win_rate": 0.75,
-                  "profit_factor": 2.3710730003102403
-                },
-                "7d": {
-                  "net_pnl": 8.01232734275214,
-                  "total_trades": 47,
-                  "wins": 32,
-                  "losses": 15,
-                  "win_rate": 0.6808510638297872,
-                  "profit_factor": 1.322195741781066
-                }
-              }
-            },
-            "500": {
-              "account_start": 500.0,
-              "promotion_pass": false,
-              "score": {
-                "net_pnl": -27.940045280385164,
-                "total_pnl": 47.80344936804644,
-                "total_fees": 75.74349464843161,
-                "return_pct": -0.055880090560770326,
-                "total_trades": 141,
-                "wins": 84,
-                "losses": 57,
-                "win_rate": 0.5957446808510638,
-                "win_loss_gap": 27,
-                "profit_factor": 1.1680879091349363,
-                "max_drawdown_pct": 0.17013875168562664,
-                "avg_rr": 0.48953208600427145,
-                "best_trade": 18.89821338957466,
-                "worst_trade": -14.111531823184569,
-                "long_pnl": 46.120512797548606,
-                "short_pnl": 1.6829365704978358
-              },
-              "session_scores": {
-                "1d": {
-                  "net_pnl": 41.710839973054476,
-                  "total_trades": 26,
-                  "wins": 20,
-                  "losses": 6,
-                  "win_rate": 0.7692307692307693,
-                  "profit_factor": 2.470067893030661
-                },
-                "3d": {
-                  "net_pnl": 47.07168436888899,
-                  "total_trades": 32,
-                  "wins": 24,
-                  "losses": 8,
-                  "win_rate": 0.75,
-                  "profit_factor": 2.37107300031024
-                },
-                "7d": {
-                  "net_pnl": 26.707757809173803,
-                  "total_trades": 47,
-                  "wins": 32,
-                  "losses": 15,
-                  "win_rate": 0.6808510638297872,
-                  "profit_factor": 1.322195741781066
-                }
-              }
-            }
-          }
+          "stage_gate_label": "S2 gate 18h"
         }
-      ],
-      "champion": "dx_champion_liquidity_sweep_current"
+      ]
     }
   ]
 };
-    var LIVE_STATUS = {
-  "state": "running",
-  "interval_minutes": 30.0,
-  "last_refresh_started_at": "2026-04-16T10:51:16.829501+00:00",
-  "last_refresh_finished_at": "",
-  "next_refresh_at": "",
-  "last_error": ""
-};
 
-    function fmt(n) { return (n >= 0 ? '+' : '') + '$' + Math.abs(n).toFixed(2); }
-    function fmtShort(n) { return (n >= 0 ? '+' : '-') + '$' + Math.abs(n).toFixed(0); }
-    function pct(n) { return (n * 100).toFixed(1) + '%'; }
-    function cls(n) { return n >= 0 ? 'good' : 'bad'; }
-    function esc(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
-
-    function neonStream(type) {
-      var c = type === 'gain' ? 'gain' : 'loss';
-      return '<div class="money-stream"><div class="stream-canvas">' +
-        Array(6).fill(0).map(function() { return '<div class="neon-line ' + c + '"></div>'; }).join('') +
-        Array(3).fill(0).map(function() { return '<div class="neon-orb ' + c + '"></div>'; }).join('') +
-        '</div><div class="stream-label ' + cls(type === 'gain' ? 1 : -1) + '" id="stream-pnl-' + c + '"></div>' +
-        '<div class="stream-sub" id="stream-sub-' + c + '"></div></div>';
+    function fmtMoney(value) {
+      const sign = value >= 0 ? '+' : '-';
+      return sign + '$' + Math.abs(value).toFixed(2);
     }
-
-    function stageIndex(stage) {
-      if (stage === 'stage1') return 0;
-      if (stage === 'stage2') return 1;
-      if (stage === 'stage3') return 2;
-      return 3;
+    function fmtPct(value) {
+      return (value * 100).toFixed(1) + '%';
     }
-
-    function gateTimeline(bot) {
-      var s = bot.score || {};
-      var si = stageIndex(bot.stage);
-      var ko = bot.lifecycle_state === 'knocked_out';
-      var champ = bot.verdict === 'champion';
-      var allPass = champ && bot.promotion_pass;
-
-      var nodes = ['S1', 'S2', 'S3', 'OK'];
-      var hours = ['24h', '72h', '168h', 'Live'];
-      var fillPct, fillCls;
-
-      if (ko) {
-        fillPct = Math.min(100, ((si + 0.3) / 4) * 100);
-        fillCls = 'bad';
-      } else if (allPass) {
-        fillPct = 100;
-        fillCls = 'good';
-      } else {
-        var prog = bot.hours_to_floor !== undefined
-          ? Math.max(0, 1 - bot.hours_to_floor / Math.max(1, bot.stage_floor_hours))
-          : 0.5;
-        fillPct = ((si + prog) / 4) * 100;
-        fillCls = 'amber';
-      }
-
-      var nodeHtml = nodes.map(function(label, i) {
-        var pos = (i / 3) * 100;
-        var nodeCls;
-        if (ko) {
-          nodeCls = i <= si ? 'failed' : 'locked';
-        } else if (allPass) {
-          nodeCls = 'passed';
-        } else if (i < si) {
-          nodeCls = 'passed';
-        } else if (i === si) {
-          nodeCls = 'current';
-        } else {
-          nodeCls = 'locked';
-        }
-        var txt = (ko && i <= si) ? 'X' : label;
-        return '<div class="gate-node ' + nodeCls + '" style="left:' + pos + '%">' + txt + '</div>';
-      }).join('');
-
-      var labelHtml = hours.map(function(h, i) {
-        var lc = '';
-        if (ko && i <= si) lc = ' fail';
-        else if (!ko && !allPass && i === si) lc = ' active';
-        return '<div class="gate-label' + lc + '">' + (ko && i <= si ? 'Failed' : h) + '</div>';
-      }).join('');
-
-      var eta = '';
-      if (ko) {
-        var reasons = [];
-        var promo = (SNAPSHOT.venues || []).find(function(v) {
-          return v.leaderboard && v.leaderboard.some(function(b) { return b.case_id === bot.case_id; });
-        });
-        var rules = promo ? promo.promotion_rules : {};
-        if (s.net_pnl < (rules.min_net_pnl || 0)) reasons.push('Net PnL negative');
-        if ((s.profit_factor || 0) < (rules.min_profit_factor || 1.05)) reasons.push('PF below ' + (rules.min_profit_factor || 1.05));
-        if ((s.max_drawdown_pct || 0) > (rules.max_drawdown_pct || 0.12)) reasons.push('DD above ' + pct(rules.max_drawdown_pct || 0.12));
-        eta = '<span class="fail">Knocked out' + (reasons.length ? ' -- ' + esc(reasons.join(', ')) : '') + '</span>';
-      } else if (allPass) {
-        eta = 'All gates cleared -- <strong>Champion</strong>';
-      } else {
-        var h = bot.hours_to_floor;
-        var hStr = h !== undefined ? Math.ceil(h) + 'h' : '?';
-        eta = esc(bot.stage_label || '') + ' gate in <strong>' + hStr + '</strong>';
-      }
-
-      return '<div class="gate-timeline"><div class="gate-track"><div class="gate-rail">' +
-        '<div class="gate-fill ' + fillCls + '" style="width:' + fillPct.toFixed(0) + '%"></div></div>' +
-        nodeHtml + '</div><div class="gate-labels">' + labelHtml +
-        '</div><div class="gate-eta">' + eta + '</div></div>';
+    function cls(value) {
+      return value >= 0 ? 'good' : 'bad';
     }
-
-    function botCard(bot, isLeader) {
-      var s = bot.score || {};
-      var ko = bot.lifecycle_state === 'knocked_out';
-      var pos = (s.net_pnl || 0) >= 0;
-      var cardCls = 'bot-card';
-      if (isLeader) cardCls += ' leader';
-      cardCls += pos ? ' positive' : ' negative';
-      if (ko) cardCls += ' dead';
-
-      var cov = bot.coverage || {};
-      var owned = (cov.owned_assets || []).join(' ') || '-';
-      var ownedRatio = (cov.owned_assets || []).length + '/' + (cov.requested_assets || []).length;
-
-      var bs = bot.bankroll_scores || {};
-      var bk150 = bs['150'] ? bs['150'].score.net_pnl : null;
-      var bk500 = bs['500'] ? bs['500'].score.net_pnl : null;
-
-      var ss = bot.session_scores || {};
-      var d1 = ss['1d'] ? ss['1d'].net_pnl : null;
-      var d7 = ss['7d'] ? ss['7d'].net_pnl : null;
-
-      var roleLabel = bot.verdict === 'champion' ? 'Champion' : (ko ? 'Knocked out' : 'Challenger');
-
-      return '<div class="' + cardCls + '">' +
-        '<div class="bot-head"><div>' +
-        '<div class="bot-name">' + esc(bot.nickname || bot.case_id) + '</div>' +
-        '<div class="bot-sub">' + esc(bot.base_strategy || '') + ' -- ' + roleLabel + '</div>' +
-        '</div><div class="bot-pnl ' + cls(s.net_pnl || 0) + '">' + fmt(s.net_pnl || 0) + '</div></div>' +
-        '<div class="stats-bar">' +
-        '<div class="sb-item"><div class="sb-label">PF</div><div class="sb-val ' +
-          ((s.profit_factor || 0) >= 1.05 ? 'good' : (s.profit_factor || 0) < 1 ? 'bad' : '') +
-          '">' + (s.profit_factor ? s.profit_factor.toFixed(2) : '-') + '</div></div>' +
-        '<div class="sb-item"><div class="sb-label">DD</div><div class="sb-val ' +
-          ((s.max_drawdown_pct || 0) > 0.12 ? 'bad' : (s.max_drawdown_pct || 0) > 0.08 ? 'amber' : '') +
-          '">' + pct(s.max_drawdown_pct || 0) + '</div></div>' +
-        '<div class="sb-item"><div class="sb-label">W/L</div><div class="sb-val ' +
-          ((s.wins || 0) > (s.losses || 0) ? 'good' : 'bad') +
-          '">' + (s.wins || 0) + '/' + (s.losses || 0) + '</div></div>' +
-        '<div class="sb-item"><div class="sb-label">1D</div><div class="sb-val ' +
-          (d1 !== null ? cls(d1) : '') + '">' + (d1 !== null ? fmt(d1) : '-') + '</div></div>' +
-        '<div class="sb-item"><div class="sb-label">7D</div><div class="sb-val ' +
-          (d7 !== null ? cls(d7) : '') + '">' + (d7 !== null ? fmt(d7) : '-') + '</div></div>' +
-        '</div>' +
-        '<div class="stats-bar-2">' +
-        '<div class="sb-item"><div class="sb-label">$150</div><div class="sb-val ' +
-          (bk150 !== null ? cls(bk150) : '') + '">' + (bk150 !== null ? fmtShort(bk150) : '-') + '</div></div>' +
-        '<div class="sb-item"><div class="sb-label">$500</div><div class="sb-val ' +
-          (bk500 !== null ? cls(bk500) : '') + '">' + (bk500 !== null ? fmtShort(bk500) : '-') + '</div></div>' +
-        '<div class="sb-item"><div class="sb-label">Owned</div><div class="sb-val">' + esc(ownedRatio) + '</div></div>' +
-        '<div class="sb-item"><div class="sb-label">Assets</div><div class="sb-val">' + esc(owned) + '</div></div>' +
-        '</div>' +
-        gateTimeline(bot) +
-        '</div>';
+    function esc(value) {
+      const div = document.createElement('div');
+      div.textContent = value ?? '';
+      return div.innerHTML;
     }
-
-    function reserveStateLabel(state) {
-      if (state === 'ready') return 'Reserve ready';
-      if (state === 'active') return 'Reserve active';
-      if (state === 'seeded') return 'Reserve seeded';
-      if (state === 'field-full') return 'Reserve dormant';
-      if (state === 'exhausted') return 'Reserve exhausted';
-      return 'Reserve off';
+    function rowStatus(row) {
+      if (row.lifecycle_state === 'knocked_out') return 'out';
+      return esc(row.lifecycle_state || 'active') + ' | ' + esc(row.stage_gate_label || '');
     }
-
-    function renderOpsStrip(venue) {
-      var rotation = venue.rotation_status || {};
-      var reserve = venue.replenishment_status || {};
-      if (!rotation.enabled && !reserve.enabled) return '';
-
-      var rotValue = 'off';
-      var rotCls = '';
-      if (rotation.enabled) {
-        var activeCases = rotation.active_agent_cases || 0;
-        var maxCases = rotation.max_agent_cases || 0;
-        var freeSlots = rotation.free_agent_slots || 0;
-        var activeGroups = rotation.active_group_count || 0;
-        var requestedGroups = rotation.requested_group_count || 0;
-        var benchedCases = rotation.benched_case_count || 0;
-        rotValue = activeCases + '/' + maxCases + ' slots · free ' + freeSlots +
-          '<br>' + activeGroups + '/' + requestedGroups + ' groups' +
-          (benchedCases ? ' · benched ' + benchedCases : '');
-        rotCls = freeSlots > 0 ? 'amber' : '';
-      }
-
-      var reserveValue = 'off';
-      var reserveCls = '';
-      if (reserve.enabled) {
-        reserveValue = reserveStateLabel(reserve.state || 'none') +
-          '<br>queue ' + (reserve.queue_size || 0) +
-          ((reserve.seeded_count || 0) ? ' · seeded ' + reserve.seeded_count : '');
-        if (reserve.next_label) {
-          reserveValue += ' · next ' + esc(reserve.next_label);
-        } else if (reserve.next_group) {
-          reserveValue += ' · next ' + esc(String(reserve.next_group).split('_').join(' '));
-        }
-        if (reserve.state === 'ready') reserveCls = 'good';
-        else if (reserve.state === 'field-full') reserveCls = 'amber';
-        else if (reserve.state === 'exhausted') reserveCls = 'bad';
-      }
-
-      return '<div class="ops-strip">' +
-        '<div class="ops-card"><div class="ops-title">Rotation</div><div class="ops-value ' + rotCls + '">' + rotValue + '</div></div>' +
-        '<div class="ops-card"><div class="ops-title">Reserve</div><div class="ops-value ' + reserveCls + '">' + reserveValue + '</div></div>' +
-        '</div>';
+    function renderCard(row, leader) {
+      const score = row.score || {};
+      const session = row.session_scores || {};
+      return [
+        '<article class="card ' + (leader ? 'leader' : '') + '">',
+        '<div class="row">',
+        '<div>',
+        '<div class="title">' + esc(row.nickname || row.case_id) + '</div>',
+        '<div class="meta">' + esc(row.base_strategy || 'strategy') + ' | ' + esc(row.lifecycle_state || 'active') + ' | ' + esc(row.stage_gate_label || '') + '</div>',
+        '</div>',
+        '<div class="pnl ' + cls(score.net_pnl || 0) + '">' + fmtMoney(score.net_pnl || 0) + '</div>',
+        '</div>',
+        '<div class="grid">',
+        '<div class="metric"><div class="k">PF</div><div class="v">' + (score.profit_factor || 0).toFixed(2) + '</div></div>',
+        '<div class="metric"><div class="k">DD</div><div class="v">' + fmtPct(score.max_drawdown_pct || 0) + '</div></div>',
+        '<div class="metric"><div class="k">W/L</div><div class="v">' + (score.wins || 0) + '/' + (score.losses || 0) + '</div></div>',
+        '<div class="metric"><div class="k">Trades</div><div class="v">' + (score.total_trades || 0) + '</div></div>',
+        '</div>',
+        '<div class="line"><strong>Form</strong> 1d ' + fmtMoney((session['1d'] || {}).net_pnl || 0) + ' | 3d ' + fmtMoney((session['3d'] || {}).net_pnl || 0) + ' | 7d ' + fmtMoney((session['7d'] || {}).net_pnl || 0) + '</div>',
+        '</article>',
+      ].join('');
     }
-
-    function renderVenue(venue, pageId) {
-      var page = document.getElementById(pageId);
-      var lb = venue.leaderboard || [];
-      if (!lb.length) return;
-
-      var champ = lb[0];
-      var champScore = champ.score || {};
-      var isGain = (champScore.net_pnl || 0) >= 0;
-      var streamType = isGain ? 'gain' : 'loss';
-
-      var html = neonStream(streamType);
-      html += renderOpsStrip(venue);
-
-      lb.forEach(function(bot, i) {
-        html += botCard(bot, i === 0);
+    function renderVenue(venue, active) {
+      const rows = venue.rows || [];
+      return [
+        '<section class="venue ' + (active ? 'active' : '') + '" id="venue-' + venue.venue + '">',
+        '<div class="venue-head">',
+        '<h2>' + esc(venue.venue) + ' // ' + venue.days + 'd</h2>',
+        '<div class="sub">' + esc(venue.focus_label) + '</div>',
+        '<div class="focus">' + esc(venue.strategy_summary) + '</div>',
+        '</div>',
+        '<div class="cards">' + rows.map((row, index) => renderCard(row, index === 0)).join('') + '</div>',
+        '</section>',
+      ].join('');
+    }
+    function activateVenue(name) {
+      document.querySelectorAll('.tab').forEach((button) => {
+        button.classList.toggle('active', button.dataset.venue === name);
       });
-
-      var ts = venue.generated_at || SNAPSHOT.generated_at || '';
-      html += '<div class="timestamp"><span class="live-dot"></span>' +
-        esc(venue.venue) + ' -- ' + venue.days + 'd window -- ' +
-        esc(ts.substring(0, 16).replace('T', ' ')) + ' UTC</div>';
-
-      page.innerHTML = '<div class="spacer"></div>' + html;
-
-      var pnlEl = page.querySelector('.stream-label');
-      if (pnlEl) pnlEl.textContent = fmt(champScore.net_pnl || 0);
-
-      var subEl = page.querySelector('.stream-sub');
-      if (subEl) {
-        subEl.textContent = 'PF ' + (champScore.profit_factor ? champScore.profit_factor.toFixed(2) : '-') +
-          ' \u00b7 ' + (champScore.total_trades || 0) + ' trades' +
-          ' \u00b7 ' + pct(champScore.win_rate || 0) + ' WR' +
-          ' \u00b7 ' + pct(champScore.max_drawdown_pct || 0) + ' DD';
-      }
+      document.querySelectorAll('.venue').forEach((section) => {
+        section.classList.toggle('active', section.id === 'venue-' + name);
+      });
     }
-
-    function render() {
-      var venues = SNAPSHOT.venues || [];
-      var hlVenue = venues.find(function(v) { return v.venue === 'HL'; });
-      var dxVenue = venues.find(function(v) { return v.venue === 'DX'; });
-
-      if (hlVenue) {
-        renderVenue(hlVenue, 'hl-page');
-        var hlChamp = (hlVenue.leaderboard || [])[0];
-        var hlPnl = hlChamp ? (hlChamp.score || {}).net_pnl || 0 : 0;
-        var hlTab = document.getElementById('hl-tab-pnl');
-        hlTab.textContent = fmt(hlPnl);
-        hlTab.className = 'vt-pnl ' + cls(hlPnl);
-      }
-
-      if (dxVenue) {
-        renderVenue(dxVenue, 'dx-page');
-        var dxChamp = (dxVenue.leaderboard || [])[0];
-        var dxPnl = dxChamp ? (dxChamp.score || {}).net_pnl || 0 : 0;
-        var dxTab = document.getElementById('dx-tab-pnl');
-        dxTab.textContent = fmt(dxPnl);
-        dxTab.className = 'vt-pnl ' + cls(dxPnl);
-      }
-    }
-
-    function showVenue(v) {
-      var swiper = document.getElementById('swiper');
-      swiper.classList.toggle('show-dx', v === 'dx');
-      document.querySelectorAll('.vt-btn').forEach(function(b) { b.classList.remove('active'); });
-      document.querySelector('.vt-btn.' + v).classList.add('active');
-    }
-
-    var startX = 0;
-    document.addEventListener('touchstart', function(e) { startX = e.touches[0].clientX; });
-    document.addEventListener('touchend', function(e) {
-      var diff = startX - e.changedTouches[0].clientX;
-      if (Math.abs(diff) > 60) showVenue(diff > 0 ? 'dx' : 'hl');
+    const tabs = document.getElementById('tabs');
+    const venues = document.getElementById('venues');
+    const venueList = VIEW.venues || [];
+    tabs.innerHTML = venueList.map((venue, index) =>
+      '<button class="tab ' + (index === 0 ? 'active' : '') + '" data-venue="' + venue.venue + '">' +
+      venue.venue +
+      '</button>'
+    ).join('');
+    venues.innerHTML = venueList.map((venue, index) => renderVenue(venue, index === 0)).join('');
+    tabs.querySelectorAll('.tab').forEach((button) => {
+      button.addEventListener('click', () => activateVenue(button.dataset.venue));
     });
-
-    render();
   </script>
-
 </body>
 </html>
