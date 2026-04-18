@@ -172,6 +172,14 @@
     font-size: 12px;
     line-height: 1.35;
   }
+  .perf-line {
+    margin-top: 8px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.4;
+  }
   .stats-line {
     margin-top: 10px;
     display: flex;
@@ -258,7 +266,7 @@
   <div class="shell">
     <section class="hero">
       <h1>Battle Pulse Arena</h1>
-      <p>snapshot 34m ago | running | 30m cadence</p>
+      <p>snapshot 38m ago | running | 30m cadence</p>
       <div class="summary" id="summary"></div>
     </section>
     <div class="tabs" id="tabs"></div>
@@ -734,6 +742,9 @@
       const statsLine = (row.metrics || []).map((item) =>
         '<span class="stat-pill"><span class="pill-v">' + esc(item.value) + '</span><span class="pill-k">' + esc(item.label) + '</span></span>'
       ).join('');
+      const perfLine = (row.metrics || []).map((item) =>
+        esc(item.label) + ' ' + esc(item.value)
+      ).join(' | ');
       return [
         '<article class="card">',
         '<div class="row">',
@@ -743,6 +754,7 @@
         '</div>',
         '<span class="chip ' + esc(kind) + '">' + esc(sectionTitle(kind)) + '</span>',
         '</div>',
+        perfLine ? '<div class="perf-line">' + perfLine + '</div>' : '',
         statsLine ? '<div class="stats-line">' + statsLine + '</div>' : '',
         '<div class="meta">' + esc(row.summary) + '</div>',
         metrics ? '<div class="metrics">' + metrics + '</div>' : '',
