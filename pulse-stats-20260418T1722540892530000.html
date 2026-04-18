@@ -172,6 +172,34 @@
     font-size: 12px;
     line-height: 1.35;
   }
+  .stats-line {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .stat-pill {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    border-radius: 999px;
+    padding: 6px 9px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.07);
+    font-family: var(--mono);
+    line-height: 1;
+  }
+  .stat-pill .pill-v {
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .stat-pill .pill-k {
+    color: var(--muted);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
   .metrics {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -230,7 +258,7 @@
   <div class="shell">
     <section class="hero">
       <h1>Battle Pulse Arena</h1>
-      <p>snapshot 22m ago | running | 30m cadence</p>
+      <p>snapshot 34m ago | running | 30m cadence</p>
       <div class="summary" id="summary"></div>
     </section>
     <div class="tabs" id="tabs"></div>
@@ -703,6 +731,9 @@
       const metrics = (row.metrics || []).map((item) =>
         '<div class="metric"><span class="metric-v">' + esc(item.value) + '</span><span class="metric-k">' + esc(item.label) + '</span></div>'
       ).join('');
+      const statsLine = (row.metrics || []).map((item) =>
+        '<span class="stat-pill"><span class="pill-v">' + esc(item.value) + '</span><span class="pill-k">' + esc(item.label) + '</span></span>'
+      ).join('');
       return [
         '<article class="card">',
         '<div class="row">',
@@ -712,6 +743,7 @@
         '</div>',
         '<span class="chip ' + esc(kind) + '">' + esc(sectionTitle(kind)) + '</span>',
         '</div>',
+        statsLine ? '<div class="stats-line">' + statsLine + '</div>' : '',
         '<div class="meta">' + esc(row.summary) + '</div>',
         metrics ? '<div class="metrics">' + metrics + '</div>' : '',
         '</article>',
@@ -738,6 +770,11 @@
         '<div class="head-sub">Daily progress read, not raw leaderboard noise.</div>',
         champ ? (
           '<div class="champ"><div class="head-sub">Champion</div><strong>' + esc(champ.name) + ' [' + esc(champ.stage) + ']</strong><div class="head-sub">' + esc(champ.strategy) + ' | ' + fmtMoney(champ.net_pnl || 0) + '</div>' +
+          (((champ.metrics || []).length > 0)
+            ? '<div class="stats-line">' + (champ.metrics || []).map((item) =>
+                '<span class="stat-pill"><span class="pill-v">' + esc(item.value) + '</span><span class="pill-k">' + esc(item.label) + '</span></span>'
+              ).join('') + '</div>'
+            : '') +
           (((champ.metrics || []).length > 0)
             ? '<div class="metrics">' + (champ.metrics || []).map((item) =>
                 '<div class="metric"><span class="metric-v">' + esc(item.value) + '</span><span class="metric-k">' + esc(item.label) + '</span></div>'
