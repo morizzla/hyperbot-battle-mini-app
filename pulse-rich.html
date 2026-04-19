@@ -266,7 +266,7 @@
   <div class="shell">
     <section class="hero">
       <h1>Battle Pulse Arena</h1>
-      <p>snapshot 9m ago | running | 30m cadence</p>
+      <p>snapshot 10m ago | running | 30m cadence</p>
       <div class="summary" id="summary"></div>
     </section>
     <div class="tabs" id="tabs"></div>
@@ -311,7 +311,7 @@
             "strategy": "dip_rip/oi_filter",
             "status": "floor in 15h",
             "stage_age": "2.4d",
-            "created_age": "8.1d",
+            "created_age": "8.2d",
             "summary": "Flow Guard [S2] | dip_rip/oi_filter | on stage 2.4d | floor in 15h | PnL $+32.52 | Trades 21 | PF 2.10 | /d $+1.55",
             "lifecycle_state": "active",
             "promotion_target": "hold",
@@ -339,9 +339,9 @@
             "stage": "S2",
             "strategy": "dip_rip/oi_velocity_reclaim",
             "status": "hold",
-            "stage_age": "6.1d",
-            "created_age": "6.1d",
-            "summary": "Current Sentinel [S2] | dip_rip/oi_velocity_reclaim | on stage 6.1d | hold | stalled | PnL $+29.08 | Trades 16 | PF 2.46 | /d $+1.38",
+            "stage_age": "6.2d",
+            "created_age": "6.2d",
+            "summary": "Current Sentinel [S2] | dip_rip/oi_velocity_reclaim | on stage 6.2d | hold | stalled | PnL $+29.08 | Trades 16 | PF 2.46 | /d $+1.38",
             "lifecycle_state": "active",
             "promotion_target": "hold",
             "metrics": [
@@ -368,9 +368,9 @@
             "stage": "S3",
             "strategy": "dip_rip/oi_velocity_reclaim",
             "status": "floor in 20h",
-            "stage_age": "6.1d",
-            "created_age": "6.1d",
-            "summary": "Flow Prism [S3] | dip_rip/oi_velocity_reclaim | on stage 6.1d | floor in 20h | PnL $+26.69 | Trades 19 | PF 1.91 | /d $+1.27",
+            "stage_age": "6.2d",
+            "created_age": "6.2d",
+            "summary": "Flow Prism [S3] | dip_rip/oi_velocity_reclaim | on stage 6.2d | floor in 20h | PnL $+26.69 | Trades 19 | PF 1.91 | /d $+1.27",
             "lifecycle_state": "active",
             "promotion_target": "hold",
             "metrics": [
@@ -756,6 +756,35 @@
         "stalled": [],
         "out": [
           {
+            "name": "Open Interest Torque",
+            "stage": "S1",
+            "strategy": "liquidity_sweep/oi_filter",
+            "status": "out",
+            "stage_age": "<1h",
+            "created_age": "<1h",
+            "summary": "Open Interest Torque [S1] | liquidity_sweep/oi_filter | out | PnL $-6.38 | Trades 16 | PF 0.78 | /d $-0.21",
+            "lifecycle_state": "knocked_out",
+            "promotion_target": "graveyard",
+            "metrics": [
+              {
+                "label": "PnL",
+                "value": "$-6.38"
+              },
+              {
+                "label": "Trades",
+                "value": "16"
+              },
+              {
+                "label": "PF",
+                "value": "0.78"
+              },
+              {
+                "label": "/d",
+                "value": "$-0.21"
+              }
+            ]
+          },
+          {
             "name": "Signal Quarry",
             "stage": "S1",
             "strategy": "supertrend_rsi/regime_rotation",
@@ -781,35 +810,6 @@
               {
                 "label": "/d",
                 "value": "$-1.50"
-              }
-            ]
-          },
-          {
-            "name": "Pulse Harbor",
-            "stage": "S1",
-            "strategy": "adx_fast_signal/regime_rotation",
-            "status": "out",
-            "stage_age": "2.3d",
-            "created_age": "2.3d",
-            "summary": "Pulse Harbor [S1] | adx_fast_signal/regime_rotation | out | PnL $-88.68 | Trades 252 | PF 0.75 | /d $-2.96",
-            "lifecycle_state": "knocked_out",
-            "promotion_target": "graveyard",
-            "metrics": [
-              {
-                "label": "PnL",
-                "value": "$-88.68"
-              },
-              {
-                "label": "Trades",
-                "value": "252"
-              },
-              {
-                "label": "PF",
-                "value": "0.75"
-              },
-              {
-                "label": "/d",
-                "value": "$-2.96"
               }
             ]
           }
