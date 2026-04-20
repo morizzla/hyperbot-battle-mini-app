@@ -266,7 +266,7 @@
   <div class="shell">
     <section class="hero">
       <h1>Battle Pulse Arena</h1>
-      <p>snapshot 10m ago | running | 30m cadence</p>
+      <p>snapshot 12m ago | running | 30m cadence</p>
       <div class="summary" id="summary"></div>
     </section>
     <div class="tabs" id="tabs"></div>
@@ -274,7 +274,7 @@
   </div>
   <script>
     const VIEW = {
-  "summary": "new 4 | review 14 | moving 0 | stalled 12",
+  "summary": "new 4 | review 17 | moving 0 | stalled 15",
   "venues": [
     {
       "venue": "HL",
@@ -309,10 +309,10 @@
             "name": "Flow Guard",
             "stage": "S2",
             "strategy": "dip_rip/oi_filter",
-            "status": "floor in 5h",
+            "status": "floor in 4h",
             "stage_age": "2.8d",
             "created_age": "8.6d",
-            "summary": "Flow Guard [S2] | dip_rip/oi_filter | on stage 2.8d | floor in 5h | PnL $+32.52 | Trades 21 | PF 2.10 | /d $+1.55",
+            "summary": "Flow Guard [S2] | dip_rip/oi_filter | on stage 2.8d | floor in 4h | PnL $+32.52 | Trades 21 | PF 2.10 | /d $+1.55",
             "lifecycle_state": "active",
             "promotion_target": "hold",
             "metrics": [
@@ -367,10 +367,10 @@
             "name": "Flow Prism",
             "stage": "S3",
             "strategy": "dip_rip/oi_velocity_reclaim",
-            "status": "floor in 10h",
+            "status": "floor in 9h",
             "stage_age": "6.6d",
             "created_age": "6.6d",
-            "summary": "Flow Prism [S3] | dip_rip/oi_velocity_reclaim | on stage 6.6d | floor in 10h | PnL $+26.69 | Trades 19 | PF 1.91 | /d $+1.27",
+            "summary": "Flow Prism [S3] | dip_rip/oi_velocity_reclaim | on stage 6.6d | floor in 9h | PnL $+26.69 | Trades 19 | PF 1.91 | /d $+1.27",
             "lifecycle_state": "active",
             "promotion_target": "hold",
             "metrics": [
@@ -397,9 +397,9 @@
             "stage": "S3",
             "strategy": "dip_rip/agent_stage3",
             "status": "hold",
-            "stage_age": "8.5d",
-            "created_age": "8.5d",
-            "summary": "Reclaim Warden [S3] | dip_rip/agent_stage3 | on stage 8.5d | hold | stalled | PnL $+26.26 | Trades 19 | PF 1.89 | /d $+1.25",
+            "stage_age": "8.6d",
+            "created_age": "8.6d",
+            "summary": "Reclaim Warden [S3] | dip_rip/agent_stage3 | on stage 8.6d | hold | stalled | PnL $+26.26 | Trades 19 | PF 1.89 | /d $+1.25",
             "lifecycle_state": "active",
             "promotion_target": "hold",
             "metrics": [
@@ -424,13 +424,13 @@
         ],
         "new": [
           {
-            "name": "Regime Jury",
+            "name": "Regime Jury II",
             "stage": "S1",
             "strategy": "donchian_adx/regime_split",
-            "status": "floor in 11h",
-            "stage_age": "13h",
-            "created_age": "13h",
-            "summary": "Regime Jury [S1] | donchian_adx/regime_split | in arena 13h | floor in 11h | PnL $+0.00 | Trades 0 | PF 0.00 | /d $+0.00",
+            "status": "floor in 24h",
+            "stage_age": "<1h",
+            "created_age": "<1h",
+            "summary": "Regime Jury II [S1] | donchian_adx/regime_split | in arena <1h | floor in 24h | PnL $+0.00 | Trades 0 | PF 0.00 | /d $+0.00",
             "lifecycle_state": "probation",
             "promotion_target": "hold",
             "metrics": [
@@ -465,23 +465,23 @@
         "name": "Street Sweeper",
         "stage": "S3",
         "strategy": "liquidity_sweep",
-        "net_pnl": -8.382013584115668,
+        "net_pnl": -1.581096119213413,
         "metrics": [
           {
             "label": "PnL",
-            "value": "$-8.38"
+            "value": "$-1.58"
           },
           {
             "label": "Trades",
-            "value": "141"
+            "value": "138"
           },
           {
             "label": "PF",
-            "value": "1.17"
+            "value": "1.26"
           },
           {
             "label": "/d",
-            "value": "$-0.28"
+            "value": "$-0.05"
           }
         ]
       },
@@ -606,35 +606,6 @@
         ],
         "new": [
           {
-            "name": "Sleeve Pilot",
-            "stage": "S1",
-            "strategy": "grid/adaptive_sleeve_activation",
-            "status": "floor in 11h",
-            "stage_age": "13h",
-            "created_age": "13h",
-            "summary": "Sleeve Pilot [S1] | grid/adaptive_sleeve_activation | in arena 13h | floor in 11h | PnL $+1.76 | Trades 1011 | PF 1.05 | /d $+0.06",
-            "lifecycle_state": "active",
-            "promotion_target": "hold",
-            "metrics": [
-              {
-                "label": "PnL",
-                "value": "$+1.76"
-              },
-              {
-                "label": "Trades",
-                "value": "1011"
-              },
-              {
-                "label": "PF",
-                "value": "1.05"
-              },
-              {
-                "label": "/d",
-                "value": "$+0.06"
-              }
-            ]
-          },
-          {
             "name": "Pivot Switch",
             "stage": "S1",
             "strategy": "donchian_adx/structure_breakout",
@@ -691,10 +662,69 @@
                 "value": "$+0.00"
               }
             ]
+          },
+          {
+            "name": "Sleeve Pilot II",
+            "stage": "S1",
+            "strategy": "grid/adaptive_sleeve_activation",
+            "status": "floor in 24h",
+            "stage_age": "<1h",
+            "created_age": "<1h",
+            "summary": "Sleeve Pilot II [S1] | grid/adaptive_sleeve_activation | in arena <1h | floor in 24h | PnL $-5.04 | Trades 314 | PF 0.93 | /d $-0.17",
+            "lifecycle_state": "probation",
+            "promotion_target": "hold",
+            "metrics": [
+              {
+                "label": "PnL",
+                "value": "$-5.04"
+              },
+              {
+                "label": "Trades",
+                "value": "314"
+              },
+              {
+                "label": "PF",
+                "value": "0.93"
+              },
+              {
+                "label": "/d",
+                "value": "$-0.17"
+              }
+            ]
           }
         ],
         "progressing": [],
-        "stalled": [],
+        "stalled": [
+          {
+            "name": "Sui Harbor",
+            "stage": "S1",
+            "strategy": "liquidity_sweep/split_ownership",
+            "status": "probation",
+            "stage_age": "7.6d",
+            "created_age": "7.6d",
+            "summary": "Sui Harbor [S1] | liquidity_sweep/split_ownership | stuck 7.6d | probation | PnL $+4.36 | Trades 4 | PF inf | /d $+0.15",
+            "lifecycle_state": "probation",
+            "promotion_target": "hold",
+            "metrics": [
+              {
+                "label": "PnL",
+                "value": "$+4.36"
+              },
+              {
+                "label": "Trades",
+                "value": "4"
+              },
+              {
+                "label": "PF",
+                "value": "inf"
+              },
+              {
+                "label": "/d",
+                "value": "$+0.15"
+              }
+            ]
+          }
+        ],
         "out": []
       }
     }
