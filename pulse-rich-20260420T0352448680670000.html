@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Battle Pulse Arena</title>
+<style>
+  :root {
+    --bg: #091015;
+    --panel: #101920;
+    --panel-2: #15222b;
+    --panel-3: #0d1419;
+    --line: rgba(255,255,255,0.08);
+    --text: #edf7f1;
+    --muted: #96a9a0;
+    --mint: #7ff0be;
+    --sky: #86d7ff;
+    --amber: #ffd36b;
+    --coral: #ff8e7f;
+    --violet: #b8adff;
+    --mono: "JetBrains Mono", "Consolas", monospace;
+    --sans: "Segoe UI", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background:
+      radial-gradient(circle at top left, rgba(127,240,190,0.10), transparent 22%),
+      radial-gradient(circle at top right, rgba(134,215,255,0.08), transparent 28%),
+      linear-gradient(180deg, #091015 0%, #10181d 100%);
+    color: var(--text);
+    font-family: var(--sans);
+  }
+  .shell {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 18px 14px 36px;
+  }
+  .hero {
+    background: linear-gradient(180deg, rgba(255,255,255,0.04), transparent), var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    padding: 18px 16px;
+    margin-bottom: 14px;
+  }
+  .hero h1 {
+    margin: 0 0 8px;
+    font-size: 28px;
+    letter-spacing: -0.03em;
+  }
+  .hero p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .summary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .stat {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 14px;
+    padding: 10px 8px;
+    text-align: center;
+  }
+  .stat .v {
+    display: block;
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 800;
+  }
+  .stat .k {
+    color: var(--muted);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.10em;
+  }
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .tab {
+    flex: 1;
+    border: 1px solid var(--line);
+    background: var(--panel);
+    color: var(--muted);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-weight: 700;
+  }
+  .tab.active {
+    background: var(--panel-2);
+    color: var(--text);
+    border-color: rgba(127,240,190,0.28);
+  }
+  .venue {
+    display: none;
+    gap: 12px;
+    flex-direction: column;
+  }
+  .venue.active { display: flex; }
+  .venue-head {
+    display: grid;
+    grid-template-columns: 1.25fr 1fr;
+    gap: 12px;
+  }
+  .head-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 14px;
+  }
+  .head-card h2, .head-card h3 {
+    margin: 0 0 6px;
+  }
+  .head-sub {
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .champ {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed rgba(255,255,255,0.10);
+    font-size: 14px;
+  }
+  .champ strong {
+    font-size: 17px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .section {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 14px;
+  }
+  .section h3 {
+    margin: 0 0 10px;
+    font-size: 15px;
+    letter-spacing: 0.01em;
+  }
+  .stack {
+    display: grid;
+    gap: 10px;
+  }
+  .card {
+    background: var(--panel-3);
+    border: 1px solid rgba(255,255,255,0.04);
+    border-radius: 14px;
+    padding: 12px;
+  }
+  .row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .title {
+    margin: 0 0 4px;
+    font-size: 16px;
+    font-weight: 800;
+  }
+  .meta {
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.35;
+  }
+  .perf-line {
+    margin-top: 8px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+  .stats-line {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .stat-pill {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    border-radius: 999px;
+    padding: 6px 9px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.07);
+    font-family: var(--mono);
+    line-height: 1;
+  }
+  .stat-pill .pill-v {
+    color: var(--text);
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .stat-pill .pill-k {
+    color: var(--muted);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .metric {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 11px;
+    padding: 8px 7px;
+  }
+  .metric-v {
+    display: block;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--text);
+  }
+  .metric-k {
+    display: block;
+    margin-top: 3px;
+    color: var(--muted);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .chip {
+    border-radius: 999px;
+    padding: 5px 8px;
+    font-size: 10px;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    border: 1px solid transparent;
+  }
+  .chip.review { color: #fff4c8; background: rgba(255,211,107,0.14); border-color: rgba(255,211,107,0.24); }
+  .chip.new { color: #d6fff0; background: rgba(127,240,190,0.14); border-color: rgba(127,240,190,0.24); }
+  .chip.progressing { color: #daf3ff; background: rgba(134,215,255,0.14); border-color: rgba(134,215,255,0.24); }
+  .chip.stalled { color: #ffd9d3; background: rgba(255,142,127,0.14); border-color: rgba(255,142,127,0.24); }
+  .chip.out { color: #e0d9ff; background: rgba(184,173,255,0.14); border-color: rgba(184,173,255,0.24); }
+  .empty {
+    color: var(--muted);
+    font-size: 13px;
+  }
+  @media (max-width: 860px) {
+    .venue-head,
+    .grid,
+    .summary {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="shell">
+    <section class="hero">
+      <h1>Battle Pulse Arena</h1>
+      <p>snapshot 9m ago | running | 30m cadence</p>
+      <div class="summary" id="summary"></div>
+    </section>
+    <div class="tabs" id="tabs"></div>
+    <div id="venues"></div>
+  </div>
+  <script>
+    const VIEW = {
+  "summary": "new 6 | review 14 | moving 0 | stalled 12",
+  "venues": [
+    {
+      "venue": "HL",
+      "days": 21,
+      "champion": {
+        "name": "Tide King",
+        "stage": "S3",
+        "strategy": "dip_rip",
+        "net_pnl": 50.5570991309209,
+        "metrics": [
+          {
+            "label": "PnL",
+            "value": "$+50.56"
+          },
+          {
+            "label": "Trades",
+            "value": "26"
+          },
+          {
+            "label": "PF",
+            "value": "2.70"
+          },
+          {
+            "label": "/d",
+            "value": "$+2.41"
+          }
+        ]
+      },
+      "sections": {
+        "review": [
+          {
+            "name": "Flow Guard",
+            "stage": "S2",
+            "strategy": "dip_rip/oi_filter",
+            "status": "floor in 6h",
+            "stage_age": "2.8d",
+            "created_age": "8.5d",
+            "summary": "Flow Guard [S2] | dip_rip/oi_filter | on stage 2.8d | floor in 6h | PnL $+32.52 | Trades 21 | PF 2.10 | /d $+1.55",
+            "lifecycle_state": "active",
+            "promotion_target": "hold",
+            "metrics": [
+              {
+                "label": "PnL",
+                "value": "$+32.52"
+              },
+              {
+                "label": "Trades",
+                "value": "21"
+              },
+              {
+                "label": "PF",
+                "value": "2.10"
+              },
+              {
+                "label": "/d",
+                "value": "$+1.55"
+              }
+            ]
+          },
+          {
+            "name": "Current Sentinel",
+            "stage": "S2",
+            "strategy": "dip_rip/oi_velocity_reclaim",
+            "status": "hold",
+            "stage_age": "6.5d",
+            "created_age": "6.5d",
+            "summary": "Current Sentinel [S2] | dip_rip/oi_velocity_reclaim | on stage 6.5d | hold | stalled | PnL $+29.08 | Trades 16 | PF 2.46 | /d $+1.38",
+            "lifecycle_state": "active",
+            "promotion_target": "hold",
+            "metrics": [
+              {
+                "label": "PnL",
+                "value": "$+29.08"
+              },
+              {
+                "label": "Trades",
+                "value": "16"
+              },
+              {
+                "label": "PF",
+                "value": "2.46"
+              },
+              {
+                "label": "/d",
+                "value": "$+1.38"
+              }
+            ]
+          },
+          {
+            "name": "Flow Prism",
+            "stage": "S3",
+            "strategy": "dip_rip/oi_velocity_reclaim",
+            "status": "floor in 11h",
+            "stage_age": "6.5d",
+            "created_age": "6.5d",
+            "summary": "Flow Prism [S3] | dip_rip/oi_velocity_reclaim | on stage 6.5d | floor in 11h | PnL $+26.69 | Trades 19 | PF 1.91 | /d $+1.27",
+            "lifecycle_state": "active",
+            "promotion_target": "hold",
+            "metrics": [
+              {
+                "label": "PnL",
+                "value": "$+26.69"
+              },
+              {
+                "label": "Trades",
+                "value": "19"
+              },
+              {
+                "label": "PF",
+                "value": "1.91"
+              },
+              {
+                "label": "/d",
+                "value": "$+1.27"
+              }
+            ]
+          },
+          {
+            "name": "Reclaim Warden",
+            "stage": "S3",
+            "strategy": "dip_rip/agent_stage3",
+            "status": "hold",
+            "stage_age": "8.5d",
+            "created_age": "8.5d",
+            "summary": "Reclaim Warden [S3] | dip_rip/agent_stage3 | on stage 8.5d | hold | stalled | PnL $+26.26 | Trades 19 | PF 1.89 | /d $+1.25",
+            "lifecycle_state": "active",
+            "promotion_target": "hold",
+            "metrics": [
+              {
+                "label": "PnL",
+                "value": "$+26.26"
+              },
+              {
+                "label": "Trades",
+                "value": "19"
+              },
+              {
+                "label": "PF",
+                "value": "1.89"
+              },
+              {
+                "label": "/d",
+                "value": "$+1.25"
+              }
+            ]
+          }
+        ],
+        "new": [
+          {
+            "name": "Regime Jury",
+            "stage": "S1",
+            "strategy": "donchian_adx/regime_split",
+            "status": "floor in 12h",
+            "stage_age": "12h",
+            "created_age": "12h",
+            "summary": "Regime Jury [S1] | donchian_adx/regime_split | in arena 12h | floor in 12h | PnL $+0.00 | Trades 0 | PF 0.00 | /d $+0.00",
+            "lifecycle_state": "probation",
+            "promotion_target": "hold",
+            "metrics": [
+              {
+                "label": "PnL",
+                "value": "$+0.00"
+              },
+              {
+                "label": "Trades",
+                "value": "0"
+              },
+              {
+                "label": "PF",
+                "value": "0.00"
+              },
+              {
+                "label": "/d",
+                "value": "$+0.00"
+              }
+            ]
+          }
+        ],
+        "progressing": [],
+        "stalled": [],
+        "out": [
+          {
+            "name": "Snap Jury",
+            "stage": "S1",
+            "strategy": "supertrend_rsi/exhaustion_reversal",
+            "status": "out",
+            "stage_age": "12h",
+            "created_age": "12h",
+            "summary": "Snap Jury [S1] | supertrend_rsi/exhaustion_reversal | out | PnL $-43.52 | Trades 22 | PF 0.34 | /d $-2.07",
+            "lifecycle_state": "knocked_out",
+            "promotion_target": "graveyard",
+            "metrics": [
+              {
+                "label": "PnL",
+                "value": "$-43.52"
+              },
+              {
+                "label": "Trades",
+                "value": "22"
+              },
+              {
+                "label": "PF",
+                "value": "0.34"
+              },
+              {
+                "label": "/d",
+                "value": "$-2.07"
+              }
+            ]
+          },
+          {
+            "name": "Flow Lance",
+            "stage": "S1",
+            "strategy": "adx_fast_signal/momentum_continuation",
+            "status": "out",
+            "stage_age": "12h",
+            "created_age": "12h",
+            "summary": "Flow Lance [S1] | adx_fast_signal/momentum_continuation | out | PnL $-56.85 | Trades 183 | PF 0.78 | /d $-2.71",
+            "lifecycle_state": "knocked_out",
+            "promotion_target": "graveyard",
+            "metrics": [
+              {
+                "label": "PnL",
+                "value": "$-56.85"
+              },
+              {
+                "label": "Trades",
+                "value": "183"
+              },
+              {
+                "label": "PF",
+                "value": "0.78"
+              },
+              {
+                "label": "/d",
+                "value": "$-2.71"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "venue": "DX",
+      "days": 30,
+      "champion": {
+        "name": "Street Sweeper",
+        "stage": "S3",
+        "strategy": "liquidity_sweep",
+        "net_pnl": -8.382013584115668,
+        "metrics": [
+          {
+            "label": "PnL",
+            "value": "$-8.38"
+          },
+          {
+            "label": "Trades",
+            "value": "141"
+          },
+          {
+            "label": "PF",
+            "value": "1.17"
+          },
+          {
+            "label": "/d",
+            "value": "$-0.28"
+          }
+        ]
+      },
+      "sections": {
+        "review": [
+          {
+            "name": "Drift Rail Core",
+            "stage": "S2",
+            "strategy": "grid",
+            "status": "probation",
+            "stage_age": "6.0d",
+            "created_age": "6.0d",
+            "summary": "Drift Rail Core [S2] | grid | on stage 6.0d | probation | stalled | PnL $+17.70 | Trades 793 | PF 1.58 | /d $+0.59",
+            "lifecycle_state": "probation",
+            "promotion_target": "hold",
+            "metrics": [
+              {
+                "label": "PnL",
+                "value": "$+17.70"
+              },
+              {
+                "label": "Trades",
+                "value": "793"
+              },
+              {
+                "label": "PF",
+                "value": "1.58"
+              },
+              {
+                "label": "/d",
+                "value": "$+0.59"
+              }
+            ]
+          },
+          {
+            "name": "Drift Rail",
+            "stage": "S2",
+            "strategy": "grid",
+            "status": "probation",
+            "stage_age": "6.4d",
+            "created_age": "6.4d",
+            "summary": "Drift Rail [S2] | grid | on stage 6.4d | probation | stalled | PnL $+6.85 | Trades 1566 | PF 1.20 | /d $+0.23",
+            "lifecycle_state": "probation",
+            "promotion_target": "hold",
+            "metrics": [
+              {
+                "label": "PnL",
+                "value": "$+6.85"
+              },
+              {
+                "label": "Trades",
+                "value": "1566"
+              },
+              {
+                "label": "PF",
+                "value": "1.20"
+              },
+              {
+                "label": "/d",
+                "value": "$+0.23"
+              }
+            ]
+          },
+          {
+            "name": "Carry Lattice Core",
+            "stage": "S2",
+            "strategy": "grid",
+            "status": "hold",
+            "stage_age": "6.0d",
+            "created_age": "6.0d",
+            "summary": "Carry Lattice Core [S2] | grid | on stage 6.0d | hold | stalled | PnL $+6.47 | Trades 157 | PF 1.98 | /d $+0.22",
+            "lifecycle_state": "active",
+            "promotion_target": "hold",
+            "metrics": [
+              {
+                "label": "PnL",
+                "value": "$+6.47"
+              },
+              {
+                "label": "Trades",
+                "value": "157"
+              },
+              {
+                "label": "PF",
+                "value": "1.98"
+              },
+              {
+                "label": "/d",
+                "value": "$+0.22"
+              }
+            ]
+          },
+          {
+            "name": "Range Mason Core",
+            "stage": "S2",
+            "strategy": "grid",
+            "status": "hold",
+            "stage_age": "6.0d",
+            "created_age": "6.0d",
+            "summary": "Range Mason Core [S2] | grid | on stage 6.0d | hold | stalled | PnL $+4.72 | Trades 137 | PF 2.19 | /d $+0.16",
+            "lifecycle_state": "active",
+            "promotion_target": "hold",
+            "metrics": [
+              {
+                "label": "PnL",
+                "value": "$+4.72"
+              },
+              {
+                "label": "Trades",
+                "value": "137"
+              },
+              {
+                "label": "PF",
+                "value": "2.19"
+              },
+              {
+                "label": "/d",
+                "value": "$+0.16"
+              }
+            ]
+          }
+        ],
+        "new": [
+          {
+            "name": "Sleeve Pilot",
+            "stage": "S1",
+            "strategy": "grid/adaptive_sleeve_activation",
+            "status": "floor in 12h",
+            "stage_age": "12h",
+            "created_age": "12h",
+            "summary": "Sleeve Pilot [S1] | grid/adaptive_sleeve_activation | in arena 12h | floor in 12h | PnL $+1.76 | Trades 1011 | PF 1.05 | /d $+0.06",
+            "lifecycle_state": "active",
+            "promotion_target": "hold",
+            "metrics": [
+              {
+                "label": "PnL",
+                "value": "$+1.76"
+              },
+              {
+                "label": "Trades",
+                "value": "1011"
+              },
+              {
+                "label": "PF",
+                "value": "1.05"
+              },
+              {
+                "label": "/d",
+                "value": "$+0.06"
+              }
+            ]
+          },
+          {
+            "name": "Pivot Switch",
+            "stage": "S1",
+            "strategy": "donchian_adx/structure_breakout",
+            "status": "probation",
+            "stage_age": "2.7d",
+            "created_age": "2.7d",
+            "summary": "Pivot Switch [S1] | donchian_adx/structure_breakout | in arena 2.7d | probation | PnL $+0.00 | Trades 0 | PF 0.00 | /d $+0.00",
+            "lifecycle_state": "probation",
+            "promotion_target": "hold",
+            "metrics": [
+              {
+                "label": "PnL",
+                "value": "$+0.00"
+              },
+              {
+                "label": "Trades",
+                "value": "0"
+              },
+              {
+                "label": "PF",
+                "value": "0.00"
+              },
+              {
+                "label": "/d",
+                "value": "$+0.00"
+              }
+            ]
+          },
+          {
+            "name": "Break Cartographer",
+            "stage": "S1",
+            "strategy": "donchian_adx/structure_breakout",
+            "status": "probation",
+            "stage_age": "2.7d",
+            "created_age": "2.7d",
+            "summary": "Break Cartographer [S1] | donchian_adx/structure_breakout | in arena 2.7d | probation | PnL $+0.00 | Trades 0 | PF 0.00 | /d $+0.00",
+            "lifecycle_state": "probation",
+            "promotion_target": "hold",
+            "metrics": [
+              {
+                "label": "PnL",
+                "value": "$+0.00"
+              },
+              {
+                "label": "Trades",
+                "value": "0"
+              },
+              {
+                "label": "PF",
+                "value": "0.00"
+              },
+              {
+                "label": "/d",
+                "value": "$+0.00"
+              }
+            ]
+          }
+        ],
+        "progressing": [],
+        "stalled": [],
+        "out": [
+          {
+            "name": "Open Interest Torque",
+            "stage": "S1",
+            "strategy": "liquidity_sweep/oi_filter",
+            "status": "out",
+            "stage_age": "9h",
+            "created_age": "9h",
+            "summary": "Open Interest Torque [S1] | liquidity_sweep/oi_filter | out | PnL $-6.38 | Trades 16 | PF 0.78 | /d $-0.21",
+            "lifecycle_state": "knocked_out",
+            "promotion_target": "graveyard",
+            "metrics": [
+              {
+                "label": "PnL",
+                "value": "$-6.38"
+              },
+              {
+                "label": "Trades",
+                "value": "16"
+              },
+              {
+                "label": "PF",
+                "value": "0.78"
+              },
+              {
+                "label": "/d",
+                "value": "$-0.21"
+              }
+            ]
+          },
+          {
+            "name": "Signal Quarry",
+            "stage": "S1",
+            "strategy": "supertrend_rsi/regime_rotation",
+            "status": "out",
+            "stage_age": "2.7d",
+            "created_age": "2.7d",
+            "summary": "Signal Quarry [S1] | supertrend_rsi/regime_rotation | out | PnL $-44.89 | Trades 71 | PF 0.74 | /d $-1.50",
+            "lifecycle_state": "knocked_out",
+            "promotion_target": "graveyard",
+            "metrics": [
+              {
+                "label": "PnL",
+                "value": "$-44.89"
+              },
+              {
+                "label": "Trades",
+                "value": "71"
+              },
+              {
+                "label": "PF",
+                "value": "0.74"
+              },
+              {
+                "label": "/d",
+                "value": "$-1.50"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+};
+
+    function esc(value) {
+      const div = document.createElement('div');
+      div.textContent = value ?? '';
+      return div.innerHTML;
+    }
+    function fmtMoney(value) {
+      const sign = value >= 0 ? '+' : '-';
+      return sign + '$' + Math.abs(value).toFixed(2);
+    }
+    function summaryEntries(summary) {
+      return String(summary || '')
+        .split('|')
+        .map((part) => part.trim())
+        .filter(Boolean)
+        .map((part) => {
+          const bits = part.split(' ');
+          return { label: bits[0] || '', value: bits.slice(1).join(' ') || '0' };
+        });
+    }
+    function renderSummary() {
+      const root = document.getElementById('summary');
+      root.innerHTML = summaryEntries(VIEW.summary).map((item) =>
+        '<div class="stat"><span class="v">' + esc(item.value) + '</span><span class="k">' + esc(item.label) + '</span></div>'
+      ).join('');
+    }
+    function sectionTitle(key) {
+      return {
+        review: 'Review Queue',
+        new: 'New Challengers',
+        progressing: 'Progressing',
+        stalled: 'Stalled',
+        out: 'Out'
+      }[key] || key;
+    }
+    function renderCard(row, kind) {
+      const metrics = (row.metrics || []).map((item) =>
+        '<div class="metric"><span class="metric-v">' + esc(item.value) + '</span><span class="metric-k">' + esc(item.label) + '</span></div>'
+      ).join('');
+      const statsLine = (row.metrics || []).map((item) =>
+        '<span class="stat-pill"><span class="pill-v">' + esc(item.value) + '</span><span class="pill-k">' + esc(item.label) + '</span></span>'
+      ).join('');
+      const perfLine = (row.metrics || []).map((item) =>
+        esc(item.label) + ' ' + esc(item.value)
+      ).join(' | ');
+      return [
+        '<article class="card">',
+        '<div class="row">',
+        '<div>',
+        '<div class="title">' + esc(row.name) + ' [' + esc(row.stage) + ']</div>',
+        '<div class="meta">' + esc(row.strategy) + '</div>',
+        '</div>',
+        '<span class="chip ' + esc(kind) + '">' + esc(sectionTitle(kind)) + '</span>',
+        '</div>',
+        perfLine ? '<div class="perf-line">' + perfLine + '</div>' : '',
+        statsLine ? '<div class="stats-line">' + statsLine + '</div>' : '',
+        '<div class="meta">' + esc(row.summary) + '</div>',
+        metrics ? '<div class="metrics">' + metrics + '</div>' : '',
+        '</article>',
+      ].join('');
+    }
+    function renderSection(key, rows) {
+      return [
+        '<section class="section">',
+        '<h3>' + esc(sectionTitle(key)) + '</h3>',
+        rows.length
+          ? '<div class="stack">' + rows.map((row) => renderCard(row, key)).join('') + '</div>'
+          : '<div class="empty">Nothing here right now.</div>',
+        '</section>',
+      ].join('');
+    }
+    function renderVenue(venue, active) {
+      const champ = venue.champion;
+      const sections = venue.sections || {};
+      return [
+        '<section class="venue ' + (active ? 'active' : '') + '" id="venue-' + venue.venue + '">',
+        '<div class="venue-head">',
+        '<div class="head-card">',
+        '<h2>' + esc(venue.venue) + ' // ' + esc(String(venue.days)) + 'd</h2>',
+        '<div class="head-sub">Daily progress read, not raw leaderboard noise.</div>',
+        champ ? (
+          '<div class="champ"><div class="head-sub">Champion</div><strong>' + esc(champ.name) + ' [' + esc(champ.stage) + ']</strong><div class="head-sub">' + esc(champ.strategy) + ' | ' + fmtMoney(champ.net_pnl || 0) + '</div>' +
+          (((champ.metrics || []).length > 0)
+            ? '<div class="stats-line">' + (champ.metrics || []).map((item) =>
+                '<span class="stat-pill"><span class="pill-v">' + esc(item.value) + '</span><span class="pill-k">' + esc(item.label) + '</span></span>'
+              ).join('') + '</div>'
+            : '') +
+          (((champ.metrics || []).length > 0)
+            ? '<div class="metrics">' + (champ.metrics || []).map((item) =>
+                '<div class="metric"><span class="metric-v">' + esc(item.value) + '</span><span class="metric-k">' + esc(item.label) + '</span></div>'
+              ).join('') + '</div>'
+            : '') +
+          '</div>'
+        ) : '<div class="champ head-sub">No champion available.</div>',
+        '</div>',
+        '<div class="head-card">',
+        '<h3>How to read this</h3>',
+        '<div class="head-sub">Review Queue means stage 2/3 contenders to watch now. New Challengers are fresh stage 1 entries. Stalled means alive but not advancing.</div>',
+        '</div>',
+        '</div>',
+        '<div class="grid">',
+        renderSection('review', sections.review || []),
+        renderSection('new', sections.new || []),
+        renderSection('progressing', sections.progressing || []),
+        renderSection('stalled', sections.stalled || []),
+        '</div>',
+        renderSection('out', sections.out || []),
+        '</section>',
+      ].join('');
+    }
+    function activateVenue(name) {
+      document.querySelectorAll('.tab').forEach((button) => {
+        button.classList.toggle('active', button.dataset.venue === name);
+      });
+      document.querySelectorAll('.venue').forEach((section) => {
+        section.classList.toggle('active', section.id === 'venue-' + name);
+      });
+    }
+    renderSummary();
+    const tabs = document.getElementById('tabs');
+    const venues = document.getElementById('venues');
+    const venueList = VIEW.venues || [];
+    tabs.innerHTML = venueList.map((venue, index) =>
+      '<button class="tab ' + (index === 0 ? 'active' : '') + '" data-venue="' + venue.venue + '">' +
+      esc(venue.venue) +
+      '</button>'
+    ).join('');
+    venues.innerHTML = venueList.map((venue, index) => renderVenue(venue, index === 0)).join('');
+    tabs.querySelectorAll('.tab').forEach((button) => {
+      button.addEventListener('click', () => activateVenue(button.dataset.venue));
+    });
+  </script>
+</body>
+</html>
